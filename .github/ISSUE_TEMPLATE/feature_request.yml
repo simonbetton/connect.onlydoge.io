@@ -1,0 +1,63 @@
+name: Feature request
+description: Propose an improvement to protocol validation, relay simulation, or developer UX.
+title: "[Feature]: "
+labels:
+  - enhancement
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please focus on the user problem first, then describe the solution.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem are you trying to solve?
+      placeholder: As a developer integrating DogeConnect, I need ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior you want.
+      placeholder: Add a new validator panel that ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other options did you evaluate?
+
+  - type: textarea
+    id: contract-impact
+    attributes:
+      label: API or protocol impact
+      description: Does this require endpoint, schema, or protocol rule changes?
+      placeholder: |
+        - Endpoint changes:
+        - OpenAPI schema changes:
+        - Domain/use-case changes:
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Define concrete done conditions.
+      placeholder: |
+        - [ ] Validation result includes ...
+        - [ ] OpenAPI docs updated
+        - [ ] Integration tests added
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Links, screenshots, references, or related issues.
