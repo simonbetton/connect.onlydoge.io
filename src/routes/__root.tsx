@@ -2,10 +2,10 @@ import { TanStackDevtools } from "@tanstack/react-devtools"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createRootRoute, HeadContent, Link, Scripts, useRouterState } from "@tanstack/react-router"
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
+import { Analytics } from "@vercel/analytics/react"
 import * as React from "react"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Analytics } from "@vercel/analytics/next"
 
 import appCss from "../styles.css?url"
 
