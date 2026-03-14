@@ -45,6 +45,14 @@ function App() {
             >
               Open API Docs
             </a>
+            <a
+              href="/mcp"
+              target="_blank"
+              rel="noreferrer"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Open MCP Endpoint
+            </a>
           </div>
         </div>
       </section>
@@ -119,6 +127,61 @@ function App() {
               and pay/status execution.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-border/70 bg-card/50 p-6">
+        <h2 className="text-lg font-semibold">MCP Service for AI-Assisted Debugging</h2>
+        <p className="mt-2 max-w-4xl text-sm leading-relaxed text-muted-foreground">
+          Connect your MCP client to <code className="font-mono text-xs">/mcp</code> to run protocol
+          checks as tool calls. This endpoint exposes URI, envelope, relay, and flight-recorder flow
+          tools so agents can verify each step programmatically.
+        </p>
+        <div className="mt-4 grid gap-3 text-sm text-muted-foreground md:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl border border-border/60 bg-background/70 p-4">
+            <p className="font-medium text-foreground">URI + Envelope</p>
+            <p className="mt-2">
+              <code className="font-mono text-xs">validate_dogeconnect_uri</code> and{" "}
+              <code className="font-mono text-xs">validate_payment_envelope</code>.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-border/60 bg-background/70 p-4">
+            <p className="font-medium text-foreground">Mock Fixtures</p>
+            <p className="mt-2">
+              Generate deterministic sample payloads with{" "}
+              <code className="font-mono text-xs">generate_mock_qr_fixture</code>.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-border/60 bg-background/70 p-4">
+            <p className="font-medium text-foreground">Step-by-step Flow</p>
+            <p className="mt-2">
+              Build and continue traces with{" "}
+              <code className="font-mono text-xs">build_flight_recorder_session</code>,{" "}
+              <code className="font-mono text-xs">flight_recorder_step_status</code>, and{" "}
+              <code className="font-mono text-xs">flight_recorder_step_pay</code>.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-border/60 bg-background/70 p-4">
+            <p className="font-medium text-foreground">Relay Simulator Controls</p>
+            <p className="mt-2">
+              Use <code className="font-mono text-xs">register_relay_scenario</code> and{" "}
+              <code className="font-mono text-xs">reset_relay_state</code> for deterministic relay
+              debugging.
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <a href="/mcp" target="_blank" rel="noreferrer" className={buttonVariants()}>
+            View MCP Metadata
+          </a>
+          <a
+            href="https://modelcontextprotocol.io"
+            target="_blank"
+            rel="noreferrer"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            MCP Specification
+          </a>
         </div>
       </section>
     </div>

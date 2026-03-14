@@ -17,6 +17,7 @@ import { HttpFlightRecorderRelayClient } from "../outbound/http-flight-recorder-
 import { InMemoryRelayStateStore } from "../relay/in-memory-relay-state-store"
 import { LocalFlightRecorderRelayClient } from "../relay/local-flight-recorder-relay-client"
 import { createDogeConnectApiApp } from "./elysia-app"
+import { createDogeConnectMcpServer } from "./mcp-server"
 
 const crypto = new NobleCryptoAdapter()
 const envelopeFetcher = new HttpEnvelopeFetcher()
@@ -67,6 +68,17 @@ export const dogeConnectApiApp = createDogeConnectApiApp({
   relayStatusUseCase,
   registerRelayScenarioUseCase,
   listRelayScenariosUseCase,
+  resetRelayStateUseCase,
+  buildFlightRecorderSessionUseCase,
+  executeFlightRecorderRelayPayUseCase,
+  executeFlightRecorderRelayStatusUseCase,
+})
+
+export const dogeConnectMcpServer = createDogeConnectMcpServer({
+  validateDogeConnectUriUseCase,
+  validatePaymentEnvelopeUseCase,
+  generateMockQrUseCase,
+  registerRelayScenarioUseCase,
   resetRelayStateUseCase,
   buildFlightRecorderSessionUseCase,
   executeFlightRecorderRelayPayUseCase,

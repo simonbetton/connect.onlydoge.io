@@ -136,6 +136,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                       API Docs
                     </a>
                     <a
+                      href="/mcp"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="transition hover:text-foreground"
+                    >
+                      MCP
+                    </a>
+                    <a
                       href={repositoryUrl}
                       target="_blank"
                       rel="noreferrer noopener"
@@ -194,6 +202,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                         API Docs
                       </a>
                       <a
+                        href="/mcp"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded-xl border border-transparent px-3 py-2 text-muted-foreground transition hover:border-border/60 hover:bg-background/70 hover:text-foreground"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        MCP
+                      </a>
+                      <a
                         href={repositoryUrl}
                         target="_blank"
                         rel="noreferrer noopener"
@@ -230,6 +247,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                     className="transition hover:text-foreground"
                   >
                     OpenAPI
+                  </a>
+                  <a
+                    href="/mcp"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="transition hover:text-foreground"
+                  >
+                    MCP
                   </a>
                 </div>
               </div>

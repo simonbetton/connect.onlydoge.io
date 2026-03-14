@@ -13,6 +13,7 @@ This repository gives developers a practical toolkit to validate DogeConnect pay
 - [Tech Stack](#tech-stack)
 - [API Surface](#api-surface)
 - [OpenAPI](#openapi)
+- [MCP Server](#mcp-server)
 - [Quick Start](#quick-start)
 - [Deployment on Vercel](#deployment-on-vercel)
 - [Examples](#examples)
@@ -191,6 +192,76 @@ Base URL: `/api`
 
 OpenAPI is generated directly from Elysia route contracts, so docs stay synchronized with handler schemas.
 
+## MCP Server
+
+This project exposes a Model Context Protocol (MCP) server endpoint for AI-assisted DogeConnect debugging.
+
+- MCP endpoint: `/mcp`
+- Transport: JSON-RPC 2.0 over HTTP (`POST /mcp`)
+- Metadata: `GET /mcp`
+- Protocol version: `2024-11-05`
+
+### MCP tool catalog
+
+- `validate_dogeconnect_uri`
+- `validate_payment_envelope`
+- `generate_mock_qr_fixture`
+- `build_flight_recorder_session`
+- `flight_recorder_step_status`
+- `flight_recorder_step_pay`
+- `register_relay_scenario`
+- `reset_relay_state`
+
+These tools are designed so agent tool calls can inspect each protocol stage independently (URI parse, envelope checks, relay setup, and end-to-end flow execution).
+
+### MCP JSON-RPC examples
+
+Initialize:
+
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "jsonrpc":"2.0",
+    "id":1,
+    "method":"initialize",
+    "params":{}
+  }'
+```
+
+List tools:
+
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "jsonrpc":"2.0",
+    "id":2,
+    "method":"tools/list",
+    "params":{}
+  }'
+```
+
+Call a tool:
+
+```bash
+curl -X POST http://localhost:3000/mcp \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "jsonrpc":"2.0",
+    "id":3,
+    "method":"tools/call",
+    "params":{
+      "name":"build_flight_recorder_session",
+      "arguments":{
+        "sourceMode":"mock",
+        "targetMode":"simulator",
+        "includeInitialStatus":false
+      }
+    }
+  }'
+```
+
 ## Quick Start
 
 ### Prerequisites
@@ -227,6 +298,20 @@ Recommended settings:
 - Node.js runtime: `20+`
 
 After importing the repository into Vercel, keep framework detection defaults unless your team needs custom overrides.
+
+### MCP deployment options
+
+1. **Same deployment (recommended default)**  
+   Keep MCP under the existing app and use:
+   - `https://<your-app-domain>/mcp`
+
+2. **Dedicated MCP subdomain**
+   - Create a Vercel domain alias such as `mcp.connect.onlydoge.io`.
+   - Point it to this same deployment (or a second deployment of this repo).
+   - Use:
+     - `https://mcp.connect.onlydoge.io/mcp`
+
+If your MCP client requires root-path hosting, configure a Vercel rewrite in that dedicated project to route `/` to `/mcp`.
 
 ## Examples
 
