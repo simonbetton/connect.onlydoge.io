@@ -247,7 +247,59 @@ export function ToolsPage() {
         </p>
       </section>
 
-      <Card className="min-w-0">
+      <section className="rounded-3xl border border-border/70 bg-card/60 p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold">Quick Start</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              New here? Follow this path to get from QR input to relay response quickly.
+            </p>
+          </div>
+          <a href="/flight-recorder" className={buttonVariants({ variant: "outline", size: "sm" })}>
+            Need full traces? Open Flight Recorder
+          </a>
+        </div>
+        <ol className="mt-4 grid gap-3 text-sm md:grid-cols-3">
+          <li className="rounded-2xl border border-border/60 bg-background/70 p-4">
+            <p className="font-medium text-foreground">1. Generate or paste a QR URI</p>
+            <p className="mt-1 text-muted-foreground">
+              Start with Mock QR if you need known-good fixture data.
+            </p>
+            <a
+              href="#mock-fixture"
+              className={buttonVariants({ variant: "outline", size: "sm", className: "mt-3" })}
+            >
+              Open Mock QR
+            </a>
+          </li>
+          <li className="rounded-2xl border border-border/60 bg-background/70 p-4">
+            <p className="font-medium text-foreground">2. Run validation checks</p>
+            <p className="mt-1 text-muted-foreground">
+              Verify URI fields, then inspect envelope schema and signature.
+            </p>
+            <a
+              href="#qr-validator"
+              className={buttonVariants({ variant: "outline", size: "sm", className: "mt-3" })}
+            >
+              Open Validators
+            </a>
+          </li>
+          <li className="rounded-2xl border border-border/60 bg-background/70 p-4">
+            <p className="font-medium text-foreground">3. Test relay behavior</p>
+            <p className="mt-1 text-muted-foreground">
+              Register a scenario and call pay/status against the local simulator.
+            </p>
+            <a
+              href="#relay-registration"
+              className={buttonVariants({ variant: "outline", size: "sm", className: "mt-3" })}
+            >
+              Open Relay Tools
+            </a>
+          </li>
+        </ol>
+      </section>
+
+      <Card id="mock-fixture" className="min-w-0 scroll-mt-24">
         <CardHeader>
           <CardTitle>Mock QR Fixture Generator</CardTitle>
           <CardDescription>
@@ -351,7 +403,7 @@ export function ToolsPage() {
       </Card>
 
       <div className="grid min-w-0 gap-6 xl:grid-cols-2">
-        <Card className="min-w-0">
+        <Card id="qr-validator" className="min-w-0 scroll-mt-24">
           <CardHeader>
             <CardTitle>Validate QR URI</CardTitle>
             <CardDescription>
@@ -420,7 +472,7 @@ export function ToolsPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-0">
+        <Card id="envelope-validator" className="min-w-0 scroll-mt-24">
           <CardHeader>
             <CardTitle>Validate Payment Envelope</CardTitle>
             <CardDescription>
@@ -495,7 +547,7 @@ export function ToolsPage() {
       </div>
 
       <div className="grid min-w-0 gap-6 xl:grid-cols-2">
-        <Card className="min-w-0">
+        <Card id="relay-registration" className="min-w-0 scroll-mt-24">
           <CardHeader>
             <CardTitle>Relay Scenario Registration</CardTitle>
             <CardDescription>
@@ -661,7 +713,7 @@ export function ToolsPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-0">
+        <Card id="relay-tester" className="min-w-0 scroll-mt-24">
           <CardHeader>
             <CardTitle>Relay Pay / Status Tester</CardTitle>
             <CardDescription>
