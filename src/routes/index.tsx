@@ -19,8 +19,9 @@ function App() {
             Debug DogeConnect flows with confidence.
           </h1>
           <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Validate QR payloads, inspect envelope signatures, and test relay behaviors in one place.
-            Start with tools for quick checks or use Flight Recorder for full trace-level debugging.
+            Validate QR payloads, inspect envelope signatures, and test relay behaviors in one
+            place. Start with tools for quick checks or use Flight Recorder for full trace-level
+            debugging.
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <Link to="/tools" className={buttonVariants({ className: "gap-1.5" })}>
@@ -59,7 +60,10 @@ function App() {
               Use this when you need to quickly verify one payload, reproduce an issue, or inspect a
               response contract without building a full trace session.
             </p>
-            <Link to="/tools" className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto")}>
+            <Link
+              to="/tools"
+              className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto")}
+            >
               Open Tools
             </Link>
           </CardContent>
