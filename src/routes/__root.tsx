@@ -76,7 +76,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
           <div className="relative flex min-h-svh flex-col">
-            <header className="sticky top-0 z-20 border-b border-border/70 bg-primary/90 backdrop-blur">
+            <header className="sticky top-0 z-20 border-b border-border/70 bg-background/95 shadow-xs backdrop-blur">
               <nav className="mx-auto w-full max-w-7xl px-4 sm:px-6">
                 <div className="flex items-center justify-between gap-3 py-3">
                   <Link
@@ -86,10 +86,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   >
                     <img src="/favicon.svg" alt="OnlyDoge" className="size-9 shrink-0 sm:size-10" />
                     <div className="flex flex-col">
-                      <span className="doge-logo truncate text-sm font-bold text-neutral-800 sm:text-base">
+                      <span className="doge-logo truncate text-sm font-bold text-foreground sm:text-base">
                         DogeConnect Debugger
                       </span>
-                      <span className="text-neutral-500 -mt-1 text-xs ml-0.5 font-normal">
+                      <span className="-mt-1 ml-0.5 text-xs font-normal text-muted-foreground">
                         by EasyDoge
                       </span>
                     </div>
@@ -108,22 +108,22 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   <div className="hidden items-center gap-4 text-sm text-muted-foreground md:flex">
                     <Link
                       to="/"
-                      className="transition hover:text-foreground"
-                      activeProps={{ className: "text-foreground" }}
+                      className="rounded-xl px-2 py-1 transition hover:bg-muted/70 hover:text-foreground"
+                      activeProps={{ className: "bg-muted text-foreground" }}
                     >
                       Overview
                     </Link>
                     <Link
                       to="/tools"
-                      className="transition hover:text-foreground"
-                      activeProps={{ className: "text-foreground" }}
+                      className="rounded-xl px-2 py-1 transition hover:bg-muted/70 hover:text-foreground"
+                      activeProps={{ className: "bg-muted text-foreground" }}
                     >
                       Tools
                     </Link>
                     <Link
                       to="/flight-recorder"
-                      className="transition hover:text-foreground"
-                      activeProps={{ className: "text-foreground" }}
+                      className="rounded-xl px-2 py-1 transition hover:bg-muted/70 hover:text-foreground"
+                      activeProps={{ className: "bg-muted text-foreground" }}
                     >
                       Flight Recorder
                     </Link>
@@ -145,6 +145,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                       <GitHubMarkIcon className="size-4" />
                       <span>GitHub</span>
                     </a>
+                    <Link to="/tools" className={buttonVariants({ size: "sm" })}>
+                      Get Started
+                    </Link>
                   </div>
                 </div>
 
@@ -212,9 +215,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <main className="flex-1">{children}</main>
 
             <footer className="border-t border-border/70 bg-background/90">
-              <div className="mx-auto flex w-full max-w-7xl flex-col gap-2 px-4 pt-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
+              <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
                 <p>Unaffiliated with Dogecoin or any other organization.</p>
-                <p className="flex items-center gap-3">
+                <p className="flex flex-wrap items-center gap-3">
                   <a
                     href="https://connect.dogecoin.org/getting_started/introduction.html"
                     target="_blank"
@@ -230,22 +233,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                     rel="noreferrer"
                     className="transition hover:text-foreground"
                   >
-                    Debugger OpenAPI docs
+                    OpenAPI
                   </a>
-                </p>
-              </div>
-              <div className="mx-auto flex w-full max-w-7xl flex-col gap-2 px-4 pt-2 pb-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
-                <p className="md:text-center w-full">
-                  Proudly built by{" "}
+                  <span>|</span>
                   <a
                     href="https://github.com/simonbetton"
                     target="_blank"
                     rel="noreferrer"
-                    className="underline underline-offset-2"
+                    className="transition hover:text-foreground"
                   >
-                    Simon Betton
-                  </a>{" "}
-                  with ❤️ for Dogecoin and the community.
+                    Maintainer
+                  </a>
                 </p>
               </div>
             </footer>
