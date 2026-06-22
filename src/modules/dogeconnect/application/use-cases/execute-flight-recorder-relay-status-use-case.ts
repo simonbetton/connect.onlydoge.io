@@ -3,7 +3,7 @@ import type {
   ExecuteFlightRecorderStatusInput,
   FlightRecorderSessionV1,
 } from "../flight-recorder-contracts"
-import { summarizeFlightRecorderSession } from "../flight-recorder-session"
+import { createTraceEntry, summarizeFlightRecorderSession } from "../flight-recorder-session"
 
 export class ExecuteFlightRecorderRelayStatusUseCase {
   constructor(
@@ -17,7 +17,40 @@ export class ExecuteFlightRecorderRelayStatusUseCase {
       throw new Error("Flight Recorder session does not have a derived relay target")
     }
 
-    const client = relay.mode === "simulator" ? this.localRelayClient : this.liveRelayClient
+    const targetMode = input.session.meta.targetMode
+    if (relay.mode !== targetMode) {
+      return updateSession(
+        input.session,
+        createTraceEntry({
+          kind: "execution",
+          phase: "relay_status",
+          target: targetMode === "simulator" ? "local" : "remote",
+          verdict: "fail",
+          issues: [
+            {
+              field: "artifacts.relay.mode",
+              message: "Relay mode must match meta.targetMode before execution.",
+              severity: "error",
+            },
+          ],
+          requestSummary: {
+            method: "POST",
+            endpoint: relay.statusUrl,
+            note: "Blocked relay status because the imported session target mode is inconsistent.",
+            body: {
+              id: input.session.artifacts.payDraft?.id ?? input.session.source.paymentId,
+            },
+          },
+          responseSummary: {
+            statusCode: null,
+            note: "Relay status was blocked before the request was sent.",
+            body: null,
+          },
+        })
+      )
+    }
+
+    const client = targetMode === "simulator" ? this.localRelayClient : this.liveRelayClient
     const result = await client.getStatus({
       session: input.session,
       relay,
