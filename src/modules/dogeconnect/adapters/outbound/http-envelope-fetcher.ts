@@ -1,30 +1,13 @@
 import type { EnvelopeFetcherPort } from "../../ports/envelope-fetcher-port"
+import { safeFetchJson } from "./public-target-guard"
 
 export class HttpEnvelopeFetcher implements EnvelopeFetcherPort {
   async fetchEnvelope(connectUrl: string): Promise<unknown> {
-    const target = normalizeConnectUrl(connectUrl)
-    const response = await fetch(target, {
+    const response = await safeFetchJson({
+      url: connectUrl,
       method: "GET",
-      headers: {
-        Accept: "application/json",
-      },
     })
 
-    if (!response.ok) {
-      throw new Error(`Envelope fetch failed with ${response.status} ${response.statusText}`)
-    }
-
-    try {
-      return await response.json()
-    } catch {
-      throw new Error("Envelope response is not valid JSON")
-    }
+    return response.body
   }
-}
-
-const normalizeConnectUrl = (connectUrl: string): string => {
-  if (connectUrl.startsWith("https://") || connectUrl.startsWith("http://")) {
-    return connectUrl
-  }
-  return `https://${connectUrl}`
 }
