@@ -30,7 +30,72 @@ describe("Flight Recorder session helpers", () => {
     expect(parsed.value?.version).toBe("flight-recorder/v1")
     expect(parsed.value?.trace).toHaveLength(1)
   })
+
+  test("rejects imports with mismatched metadata and relay target modes", () => {
+    const session = cloneSession(createSessionFixture())
+    session.meta.targetMode = "simulator"
+    if (session.artifacts.relay) {
+      session.artifacts.relay.mode = "live"
+    }
+
+    const parsed = parseImportedFlightRecorderSession(session)
+
+    expectRejectedWithField(parsed, "artifacts.relay.mode")
+  })
+
+  test.each([
+    ["payUrl", "https://relay.example/checkout/pay"],
+    ["statusUrl", "https://relay.example/checkout/status"],
+  ] as const)("rejects simulator imports with external relay %s", (field, url) => {
+    const session = createSimulatorSessionFixture()
+    if (session.artifacts.relay) {
+      session.artifacts.relay[field] = url
+    }
+
+    const parsed = parseImportedFlightRecorderSession(session)
+
+    expectRejectedWithField(parsed, `artifacts.relay.${field}`)
+  })
+
+  test("rejects live imports whose status URL is not derived from the source relay URL", () => {
+    const session = cloneSession(createSessionFixture())
+    if (session.artifacts.relay) {
+      session.artifacts.relay.statusUrl = "https://relay.example/unrelated/status"
+    }
+
+    const parsed = parseImportedFlightRecorderSession(session)
+
+    expectRejectedWithField(parsed, "artifacts.relay.statusUrl")
+  })
 })
+
+const expectRejectedWithField = (
+  parsed: ReturnType<typeof parseImportedFlightRecorderSession>,
+  field: string
+) => {
+  expect(parsed.value).toBeNull()
+  expect(parsed.issues).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        field,
+      }),
+    ])
+  )
+}
+
+const cloneSession = (session: FlightRecorderSessionV1): FlightRecorderSessionV1 =>
+  JSON.parse(JSON.stringify(session)) as FlightRecorderSessionV1
+
+const createSimulatorSessionFixture = (): FlightRecorderSessionV1 => {
+  const session = cloneSession(createSessionFixture())
+  session.meta.targetMode = "simulator"
+  if (session.artifacts.relay) {
+    session.artifacts.relay.mode = "simulator"
+    session.artifacts.relay.payUrl = "/api/relay/pay"
+    session.artifacts.relay.statusUrl = "/api/relay/status"
+  }
+  return session
+}
 
 const createSessionFixture = (): FlightRecorderSessionV1 => ({
   version: "flight-recorder/v1",

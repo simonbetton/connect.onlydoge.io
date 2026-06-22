@@ -7,15 +7,14 @@ import type {
   BuildFlightRecorderSessionInput,
   FlightRecorderFaultPreset,
   FlightRecorderSessionV1,
-  FlightRecorderTargetMode,
 } from "../flight-recorder-contracts"
 import { FLIGHT_RECORDER_SESSION_VERSION } from "../flight-recorder-contracts"
 import {
   applyReadSafeFaults,
   createEmptyArtifacts,
   createTraceEntry,
+  deriveFlightRecorderRelayTarget,
   listIncompatibleFaultIssues,
-  resolveSimulatorFault,
   summarizeFlightRecorderSession,
 } from "../flight-recorder-session"
 import type { GenerateMockQrUseCase } from "./generate-mock-qr-use-case"
@@ -236,7 +235,11 @@ export class BuildFlightRecorderSessionUseCase {
     )
 
     const incompatibleFaults = listIncompatibleFaultIssues(input.targetMode, faults)
-    const relay = buildRelayArtifact(input.targetMode, paymentParse.value?.wire, faults)
+    const relay = deriveFlightRecorderRelayTarget({
+      targetMode: input.targetMode,
+      sourceRelayUrl: paymentParse.value?.wire.relay,
+      faults,
+    })
     artifacts.relay = {
       ...relay,
       liveWriteArmed: false,
@@ -283,7 +286,7 @@ export class BuildFlightRecorderSessionUseCase {
       session.artifacts.payDraft
     ) {
       const client =
-        session.artifacts.relay.mode === "simulator" ? this.localRelayClient : this.liveRelayClient
+        session.meta.targetMode === "simulator" ? this.localRelayClient : this.liveRelayClient
       const statusResult = await client.getStatus({
         session,
         relay: session.artifacts.relay,
@@ -325,45 +328,6 @@ export class BuildFlightRecorderSessionUseCase {
       trace: input.trace,
       summary: summarizeFlightRecorderSession(input.trace),
     }
-  }
-}
-
-const buildRelayArtifact = (
-  targetMode: FlightRecorderTargetMode,
-  payment: ConnectPaymentWire | undefined,
-  faults: FlightRecorderFaultPreset[]
-) => {
-  const sourceRelayUrl = payment?.relay ?? ""
-  const simulatorScenario = resolveSimulatorFault(faults)
-
-  if (targetMode === "simulator") {
-    return {
-      mode: "simulator" as const,
-      sourceRelayUrl,
-      payUrl: "/api/relay/pay",
-      statusUrl: "/api/relay/status",
-      simulatorScenario,
-    }
-  }
-
-  const payUrl = sourceRelayUrl.endsWith("/pay")
-    ? sourceRelayUrl
-    : sourceRelayUrl.endsWith("/status")
-      ? `${sourceRelayUrl.slice(0, -"/status".length)}/pay`
-      : `${sourceRelayUrl.replace(/\/$/, "")}/pay`
-
-  const statusUrl = sourceRelayUrl.endsWith("/status")
-    ? sourceRelayUrl
-    : sourceRelayUrl.endsWith("/pay")
-      ? `${sourceRelayUrl.slice(0, -"/pay".length)}/status`
-      : `${sourceRelayUrl.replace(/\/$/, "")}/status`
-
-  return {
-    mode: "live" as const,
-    sourceRelayUrl,
-    payUrl,
-    statusUrl,
-    simulatorScenario,
   }
 }
 

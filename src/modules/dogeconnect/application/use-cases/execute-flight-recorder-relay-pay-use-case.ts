@@ -19,7 +19,38 @@ export class ExecuteFlightRecorderRelayPayUseCase {
       throw new Error("Flight Recorder session is missing relay or pay draft artifacts")
     }
 
-    if (relay.mode === "live" && !input.liveWriteArmed) {
+    const targetMode = input.session.meta.targetMode
+    if (relay.mode !== targetMode) {
+      return appendTrace(
+        input.session,
+        createTraceEntry({
+          kind: "execution",
+          phase: "relay_pay",
+          target: targetMode === "simulator" ? "local" : "remote",
+          verdict: "fail",
+          issues: [
+            {
+              field: "artifacts.relay.mode",
+              message: "Relay mode must match meta.targetMode before execution.",
+              severity: "error",
+            },
+          ],
+          requestSummary: {
+            method: "POST",
+            endpoint: relay.payUrl,
+            note: "Blocked relay pay because the imported session target mode is inconsistent.",
+            body: payDraft,
+          },
+          responseSummary: {
+            statusCode: null,
+            note: "Relay pay was blocked before the request was sent.",
+            body: null,
+          },
+        })
+      )
+    }
+
+    if (targetMode === "live" && !input.liveWriteArmed) {
       return appendTrace(
         input.session,
         createTraceEntry({
@@ -49,7 +80,7 @@ export class ExecuteFlightRecorderRelayPayUseCase {
       )
     }
 
-    const client = relay.mode === "simulator" ? this.localRelayClient : this.liveRelayClient
+    const client = targetMode === "simulator" ? this.localRelayClient : this.liveRelayClient
     const result = await client.pay({
       session: input.session,
       relay,

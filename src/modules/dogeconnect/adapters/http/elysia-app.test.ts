@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest"
+import type { FlightRecorderSessionV1 } from "../../application/flight-recorder-contracts"
 import { createTraceEntry } from "../../application/flight-recorder-session"
 import { BuildFlightRecorderSessionUseCase } from "../../application/use-cases/build-flight-recorder-session-use-case"
 import { ExecuteFlightRecorderRelayPayUseCase } from "../../application/use-cases/execute-flight-recorder-relay-pay-use-case"
@@ -177,6 +178,38 @@ describe("DogeConnect Elysia API", () => {
     const lastTrace = session.trace.at(-1)
     expect(lastTrace?.phase).toBe("relay_pay")
     expect(lastTrace?.verdict).toBe("fail")
+  })
+
+  test("rejects imported relay status sessions with mismatched target mode", async () => {
+    const app = createTestApp()
+
+    const sessionResponse = await requestJson(app, "/api/flight-recorder/session", {
+      source: {
+        mode: "mock",
+      },
+      targetMode: "simulator",
+      options: {
+        includeInitialStatus: false,
+      },
+    })
+    expect(sessionResponse.status).toBe(200)
+
+    const session = sessionResponse.body as FlightRecorderSessionV1
+    if (session.artifacts.relay) {
+      session.artifacts.relay.mode = "live"
+    }
+
+    const statusResponse = await requestJson(app, "/api/flight-recorder/relay/status", {
+      session,
+    })
+
+    expect(statusResponse.status).toBe(400)
+    const body = statusResponse.body as { errors: Array<{ field: string; message: string }> }
+    expect(
+      body.errors.some(
+        (error) => error.field.includes("relay.mode") || error.message.includes("meta.targetMode")
+      )
+    ).toBe(true)
   })
 })
 
