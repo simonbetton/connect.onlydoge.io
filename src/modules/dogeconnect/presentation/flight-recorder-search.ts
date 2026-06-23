@@ -125,14 +125,10 @@ export const validateFlightRecorderSearch = (input: unknown): FlightRecorderSear
     mockPaymentId: readString(record, "mock"),
     includeInitialStatus: readBoolean(record, "initial"),
     selectedFaults,
-    importJson: readString(record, "import"),
     selectedTraceId: readString(record, "trace"),
     autoPoll: readBoolean(record, "autoPoll"),
     pollIntervalSec: pollIntervalSec === undefined ? undefined : Math.max(1, pollIntervalSec),
     payDraftId: readString(record, "draftId"),
-    payDraftTx: readString(record, "draftTx"),
-    payDraftRelayToken: readString(record, "draftToken"),
-    payDraftRefund: readString(record, "draftRefund"),
     liveWriteArmed: readBoolean(record, "armed"),
   })
 }
@@ -152,7 +148,6 @@ export const cleanFlightRecorderSearch = (
     ? {}
     : { initial: search.includeInitialStatus }),
   ...(search.selectedFaults.length > 0 ? { faults: search.selectedFaults.join(",") } : {}),
-  ...(search.importJson ? { import: search.importJson } : {}),
   ...(search.selectedTraceId ? { trace: search.selectedTraceId } : {}),
   ...(search.autoPoll === defaultFlightRecorderSearch.autoPoll
     ? {}
@@ -161,9 +156,6 @@ export const cleanFlightRecorderSearch = (
     ? {}
     : { poll: search.pollIntervalSec }),
   ...(search.payDraftId === null ? {} : { draftId: search.payDraftId }),
-  ...(search.payDraftTx === null ? {} : { draftTx: search.payDraftTx }),
-  ...(search.payDraftRelayToken === null ? {} : { draftToken: search.payDraftRelayToken }),
-  ...(search.payDraftRefund === null ? {} : { draftRefund: search.payDraftRefund }),
   ...(search.liveWriteArmed === defaultFlightRecorderSearch.liveWriteArmed
     ? {}
     : { armed: search.liveWriteArmed }),

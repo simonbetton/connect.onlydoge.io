@@ -91,11 +91,26 @@ const SIMULATOR_FAULTS: Array<{
 
 const SIMULATOR_FAULT_VALUES = new Set(SIMULATOR_FAULTS.map((fault) => fault.value))
 
+type FlightRecorderPayDraftFields = Pick<
+  FlightRecorderSearchState,
+  "payDraftTx" | "payDraftRelayToken" | "payDraftRefund"
+>
+
+const createDefaultFlightRecorderPayDraftFields = (): FlightRecorderPayDraftFields => ({
+  payDraftTx: defaultFlightRecorderSearch.payDraftTx,
+  payDraftRelayToken: defaultFlightRecorderSearch.payDraftRelayToken,
+  payDraftRefund: defaultFlightRecorderSearch.payDraftRefund,
+})
+
 export function FlightRecorderPage() {
   const rawSearch = useSearch({ from: "/flight-recorder" })
   const search = resolveFlightRecorderSearch(rawSearch)
   const navigate = useNavigate({ from: "/flight-recorder" })
   const [importError, setImportError] = React.useState("")
+  const [importJson, setImportJson] = React.useState(defaultFlightRecorderSearch.importJson)
+  const [payDraftFields, setPayDraftFields] = React.useState(
+    createDefaultFlightRecorderPayDraftFields
+  )
   const [qrImageError, setQrImageError] = React.useState("")
   const [qrImageName, setQrImageName] = React.useState("")
   const [qrImageDecodePending, setQrImageDecodePending] = React.useState(false)
@@ -116,8 +131,8 @@ export function FlightRecorderPage() {
     [search.selectedFaults, search.targetMode]
   )
   const sessionView = React.useMemo(
-    () => applySearchStateToSession(session, search),
-    [search, session]
+    () => applySearchStateToSession(session, search, payDraftFields),
+    [payDraftFields, search, session]
   )
 
   const updateSearch = React.useEffectEvent((patch: Partial<FlightRecorderSearchState>) => {
@@ -140,6 +155,7 @@ export function FlightRecorderPage() {
       postJson<FlightRecorderSessionV1>("/api/flight-recorder/session", payload),
     onSuccess: (nextSession) => {
       setSession(nextSession)
+      setPayDraftFields(createDefaultFlightRecorderPayDraftFields())
       setImportError("")
       setPageMessage("Flight Recorder session built successfully.")
       updateSearch({
@@ -266,7 +282,7 @@ export function FlightRecorderPage() {
     let parsedJson: unknown
 
     try {
-      parsedJson = JSON.parse(search.importJson)
+      parsedJson = JSON.parse(importJson)
     } catch {
       setImportError("Session JSON must be valid JSON.")
       return
@@ -287,6 +303,7 @@ export function FlightRecorderPage() {
     }
 
     setSession(importedSession)
+    setPayDraftFields(createDefaultFlightRecorderPayDraftFields())
     setPageMessage("Imported session loaded.")
     updateSearch({
       ...payDraftSearchPatch(importedSession),
@@ -311,7 +328,7 @@ export function FlightRecorderPage() {
     }
 
     const text = await file.text()
-    updateSearch({ importJson: text })
+    setImportJson(text)
   }
 
   const loadQrImage = async (file: File | null) => {
@@ -516,8 +533,8 @@ export function FlightRecorderPage() {
                     Session JSON
                   </p>
                   <Textarea
-                    value={search.importJson}
-                    onChange={(event) => updateSearch({ importJson: event.target.value })}
+                    value={importJson}
+                    onChange={(event) => setImportJson(event.target.value)}
                     rows={8}
                     placeholder='{"version":"flight-recorder/v1", ...}'
                   />
@@ -580,6 +597,8 @@ export function FlightRecorderPage() {
                 variant="outline"
                 onClick={() => {
                   updateSearch(defaultFlightRecorderSearch)
+                  setImportJson(defaultFlightRecorderSearch.importJson)
+                  setPayDraftFields(createDefaultFlightRecorderPayDraftFields())
                   setImportError("")
                   setQrImageError("")
                   setQrImageName("")
@@ -741,18 +760,33 @@ export function FlightRecorderPage() {
                 />
                 <Textarea
                   value={sessionView.artifacts.payDraft?.tx ?? ""}
-                  onChange={(event) => updateSearch({ payDraftTx: event.target.value })}
+                  onChange={(event) =>
+                    setPayDraftFields((current) => ({
+                      ...current,
+                      payDraftTx: event.target.value,
+                    }))
+                  }
                   rows={4}
                   placeholder="Hex transaction"
                 />
                 <Input
                   value={sessionView.artifacts.payDraft?.relay_token ?? ""}
-                  onChange={(event) => updateSearch({ payDraftRelayToken: event.target.value })}
+                  onChange={(event) =>
+                    setPayDraftFields((current) => ({
+                      ...current,
+                      payDraftRelayToken: event.target.value,
+                    }))
+                  }
                   placeholder="relay_token"
                 />
                 <Input
                   value={sessionView.artifacts.payDraft?.refund ?? ""}
-                  onChange={(event) => updateSearch({ payDraftRefund: event.target.value })}
+                  onChange={(event) =>
+                    setPayDraftFields((current) => ({
+                      ...current,
+                      payDraftRefund: event.target.value,
+                    }))
+                  }
                   placeholder="Refund address"
                 />
               </div>
@@ -1021,7 +1055,8 @@ const formatPhaseLabel = (phase: string): string =>
 
 const applySearchStateToSession = (
   session: FlightRecorderSessionV1 | null,
-  search: FlightRecorderSearchState
+  search: FlightRecorderSearchState,
+  payDraftFields: FlightRecorderPayDraftFields
 ): FlightRecorderSessionV1 | null => {
   if (!session?.artifacts.payDraft) {
     return withLiveWriteState(session, search.liveWriteArmed)
@@ -1034,9 +1069,9 @@ const applySearchStateToSession = (
       payDraft: {
         ...session.artifacts.payDraft,
         id: search.payDraftId ?? session.artifacts.payDraft.id,
-        tx: search.payDraftTx ?? session.artifacts.payDraft.tx,
-        relay_token: search.payDraftRelayToken ?? session.artifacts.payDraft.relay_token,
-        refund: search.payDraftRefund ?? session.artifacts.payDraft.refund,
+        tx: payDraftFields.payDraftTx ?? session.artifacts.payDraft.tx,
+        relay_token: payDraftFields.payDraftRelayToken ?? session.artifacts.payDraft.relay_token,
+        refund: payDraftFields.payDraftRefund ?? session.artifacts.payDraft.refund,
       },
     },
   }
@@ -1065,14 +1100,8 @@ const withLiveWriteState = (
 
 const payDraftSearchPatch = (
   session: FlightRecorderSessionV1
-): Pick<
-  FlightRecorderSearchState,
-  "payDraftId" | "payDraftTx" | "payDraftRelayToken" | "payDraftRefund"
-> => ({
+): Pick<FlightRecorderSearchState, "payDraftId"> => ({
   payDraftId: session.artifacts.payDraft?.id ?? "",
-  payDraftTx: session.artifacts.payDraft?.tx ?? "",
-  payDraftRelayToken: session.artifacts.payDraft?.relay_token ?? "",
-  payDraftRefund: session.artifacts.payDraft?.refund ?? "",
 })
 
 const postJson = async <T,>(path: string, payload: unknown): Promise<T> => {
