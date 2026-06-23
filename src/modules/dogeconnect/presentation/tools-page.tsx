@@ -125,7 +125,7 @@ export function ToolsPage() {
 
   const envelopeForm = useForm({
     defaultValues: {
-      envelope: search.envelopeJson,
+      envelope: defaultToolsSearch.envelopeJson,
       expectedHash: search.envelopeExpectedHash,
     },
     onSubmit: async ({ value }) => {
@@ -172,9 +172,9 @@ export function ToolsPage() {
   const relayPayForm = useForm({
     defaultValues: {
       id: search.relayPayId,
-      tx: search.relayPayTx,
-      refund: search.relayPayRefund,
-      relay_token: search.relayPayRelayToken,
+      tx: defaultToolsSearch.relayPayTx,
+      refund: defaultToolsSearch.relayPayRefund,
+      relay_token: defaultToolsSearch.relayPayRelayToken,
     },
     onSubmit: async ({ value }) => {
       await relayPayMutation.mutateAsync(value)
@@ -517,9 +517,7 @@ export function ToolsPage() {
                       placeholder='{"version":"1.0","payload":"...","pubkey":"...","sig":"..."}'
                       value={field.state.value}
                       onChange={(event) => {
-                        const value = event.target.value
-                        field.handleChange(value)
-                        updateSearch({ envelopeJson: value })
+                        field.handleChange(event.target.value)
                       }}
                       onBlur={field.handleBlur}
                       rows={8}
@@ -750,9 +748,7 @@ export function ToolsPage() {
                     placeholder="Hex signed transaction"
                     value={field.state.value}
                     onChange={(event) => {
-                      const value = event.target.value
-                      field.handleChange(value)
-                      updateSearch({ relayPayTx: value })
+                      field.handleChange(event.target.value)
                     }}
                     onBlur={field.handleBlur}
                     rows={4}
@@ -765,9 +761,7 @@ export function ToolsPage() {
                     placeholder="relay_token (optional)"
                     value={field.state.value}
                     onChange={(event) => {
-                      const value = event.target.value
-                      field.handleChange(value)
-                      updateSearch({ relayPayRelayToken: value })
+                      field.handleChange(event.target.value)
                     }}
                     onBlur={field.handleBlur}
                   />
@@ -779,9 +773,7 @@ export function ToolsPage() {
                     placeholder="refund address (optional)"
                     value={field.state.value}
                     onChange={(event) => {
-                      const value = event.target.value
-                      field.handleChange(value)
-                      updateSearch({ relayPayRefund: value })
+                      field.handleChange(event.target.value)
                     }}
                     onBlur={field.handleBlur}
                   />

@@ -34,14 +34,14 @@ describe("flight recorder search state", () => {
     expect(search.mockPaymentId).toBe("mock-123")
     expect(search.includeInitialStatus).toBe(false)
     expect(search.selectedFaults).toEqual(["wrong_hash", "simulator_error"])
-    expect(search.importJson).toBe('{"version":"flight-recorder/v1"}')
+    expect(search.importJson).toBe("")
     expect(search.selectedTraceId).toBe("trace-1")
     expect(search.autoPoll).toBe(true)
     expect(search.pollIntervalSec).toBe(1)
     expect(search.payDraftId).toBe("")
-    expect(search.payDraftTx).toBe("deadbeef")
-    expect(search.payDraftRelayToken).toBe("")
-    expect(search.payDraftRefund).toBe("DRefund")
+    expect(search.payDraftTx).toBeNull()
+    expect(search.payDraftRelayToken).toBeNull()
+    expect(search.payDraftRefund).toBeNull()
     expect(search.liveWriteArmed).toBe(true)
   })
 
@@ -67,9 +67,6 @@ describe("flight recorder search state", () => {
       initial: false,
       faults: "wrong_hash,simulator_error",
       draftId: "",
-      draftTx: "deadbeef",
-      draftToken: "",
-      draftRefund: "DRefund",
       armed: true,
     })
   })

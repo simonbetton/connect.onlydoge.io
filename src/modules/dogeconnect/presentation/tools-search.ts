@@ -119,7 +119,6 @@ export const validateToolsSearch = (input: unknown): ToolsSearch => {
     mockPaymentId: readString(record, "mock"),
     qrUri: readString(record, "uri"),
     qrFetchEnvelope: readBoolean(record, "fetchEnvelope"),
-    envelopeJson: readString(record, "envelope"),
     envelopeExpectedHash: readString(record, "expectedHash"),
     relayRegisterId: readString(record, "registerId"),
     relayRegisterScenario: readScenario(record, "registerScenario"),
@@ -128,9 +127,6 @@ export const validateToolsSearch = (input: unknown): ToolsSearch => {
     relayRegisterRequired: readNumber(record, "registerRequired"),
     relayRegisterDueSec: readNumber(record, "registerDueSec"),
     relayPayId: readString(record, "payId"),
-    relayPayTx: readString(record, "payTx"),
-    relayPayRefund: readString(record, "payRefund"),
-    relayPayRelayToken: readString(record, "payRelayToken"),
     relayStatusId: readString(record, "statusId"),
   })
 }
@@ -143,7 +139,6 @@ export const cleanToolsSearch = (
   ...(search.qrFetchEnvelope === defaultToolsSearch.qrFetchEnvelope
     ? {}
     : { fetchEnvelope: search.qrFetchEnvelope }),
-  ...(search.envelopeJson ? { envelope: search.envelopeJson } : {}),
   ...(search.envelopeExpectedHash ? { expectedHash: search.envelopeExpectedHash } : {}),
   ...(search.relayRegisterId ? { registerId: search.relayRegisterId } : {}),
   ...(search.relayRegisterScenario === defaultToolsSearch.relayRegisterScenario
@@ -158,9 +153,6 @@ export const cleanToolsSearch = (
     ? {}
     : { registerDueSec: search.relayRegisterDueSec }),
   ...(search.relayPayId ? { payId: search.relayPayId } : {}),
-  ...(search.relayPayTx ? { payTx: search.relayPayTx } : {}),
-  ...(search.relayPayRefund ? { payRefund: search.relayPayRefund } : {}),
-  ...(search.relayPayRelayToken ? { payRelayToken: search.relayPayRelayToken } : {}),
   ...(search.relayStatusId ? { statusId: search.relayStatusId } : {}),
 })
 
