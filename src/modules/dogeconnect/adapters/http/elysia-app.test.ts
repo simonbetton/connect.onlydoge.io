@@ -19,29 +19,85 @@ import { LocalFlightRecorderRelayClient } from "../relay/local-flight-recorder-r
 import { createDogeConnectApiApp } from "./elysia-app"
 
 describe("DogeConnect Elysia API", () => {
-  test("registers scenario and returns accepted relay status on pay/status flow", async () => {
+  test.each([
+    {
+      scenario: "accepted",
+      paymentId: "pay-accepted",
+      expectedPayStatus: 200,
+      expectedRelayStatus: "accepted",
+    },
+    {
+      scenario: "confirmed",
+      paymentId: "pay-confirmed",
+      expectedPayStatus: 200,
+      expectedRelayStatus: "confirmed",
+    },
+    {
+      scenario: "declined",
+      paymentId: "pay-declined",
+      expectedPayStatus: 200,
+      expectedRelayStatus: "declined",
+    },
+    {
+      scenario: "error",
+      paymentId: "pay-error",
+      expectedPayStatus: 400,
+      expectedError: "invalid_tx",
+    },
+  ] as const)("handles $scenario relay scenario on pay/status flow", async ({
+    scenario,
+    paymentId,
+    expectedPayStatus,
+    expectedRelayStatus,
+    expectedError,
+  }) => {
     const app = createTestApp()
+    const required = 6
 
     const registerResponse = await requestJson(app, "/api/relay/debug/payment", {
-      id: "pay-1",
-      scenario: "accepted",
-      required: 6,
+      id: paymentId,
+      scenario,
+      required,
       dueSec: 600,
     })
     expect(registerResponse.status).toBe(200)
 
     const payResponse = await requestJson(app, "/api/relay/pay", {
-      id: "pay-1",
+      id: paymentId,
       tx: "deadbeef",
     })
-    expect(payResponse.status).toBe(200)
-    expect((payResponse.body as { status: string }).status).toBe("accepted")
+    expect(payResponse.status).toBe(expectedPayStatus)
+
+    if (expectedError) {
+      expect((payResponse.body as { error: string }).error).toBe(expectedError)
+      return
+    }
+
+    const payBody = payResponse.body as {
+      status: string
+      required?: number
+      confirmed?: number
+    }
+    expect(payBody.status).toBe(expectedRelayStatus)
 
     const statusResponse = await requestJson(app, "/api/relay/status", {
-      id: "pay-1",
+      id: paymentId,
     })
     expect(statusResponse.status).toBe(200)
-    expect((statusResponse.body as { status: string }).status).toBe("accepted")
+
+    const statusBody = statusResponse.body as {
+      status: string
+      required?: number
+      confirmed?: number
+    }
+    expect(statusBody.status).toBe(expectedRelayStatus)
+
+    if (scenario === "confirmed") {
+      expect(payBody.required).toBe(required)
+      expect(payBody.confirmed).toBe(required)
+      expect(statusBody.required).toBe(required)
+      expect(statusBody.confirmed).toBe(required)
+    }
   })
 
   test("returns not_found for unknown relay payment id", async () => {
@@ -53,6 +109,28 @@ describe("DogeConnect Elysia API", () => {
 
     expect(response.status).toBe(404)
     expect((response.body as { error: string }).error).toBe("not_found")
+  })
+
+  test("rejects relay pay when relay_token does not match registered relay token", async () => {
+    const app = createTestApp()
+
+    const registerResponse = await requestJson(app, "/api/relay/debug/payment", {
+      id: "pay-token-mismatch",
+      scenario: "accepted",
+      relayToken: "expected-token",
+      required: 6,
+      dueSec: 600,
+    })
+    expect(registerResponse.status).toBe(200)
+
+    const payResponse = await requestJson(app, "/api/relay/pay", {
+      id: "pay-token-mismatch",
+      tx: "deadbeef",
+      relay_token: "wrong-token",
+    })
+
+    expect(payResponse.status).toBe(400)
+    expect((payResponse.body as { error: string }).error).toBe("invalid_token")
   })
 
   test("exposes generated OpenAPI JSON document", async () => {
