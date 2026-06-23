@@ -39,6 +39,24 @@ describe("ValidatePaymentEnvelopeUseCase", () => {
     expect(result.verdict).toBe("invalid")
     expect(result.errors.some((issue) => issue.field === "sig")).toBe(true)
   })
+
+  test("rejects envelope when expected public key hash does not match", () => {
+    const fixture = createSignedEnvelopeFixture()
+    const useCase = new ValidatePaymentEnvelopeUseCase(new NobleCryptoAdapter())
+    const wrongExpectedHash = Buffer.from(new Uint8Array(15).fill(255)).toString("base64url")
+
+    const result = useCase.execute({
+      envelope: fixture.envelope,
+      expectedHash: wrongExpectedHash,
+    })
+
+    expect(wrongExpectedHash).not.toBe(fixture.expectedHash)
+    expect(result.verdict).toBe("invalid")
+    expect(
+      result.checks.some((check) => check.name === "Public key hash match" && !check.passed)
+    ).toBe(true)
+    expect(result.errors.some((issue) => issue.field === "pubkey")).toBe(true)
+  })
 })
 
 const createSignedEnvelopeFixture = () => {

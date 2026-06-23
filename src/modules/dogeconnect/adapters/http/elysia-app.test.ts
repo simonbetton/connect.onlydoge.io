@@ -7,12 +7,14 @@ import { ExecuteFlightRecorderRelayStatusUseCase } from "../../application/use-c
 import { GenerateMockQrUseCase } from "../../application/use-cases/generate-mock-qr-use-case"
 import { GetMockEnvelopeUseCase } from "../../application/use-cases/get-mock-envelope-use-case"
 import { ListRelayScenariosUseCase } from "../../application/use-cases/list-relay-scenarios-use-case"
+import { createMockDogeConnectFixture } from "../../application/use-cases/mock-dogeconnect-fixture"
 import { RegisterRelayScenarioUseCase } from "../../application/use-cases/register-relay-scenario-use-case"
 import { RelayPayUseCase } from "../../application/use-cases/relay-pay-use-case"
 import { RelayStatusUseCase } from "../../application/use-cases/relay-status-use-case"
 import { ResetRelayStateUseCase } from "../../application/use-cases/reset-relay-state-use-case"
 import { ValidateDogeConnectUriUseCase } from "../../application/use-cases/validate-dogeconnect-uri-use-case"
 import { ValidatePaymentEnvelopeUseCase } from "../../application/use-cases/validate-payment-envelope-use-case"
+import type { EnvelopeFetcherPort } from "../../ports/envelope-fetcher-port"
 import { NobleCryptoAdapter } from "../crypto/noble-crypto-adapter"
 import { InMemoryRelayStateStore } from "../relay/in-memory-relay-state-store"
 import { LocalFlightRecorderRelayClient } from "../relay/local-flight-recorder-relay-client"
@@ -205,6 +207,35 @@ describe("DogeConnect Elysia API", () => {
     expect((validateFetchedEnvelopeResponse.body as { verdict: string }).verdict).toBe("valid")
   })
 
+  test("validates a QR URI by fetching its envelope", async () => {
+    const crypto = new NobleCryptoAdapter()
+    const fixture = createMockDogeConnectFixture(crypto, "pay-validate-qr")
+    const dc = "localhost/api/tools/mock-envelope/pay-validate-qr"
+    const query = new URLSearchParams({
+      amount: fixture.amount,
+      dc,
+      h: fixture.h,
+    })
+    let fetchedUrl = ""
+    const app = createTestApp({
+      envelopeFetcher: {
+        async fetchEnvelope(connectUrl) {
+          fetchedUrl = connectUrl
+          return fixture.envelope
+        },
+      },
+    })
+
+    const response = await requestJson(app, "/api/tools/validate-qr", {
+      uri: `dogecoin:${fixture.address}?${query.toString()}`,
+      fetchEnvelope: true,
+    })
+
+    expect(response.status).toBe(200)
+    expect((response.body as { verdict: string }).verdict).toBe("valid")
+    expect(fetchedUrl).toBe(dc)
+  })
+
   test("builds a flight recorder session from a mock source", async () => {
     const app = createTestApp()
 
@@ -291,12 +322,16 @@ describe("DogeConnect Elysia API", () => {
   })
 })
 
-const createTestApp = () => {
+interface TestAppOptions {
+  envelopeFetcher?: EnvelopeFetcherPort
+}
+
+const createTestApp = (options: TestAppOptions = {}) => {
   const crypto = new NobleCryptoAdapter()
   const relayStore = new InMemoryRelayStateStore()
   const validatePaymentEnvelopeUseCase = new ValidatePaymentEnvelopeUseCase(crypto)
   const validateDogeConnectUriUseCase = new ValidateDogeConnectUriUseCase(
-    {
+    options.envelopeFetcher ?? {
       fetchEnvelope: async () => {
         throw new Error("Envelope fetcher should not be called in this test")
       },
