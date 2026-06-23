@@ -1,5 +1,7 @@
 "use client"
 
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { useControllableState } from "@radix-ui/react-use-controllable-state"
 import {
   transformerNotationDiff,
@@ -8,7 +10,6 @@ import {
   transformerNotationHighlight,
   transformerNotationWordHighlight,
 } from "@shikijs/transformers"
-import { CheckIcon, CopyIcon } from "lucide-react"
 import * as React from "react"
 import type { BundledLanguage, CodeOptionsMultipleThemes } from "shiki"
 import { codeToHtml } from "shiki"
@@ -223,9 +224,13 @@ export const CodeBlockCopyButton = ({
       {...props}
     >
       {isCopied ? (
-        <CheckIcon className="size-3.5 text-emerald-600" />
+        <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} className="size-3.5 text-emerald-600" />
       ) : (
-        <CopyIcon className="size-3.5 text-muted-foreground" />
+        <HugeiconsIcon
+          icon={Copy01Icon}
+          strokeWidth={2}
+          className="size-3.5 text-muted-foreground"
+        />
       )}
     </Button>
   )

@@ -35,12 +35,10 @@
     "clsx": "^2.1.1",
     "elysia": "^1.4.27",
     "jsqr": "^1.4.0",
-    "lucide-react": "^0.577.0",
     "nitro": "^3.0.1-alpha.2",
     "qrcode": "^1.5.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-icons": "^5.6.0",
     "shadcn": "^4.0.3",
     "shiki": "^4.0.2",
     "tailwind-merge": "^3.5.0",
@@ -62,7 +60,6 @@
     "jsdom": "^28.1.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
-    "vitest": "^4.0.18",
-    "web-vitals": "^5.1.0"
+    "vitest": "^4.0.18"
   }
 }
