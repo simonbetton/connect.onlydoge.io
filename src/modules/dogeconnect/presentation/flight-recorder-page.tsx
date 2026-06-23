@@ -17,6 +17,7 @@ import {
   exportFlightRecorderSession,
   parseImportedFlightRecorderSession,
 } from "@/modules/dogeconnect/application/flight-recorder-session"
+import { postJson } from "./api-client"
 import {
   cleanFlightRecorderSearch,
   defaultFlightRecorderSearch,
@@ -1103,45 +1104,6 @@ const payDraftSearchPatch = (
 ): Pick<FlightRecorderSearchState, "payDraftId"> => ({
   payDraftId: session.artifacts.payDraft?.id ?? "",
 })
-
-const postJson = async <T,>(path: string, payload: unknown): Promise<T> => {
-  const response = await fetch(path, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(payload),
-  })
-
-  const body = (await response.json()) as Record<string, unknown>
-  if (!response.ok) {
-    if (Array.isArray(body.errors)) {
-      throw new Error(
-        body.errors
-          .map((issue) =>
-            typeof issue === "object" &&
-            issue &&
-            "field" in issue &&
-            "message" in issue &&
-            typeof issue.field === "string" &&
-            typeof issue.message === "string"
-              ? `${issue.field}: ${issue.message}`
-              : "Request failed"
-          )
-          .join("; ")
-      )
-    }
-
-    if (typeof body.message === "string") {
-      throw new Error(body.message)
-    }
-
-    throw new Error(`Request failed with ${response.status}`)
-  }
-
-  return body as T
-}
 
 const downloadJsonFile = (value: FlightRecorderSessionExport, filename: string) => {
   const blob = new Blob([JSON.stringify(value, null, 2)], { type: "application/json" })

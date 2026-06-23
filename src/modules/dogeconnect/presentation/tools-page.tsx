@@ -15,6 +15,7 @@ import type {
   QrValidationPayload,
   RelayDebugRecordView,
 } from "@/modules/dogeconnect/application/contracts"
+import { getJson, postJson, postJsonWithMeta } from "@/modules/dogeconnect/presentation/api-client"
 import {
   cleanToolsSearch,
   defaultToolsSearch,
@@ -1211,65 +1212,4 @@ function ApiResponseView({
       />
     </div>
   )
-}
-
-const getJson = async <T,>(path: string): Promise<T> => {
-  const response = await fetch(path, {
-    method: "GET",
-    headers: {
-      Accept: "application/json",
-    },
-  })
-
-  const json = (await response.json()) as T
-  if (!response.ok) {
-    throw new Error(`Request failed with ${response.status}`)
-  }
-
-  return json
-}
-
-const postJson = async <T,>(path: string, payload: unknown): Promise<T> => {
-  const response = await fetch(path, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(payload),
-  })
-
-  const json = (await response.json()) as T
-  if (!response.ok) {
-    throw new Error(`Request failed with ${response.status}`)
-  }
-
-  return json
-}
-
-const postJsonWithMeta = async (
-  path: string,
-  payload: unknown
-): Promise<{ ok: boolean; status: number; body: unknown }> => {
-  const response = await fetch(path, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(payload),
-  })
-
-  let body: unknown = null
-  try {
-    body = await response.json()
-  } catch {
-    body = null
-  }
-
-  return {
-    ok: response.ok,
-    status: response.status,
-    body,
-  }
 }
