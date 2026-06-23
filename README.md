@@ -80,6 +80,13 @@ Wider DogeConnect adoption can increase the utility of Dogecoin by reducing inte
 - Returns matching signed envelopes for `dc` fetch testing
 - Accelerates wallet/merchant integration and regression debugging
 
+### 5) Flight Recorder
+
+- Builds replayable sessions from QR input or generated mock sources
+- Traces QR parsing, envelope fetch and verification, payment decoding, relay targeting, and pay/status execution
+- Runs against the local simulator or live endpoints with explicit live-pay arming
+- Exports and imports sanitized sessions for reproducible debugging
+
 ## Architecture
 
 This project is a modular monolith with Hexagonal (Ports and Adapters) boundaries and DDD-inspired layering.
@@ -184,6 +191,20 @@ Base URL: `/api`
 - `GET /api/relay/debug/payments`
 - `POST /api/relay/debug/reset`
 
+### Flight Recorder
+
+- `POST /api/flight-recorder/session`
+  - Request: `{ source: { mode: "qr", uri } | { mode: "mock", paymentId? }, targetMode: "simulator" | "live", faults?: string[], options?: { includeInitialStatus?: boolean } }`
+  - Purpose: build a replayable session from a QR URI or mock payment fixture
+
+- `POST /api/flight-recorder/relay/status`
+  - Request: `{ session: FlightRecorderSession }`
+  - Purpose: append a traced relay status check to an imported session
+
+- `POST /api/flight-recorder/relay/pay`
+  - Request: `{ session: FlightRecorderSession, liveWriteArmed: boolean }`
+  - Purpose: append a traced relay pay request, with explicit arming required for live writes
+
 ## OpenAPI
 
 - Interactive docs: `/api/openapi`
@@ -214,6 +235,7 @@ Then visit:
 
 - App: [http://localhost:3000](http://localhost:3000)
 - Tools page: [http://localhost:3000/tools](http://localhost:3000/tools)
+- Flight Recorder: [http://localhost:3000/flight-recorder](http://localhost:3000/flight-recorder)
 - OpenAPI docs: [http://localhost:3000/api/openapi](http://localhost:3000/api/openapi)
 
 ## Deployment on Vercel
@@ -249,12 +271,15 @@ curl -s -X POST http://localhost:3000/api/tools/mock-qr \
 ### Validate a QR URI
 
 ```bash
+MOCK_URI=$(
+  curl -s -X POST http://localhost:3000/api/tools/mock-qr \
+    -H 'Content-Type: application/json' \
+    -d '{"paymentId":"demo-validate"}' | jq -r '.uri'
+)
+
 curl -X POST http://localhost:3000/api/tools/validate-qr \
   -H 'Content-Type: application/json' \
-  -d '{
-    "uri": "dogecoin:DPD7uK4B1kRmbfGmytBhG1DZjaMWNfbpwY?amount=12.25&dc=example.com%2Fdc%2Fid&h=72b-LVh5K_mm7zyN9PXO",
-    "fetchEnvelope": true
-  }'
+  -d "$(jq -n --arg uri "$MOCK_URI" '{uri: $uri, fetchEnvelope: true}')"
 ```
 
 ### Validate an envelope
@@ -300,9 +325,11 @@ bun run test
 Current coverage includes:
 
 - Domain value object parsing and invariants
-- Envelope validation use-case behavior
-- Elysia API integration paths (relay and OpenAPI)
+- Selected envelope validation use-case behavior
+- Selected Elysia API integration paths (relay and OpenAPI)
 - Tools page server-render sanity
+
+See the roadmap for planned compatibility fixtures and broader protocol scenario coverage.
 
 ## Tooling
 
