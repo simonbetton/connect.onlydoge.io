@@ -120,25 +120,16 @@ export const isUnsafeHostName = (hostname: string): boolean => {
 export const isUnsafeIpAddress = (value: string): boolean => {
   const version = isIP(value)
   if (version === 4) {
-    const octets = value.split(".").map((part) => Number(part))
-    if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet))) {
-      return true
-    }
-
-    const [a, b] = octets
-    return (
-      a === 0 ||
-      a === 10 ||
-      a === 127 ||
-      (a === 169 && b === 254) ||
-      (a === 172 && b >= 16 && b <= 31) ||
-      (a === 192 && b === 168) ||
-      (a === 100 && b >= 64 && b <= 127)
-    )
+    return isUnsafeIpv4Address(value)
   }
 
   if (version === 6) {
     const normalized = value.toLowerCase()
+    const mappedIpv4Address = getMappedIpv4Address(normalized)
+    if (mappedIpv4Address) {
+      return isUnsafeIpv4Address(mappedIpv4Address)
+    }
+
     return (
       normalized === "::1" ||
       normalized.startsWith("fc") ||
@@ -151,6 +142,34 @@ export const isUnsafeIpAddress = (value: string): boolean => {
   }
 
   return true
+}
+
+const getMappedIpv4Address = (value: string): string | null => {
+  const prefix = "::ffff:"
+  if (!value.startsWith(prefix)) {
+    return null
+  }
+
+  const embedded = value.slice(prefix.length)
+  return isIP(embedded) === 4 ? embedded : null
+}
+
+const isUnsafeIpv4Address = (value: string): boolean => {
+  const octets = value.split(".").map((part) => Number(part))
+  if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet))) {
+    return true
+  }
+
+  const [a, b] = octets
+  return (
+    a === 0 ||
+    a === 10 ||
+    a === 127 ||
+    (a === 169 && b === 254) ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 100 && b >= 64 && b <= 127)
+  )
 }
 
 const fetchWithTimeout = async (current: URL, input: SafeJsonFetchInput): Promise<Response> => {
