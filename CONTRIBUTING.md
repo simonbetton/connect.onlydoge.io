@@ -33,6 +33,8 @@ bun run typecheck
 bun run test
 ```
 
+Pull requests run the same quality gates in CI.
+
 ## Architecture Rules
 
 This codebase follows a modular monolith, Hexagonal architecture, and DDD-inspired layering.
