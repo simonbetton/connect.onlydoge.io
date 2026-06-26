@@ -35,6 +35,7 @@ export interface FlightRecorderSessionBuilderProps {
 export function FlightRecorderSessionBuilder(props: FlightRecorderSessionBuilderProps) {
   return (
     <PanelCard
+      id="session-builder"
       title="Session Builder"
       description="Create a new trace from a QR URI, mock fixture, or imported JSON session."
     >
@@ -96,8 +97,8 @@ function SessionBuilderStatusMessages({
 }) {
   return (
     <>
-      {buildError ? <p className="text-rose-700 text-sm">{buildError}</p> : null}
-      {pageMessage ? <p className="text-emerald-700 text-sm">{pageMessage}</p> : null}
+      {buildError ? <p className="text-danger-foreground text-sm">{buildError}</p> : null}
+      {pageMessage ? <p className="text-sm text-success-foreground">{pageMessage}</p> : null}
     </>
   )
 }

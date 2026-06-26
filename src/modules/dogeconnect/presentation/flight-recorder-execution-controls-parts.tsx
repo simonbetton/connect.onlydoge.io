@@ -1,6 +1,7 @@
 import type { UseMutationResult } from "@tanstack/react-query"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { FlightRecorderSessionV1 } from "@/modules/dogeconnect/application/flight-recorder-contracts"
@@ -47,7 +48,7 @@ function LiveRelayWriteGate({
   }
 
   return (
-    <div className="mt-4 space-y-3 rounded-2xl border border-amber-300/80 bg-amber-50/80 p-4">
+    <div className="mt-4 space-y-3 rounded-2xl border border-warning-border bg-warning-muted/80 p-4">
       <div className="space-y-1">
         <p className="font-medium text-foreground text-sm">Live relay write gate</p>
         <p className="text-muted-foreground text-xs">
@@ -65,7 +66,7 @@ function LiveRelayWriteGate({
           <p>{relay.payUrl}</p>
         </div>
       </div>
-      <label className="flex items-start gap-3 rounded-2xl border border-amber-300/80 bg-background/80 p-3 text-sm">
+      <label className="flex items-start gap-3 rounded-2xl border border-warning-border bg-background/80 p-3 text-sm">
         <input
           type="checkbox"
           checked={relay.liveWriteArmed}
@@ -99,43 +100,62 @@ export function PayDraftFieldsPanel({
 }) {
   return (
     <div className="space-y-3">
-      <p className="font-medium text-muted-foreground text-xs uppercase">Pay Draft</p>
-      <Input
-        value={sessionView.artifacts.payDraft?.id ?? ""}
-        onChange={(event) => onUpdateSearch({ payDraftId: event.target.value })}
-        placeholder="Payment ID"
-      />
-      <Textarea
-        value={sessionView.artifacts.payDraft?.tx ?? ""}
-        onChange={(event) =>
-          onSetPayDraftFields({
-            ...payDraftFields,
-            payDraftTx: event.target.value,
-          })
-        }
-        rows={4}
-        placeholder="Hex transaction"
-      />
-      <Input
-        value={sessionView.artifacts.payDraft?.relay_token ?? ""}
-        onChange={(event) =>
-          onSetPayDraftFields({
-            ...payDraftFields,
-            payDraftRelayToken: event.target.value,
-          })
-        }
-        placeholder="relay_token"
-      />
-      <Input
-        value={sessionView.artifacts.payDraft?.refund ?? ""}
-        onChange={(event) =>
-          onSetPayDraftFields({
-            ...payDraftFields,
-            payDraftRefund: event.target.value,
-          })
-        }
-        placeholder="Refund address"
-      />
+      <Field label="Pay Draft">
+        {(paymentId) => (
+          <Input
+            id={paymentId}
+            value={sessionView.artifacts.payDraft?.id ?? ""}
+            onChange={(event) => onUpdateSearch({ payDraftId: event.target.value })}
+            placeholder="Payment ID"
+          />
+        )}
+      </Field>
+      <Field label="Transaction hex">
+        {(txId) => (
+          <Textarea
+            id={txId}
+            value={sessionView.artifacts.payDraft?.tx ?? ""}
+            onChange={(event) =>
+              onSetPayDraftFields({
+                ...payDraftFields,
+                payDraftTx: event.target.value,
+              })
+            }
+            rows={4}
+            placeholder="Hex transaction"
+          />
+        )}
+      </Field>
+      <Field label="Relay token">
+        {(tokenId) => (
+          <Input
+            id={tokenId}
+            value={sessionView.artifacts.payDraft?.relay_token ?? ""}
+            onChange={(event) =>
+              onSetPayDraftFields({
+                ...payDraftFields,
+                payDraftRelayToken: event.target.value,
+              })
+            }
+            placeholder="relay_token"
+          />
+        )}
+      </Field>
+      <Field label="Refund address">
+        {(refundId) => (
+          <Input
+            id={refundId}
+            value={sessionView.artifacts.payDraft?.refund ?? ""}
+            onChange={(event) =>
+              onSetPayDraftFields({
+                ...payDraftFields,
+                payDraftRefund: event.target.value,
+              })
+            }
+            placeholder="Refund address"
+          />
+        )}
+      </Field>
     </div>
   )
 }
@@ -190,7 +210,7 @@ export function ExecutionActionButtons({
       </div>
 
       {requiresLiveWriteArm ? (
-        <p className="text-amber-800 text-sm">
+        <p className="text-sm text-warning-foreground">
           Arm live relay writes above to enable pay submission against the live target.
         </p>
       ) : null}
@@ -216,21 +236,21 @@ export function AutoPollSettingsPanel({
         />
         Auto-poll status
       </label>
-      <div className="space-y-1.5">
-        <p className="font-medium text-muted-foreground text-xs uppercase">
-          Poll Interval (seconds)
-        </p>
-        <Input
-          type="number"
-          min={1}
-          value={search.pollIntervalSec}
-          onChange={(event) => {
-            onUpdateSearch({
-              pollIntervalSec: Math.max(1, Number(event.target.value) || 1),
-            })
-          }}
-        />
-      </div>
+      <Field label="Poll Interval (seconds)">
+        {(id) => (
+          <Input
+            id={id}
+            type="number"
+            min={1}
+            value={search.pollIntervalSec}
+            onChange={(event) => {
+              onUpdateSearch({
+                pollIntervalSec: Math.max(1, Number(event.target.value) || 1),
+              })
+            }}
+          />
+        )}
+      </Field>
     </div>
   )
 }
@@ -267,10 +287,10 @@ export function MutationErrorMessages({
   return (
     <>
       {statusMutation.error ? (
-        <p className="text-rose-700 text-sm">{statusMutation.error.message}</p>
+        <p className="text-danger-foreground text-sm">{statusMutation.error.message}</p>
       ) : null}
       {payMutation.error ? (
-        <p className="text-rose-700 text-sm">{payMutation.error.message}</p>
+        <p className="text-danger-foreground text-sm">{payMutation.error.message}</p>
       ) : null}
     </>
   )

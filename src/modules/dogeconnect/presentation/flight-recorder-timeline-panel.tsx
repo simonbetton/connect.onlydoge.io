@@ -1,4 +1,6 @@
 import { Badge } from "@/components/ui/badge"
+import { idleInteractiveClass, selectedInteractiveClass } from "@/lib/selection-styles"
+import { cn } from "@/lib/utils"
 import type {
   FlightRecorderSessionV1,
   FlightTraceEntry,
@@ -17,6 +19,7 @@ export function FlightRecorderTimelinePanel({
 }) {
   return (
     <PanelCard
+      id="timeline"
       title="Timeline"
       description="Trace each protocol step, compare verdicts, and jump into the inspector."
     >
@@ -29,11 +32,11 @@ export function FlightRecorderTimelinePanel({
                 key={entry.id}
                 type="button"
                 onClick={() => onSelectTrace(entry.id)}
-                className={`w-full rounded-2xl border p-3 text-left transition ${
-                  selectedTrace?.id === entry.id
-                    ? "border-amber-400 bg-amber-50"
-                    : "border-border/70 bg-background/60 hover:border-amber-300 hover:bg-amber-50/60"
-                }`}
+                aria-current={selectedTrace?.id === entry.id ? "true" : undefined}
+                className={cn(
+                  "w-full rounded-2xl border p-3 text-left transition",
+                  selectedTrace?.id === entry.id ? selectedInteractiveClass : idleInteractiveClass
+                )}
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
@@ -48,7 +51,7 @@ export function FlightRecorderTimelinePanel({
                 </div>
                 <p className="mt-2 text-muted-foreground text-xs">{entry.responseSummary.note}</p>
                 {entry.issues.length > 0 ? (
-                  <p className="mt-2 text-rose-700 text-xs">
+                  <p className="mt-2 text-danger-foreground text-xs">
                     {entry.issues[0]?.field}: {entry.issues[0]?.message}
                   </p>
                 ) : null}

@@ -42,6 +42,7 @@ export function FlightRecorderExecutionControlsPanel({
 }) {
   return (
     <PanelCard
+      id="execution"
       title="Execution Controls"
       description="Run pay/status against the resolved relay target, export sessions, and manage live-write arming."
     >

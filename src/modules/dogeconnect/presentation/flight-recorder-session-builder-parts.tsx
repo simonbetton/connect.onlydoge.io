@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { FlightRecorderFaultPreset } from "@/modules/dogeconnect/application/flight-recorder-contracts"
@@ -91,11 +92,13 @@ export function SourceTabButtons({
   onSetSourceTab: (sourceTab: FlightRecorderSearchState["sourceTab"]) => void
 }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2" role="tablist" aria-label="Session source">
       {SOURCE_TABS.map((tab) => (
         <Button
           key={tab}
           type="button"
+          role="tab"
+          aria-selected={activeTab === tab}
           variant={activeTab === tab ? "default" : "outline"}
           onClick={() => onSetSourceTab(tab)}
         >
@@ -123,15 +126,17 @@ function QrSourcePanel({
 }) {
   return (
     <div className="space-y-3">
-      <div className="space-y-1.5">
-        <p className="font-medium text-muted-foreground text-xs uppercase">Dogecoin URI</p>
-        <Textarea
-          value={search.qrUri}
-          onChange={(event) => onUpdateSearch({ qrUri: event.target.value })}
-          rows={5}
-          placeholder="dogecoin:DPD7...?amount=12.25&dc=example.com/dc/id&h=..."
-        />
-      </div>
+      <Field label="Dogecoin URI">
+        {(id) => (
+          <Textarea
+            id={id}
+            value={search.qrUri}
+            onChange={(event) => onUpdateSearch({ qrUri: event.target.value })}
+            rows={5}
+            placeholder="dogecoin:DPD7...?amount=12.25&dc=example.com/dc/id&h=..."
+          />
+        )}
+      </Field>
       <div className="space-y-3 rounded-2xl border border-border/70 border-dashed bg-background/50 p-4">
         <div className="space-y-1">
           <p className="font-medium text-muted-foreground text-xs uppercase">QR Image Upload</p>
@@ -156,7 +161,7 @@ function QrSourcePanel({
               : `Last image: ${qrImageName}`}
           </p>
         ) : null}
-        {qrImageError ? <p className="text-rose-700 text-sm">{qrImageError}</p> : null}
+        {qrImageError ? <p className="text-danger-foreground text-sm">{qrImageError}</p> : null}
       </div>
     </div>
   )
@@ -170,14 +175,16 @@ function MockSourcePanel({
   onUpdateSearch: (patch: Partial<FlightRecorderSearchState>) => void
 }) {
   return (
-    <div className="space-y-1.5">
-      <p className="font-medium text-muted-foreground text-xs uppercase">Mock Payment ID</p>
-      <Input
-        value={search.mockPaymentId}
-        onChange={(event) => onUpdateSearch({ mockPaymentId: event.target.value })}
-        placeholder="Optional stable payment ID"
-      />
-    </div>
+    <Field label="Mock Payment ID">
+      {(id) => (
+        <Input
+          id={id}
+          value={search.mockPaymentId}
+          onChange={(event) => onUpdateSearch({ mockPaymentId: event.target.value })}
+          placeholder="Optional stable payment ID"
+        />
+      )}
+    </Field>
   )
 }
 
@@ -196,15 +203,17 @@ function ImportSourcePanel({
 }) {
   return (
     <div className="space-y-3">
-      <div className="space-y-1.5">
-        <p className="font-medium text-muted-foreground text-xs uppercase">Session JSON</p>
-        <Textarea
-          value={importJson}
-          onChange={(event) => onSetImportJson(event.target.value)}
-          rows={8}
-          placeholder='{"version":"flight-recorder/v1", ...}'
-        />
-      </div>
+      <Field label="Session JSON">
+        {(id) => (
+          <Textarea
+            id={id}
+            value={importJson}
+            onChange={(event) => onSetImportJson(event.target.value)}
+            rows={8}
+            placeholder='{"version":"flight-recorder/v1", ...}'
+          />
+        )}
+      </Field>
       <div className="flex flex-wrap gap-2">
         <Input
           type="file"
@@ -217,7 +226,7 @@ function ImportSourcePanel({
           Import Session
         </Button>
       </div>
-      {importError ? <p className="text-rose-700 text-sm">{importError}</p> : null}
+      {importError ? <p className="text-danger-foreground text-sm">{importError}</p> : null}
     </div>
   )
 }

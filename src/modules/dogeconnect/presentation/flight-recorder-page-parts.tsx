@@ -2,6 +2,8 @@ import type { ReactNode } from "react"
 import { JsonCodeBlock } from "@/components/json-code-block"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { idleInteractiveClass, selectedInteractiveClass } from "@/lib/selection-styles"
+import { cn } from "@/lib/utils"
 import type {
   FlightRecorderFaultPreset,
   FlightRecorderSessionV1,
@@ -58,16 +60,18 @@ export function FaultSelector({
 }
 
 export function PanelCard({
+  id,
   title,
   description,
   children,
 }: {
+  id?: string
   title: string
   description: string
   children: ReactNode
 }) {
   return (
-    <Card>
+    <Card id={id} className={id ? "scroll-mt-24" : undefined}>
       <CardHeader>
         <div>
           <CardTitle>{title}</CardTitle>
@@ -94,11 +98,11 @@ export function TargetModeCard({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-2xl border p-4 text-left transition ${
-        active
-          ? "border-amber-400 bg-amber-50"
-          : "border-border/70 bg-background/60 hover:border-amber-300 hover:bg-amber-50/60"
-      }`}
+      aria-pressed={active}
+      className={cn(
+        "rounded-2xl border p-4 text-left transition",
+        active ? selectedInteractiveClass : idleInteractiveClass
+      )}
     >
       <p className="font-medium text-foreground text-sm">{title}</p>
       <p className="mt-1 text-muted-foreground text-xs">{description}</p>
@@ -108,7 +112,7 @@ export function TargetModeCard({
 
 export function LiveModeNotice({ ignoredFaultCount }: { ignoredFaultCount: number }) {
   return (
-    <div className="rounded-2xl border border-amber-300/80 bg-amber-50/80 p-4">
+    <div className="rounded-2xl border border-warning-border bg-warning-muted/80 p-4">
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="warning">Live target mode</Badge>
         <Badge variant="neutral">Read-only until armed</Badge>

@@ -15,6 +15,7 @@ export function FlightRecorderInspectorPanel({
 }) {
   return (
     <PanelCard
+      id="inspector"
       title="Inspector"
       description="Inspect the selected trace entry and the normalized artifacts carried through the session."
     >

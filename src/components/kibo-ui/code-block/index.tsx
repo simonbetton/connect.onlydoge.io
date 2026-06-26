@@ -220,6 +220,7 @@ export const CodeBlockCopyButton = ({
       size="icon-sm"
       variant="ghost"
       className={cn("shrink-0", className)}
+      aria-label={isCopied ? "Copied" : "Copy code"}
       onClick={() => {
         void onCopy()
       }}

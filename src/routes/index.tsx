@@ -1,6 +1,7 @@
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { PageHero } from "@/components/page-hero"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -12,45 +13,38 @@ export const Route = createFileRoute("/")({ component: App })
 function App() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6">
-      <section className="relative overflow-hidden rounded-3xl border border-border/70 bg-linear-to-br from-primary/80 via-background to-primary/40 p-8 shadow-sm">
-        <div className="absolute -top-24 -right-14 size-56 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute -bottom-16 -left-20 size-56 rounded-full bg-primary/20 blur-3xl" />
-        <div className="relative flex max-w-3xl flex-col gap-5">
+      <PageHero
+        eyebrow={
           <p className="text-muted-foreground text-xs uppercase tracking-[0.18em]">OnlyDoge</p>
-          <h1 className="font-semibold text-3xl text-foreground tracking-tight sm:text-4xl">
-            Debug DogeConnect flows with confidence.
-          </h1>
-          <p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
-            Validate QR payloads, inspect envelope signatures, and test relay behaviors in one
-            place. Start with tools for quick checks or use Flight Recorder for full trace-level
-            debugging.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <Link to="/tools" className={buttonVariants({ className: "gap-1.5" })}>
-              Start with Tools
-              <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
-            </Link>
-            <Link
-              to="/flight-recorder"
-              className={buttonVariants({
-                variant: "outline",
-                className: "gap-1.5",
-              })}
-            >
-              Open Flight Recorder
-              <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
-            </Link>
-            <a
-              href={openApiDocsHref}
-              target="_blank"
-              rel="noreferrer"
-              className={buttonVariants({ variant: "outline" })}
-            >
-              Open API Docs
-            </a>
-          </div>
+        }
+        title="Debug DogeConnect flows with confidence."
+        description="Validate QR payloads, inspect envelope signatures, and test relay behaviors in one place. Start with tools for quick checks or use Flight Recorder for full trace-level debugging."
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          <Link to="/tools" className={buttonVariants({ className: "gap-1.5" })}>
+            Start with Tools
+            <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
+          </Link>
+          <Link
+            to="/flight-recorder"
+            className={buttonVariants({
+              variant: "outline",
+              className: "gap-1.5",
+            })}
+          >
+            Open Flight Recorder
+            <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
+          </Link>
+          <a
+            href={openApiDocsHref}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Open API Docs
+          </a>
         </div>
-      </section>
+      </PageHero>
 
       <section className="grid gap-4 md:grid-cols-2">
         <Card>

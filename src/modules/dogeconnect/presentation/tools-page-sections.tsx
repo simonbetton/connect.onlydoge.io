@@ -1,7 +1,10 @@
 import type { UseMutationResult } from "@tanstack/react-query"
+import { Link } from "@tanstack/react-router"
+import { PageHero } from "@/components/page-hero"
 import { Button } from "@/components/ui/button"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type {
@@ -10,6 +13,7 @@ import type {
   QrValidationPayload,
   RelayDebugRecordView,
 } from "@/modules/dogeconnect/application/contracts"
+import { flightRecorderQrSearch } from "./deep-link-builders"
 import {
   ApiResponseView,
   QrPreviewPanel,
@@ -17,6 +21,9 @@ import {
   ValidationResultView,
 } from "./tools-page-parts"
 import type { RelayScenarioOption } from "./tools-search"
+
+const selectClassName =
+  "h-10 w-full rounded-2xl border border-input bg-background/70 px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30"
 
 const openApiDocsHref = "/api/openapi"
 
@@ -45,33 +52,31 @@ function RelayRegisterNumberField({
   onCommit: (value: number) => void
 }) {
   return (
-    <div className="space-y-1.5">
-      <p className="font-medium text-muted-foreground text-xs uppercase">{label}</p>
-      <Input
-        type="number"
-        min={1}
-        value={field.state.value}
-        onChange={(event) => {
-          const value = Number(event.target.value) || 1
-          field.handleChange(value)
-          onCommit(value)
-        }}
-        onBlur={field.handleBlur}
-      />
-    </div>
+    <Field label={label}>
+      {(id) => (
+        <Input
+          id={id}
+          type="number"
+          min={1}
+          value={field.state.value}
+          onChange={(event) => {
+            const value = Number(event.target.value) || 1
+            field.handleChange(value)
+            onCommit(value)
+          }}
+          onBlur={field.handleBlur}
+        />
+      )}
+    </Field>
   )
 }
 
 export function ToolsPageHero() {
   return (
-    <section className="rounded-3xl border border-border/70 bg-linear-to-br from-amber-100/70 via-background to-orange-100/70 p-6">
-      <h1 className="font-semibold text-2xl tracking-tight">DogeConnect Tools</h1>
-      <p className="mt-2 max-w-3xl text-muted-foreground text-sm leading-relaxed">
-        Strict protocol and cryptographic checks are enabled by default. Use these tools to verify
-        QR URIs and payment envelopes, then test pay/status behavior against the no-op relay
-        simulator.
-      </p>
-    </section>
+    <PageHero
+      title="DogeConnect Tools"
+      description="Strict protocol and cryptographic checks are enabled by default. Use these tools to verify QR URIs and payment envelopes, then test pay/status behavior against the no-op relay simulator."
+    />
   )
 }
 
@@ -173,16 +178,21 @@ export function MockQrFixtureCard({
         <div className="grid items-center gap-3 sm:grid-cols-[1fr_auto]">
           <mockQrForm.Field name="paymentId">
             {(field: ToolsFormFieldApi) => (
-              <Input
-                placeholder="Optional payment ID (e.g. demo-001)"
-                value={field.state.value}
-                onChange={(event) => {
-                  const value = event.target.value
-                  field.handleChange(value)
-                  onUpdateSearch({ mockPaymentId: value })
-                }}
-                onBlur={field.handleBlur}
-              />
+              <Field label="Payment ID (optional)">
+                {(id) => (
+                  <Input
+                    id={id}
+                    placeholder="Optional payment ID (e.g. demo-001)"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      field.handleChange(value)
+                      onUpdateSearch({ mockPaymentId: value })
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
             )}
           </mockQrForm.Field>
           <Button
@@ -198,7 +208,7 @@ export function MockQrFixtureCard({
         </div>
 
         {generateMockQrMutation.error ? (
-          <p className="text-rose-700 text-sm">{generateMockQrMutation.error.message}</p>
+          <p className="text-danger-foreground text-sm">{generateMockQrMutation.error.message}</p>
         ) : null}
 
         {generateMockQrMutation.data ? (
@@ -242,12 +252,19 @@ export function MockQrFixtureCard({
               >
                 Validate Generated URI
               </Button>
+              <Link
+                to="/flight-recorder"
+                search={flightRecorderQrSearch(generateMockQrMutation.data.uri)}
+                className={buttonVariants({ variant: "outline" })}
+              >
+                Trace in Flight Recorder
+              </Link>
             </div>
             {mockCopyState === "copied" ? (
-              <p className="text-emerald-700 text-xs">URI copied to clipboard.</p>
+              <p className="text-success-foreground text-xs">URI copied to clipboard.</p>
             ) : null}
             {mockCopyState === "failed" ? (
-              <p className="text-rose-700 text-xs">
+              <p className="text-danger-foreground text-xs">
                 Clipboard copy failed in this environment. Copy from the textarea above.
               </p>
             ) : null}
@@ -289,21 +306,23 @@ export function QrValidatorCard({
         <div className="space-y-3">
           <qrForm.Field name="uri">
             {(field: ToolsFormFieldApi) => (
-              <div className="space-y-1.5">
-                <p className="font-medium text-muted-foreground text-xs uppercase">URI</p>
-                <Textarea
-                  placeholder="dogecoin:DPD7...?...&dc=example.com/dc/id&h=..."
-                  value={field.state.value}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    field.handleChange(value)
-                    onSetQrPreviewUri(value)
-                    onUpdateSearch({ qrUri: value })
-                  }}
-                  onBlur={field.handleBlur}
-                  rows={4}
-                />
-              </div>
+              <Field label="URI">
+                {(id) => (
+                  <Textarea
+                    id={id}
+                    placeholder="dogecoin:DPD7...?...&dc=example.com/dc/id&h=..."
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      field.handleChange(value)
+                      onSetQrPreviewUri(value)
+                      onUpdateSearch({ qrUri: value })
+                    }}
+                    onBlur={field.handleBlur}
+                    rows={4}
+                  />
+                )}
+              </Field>
             )}
           </qrForm.Field>
           <qrForm.Field name="fetchEnvelope">
@@ -338,6 +357,7 @@ export function QrValidatorCard({
         <ValidationResultView
           result={validateQrMutation.data}
           error={validateQrMutation.error?.message}
+          traceUri={qrPreviewUri}
         />
       </CardContent>
     </Card>
@@ -372,37 +392,39 @@ export function EnvelopeValidatorCard({
         <div className="space-y-3">
           <envelopeForm.Field name="expectedHash">
             {(field: ToolsFormFieldApi) => (
-              <div className="space-y-1.5">
-                <p className="font-medium text-muted-foreground text-xs uppercase">
-                  Expected URI `h` (optional)
-                </p>
-                <Input
-                  placeholder="72b-LVh5K_mm7zyN9PXO"
-                  value={field.state.value}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    field.handleChange(value)
-                    onUpdateSearch({ envelopeExpectedHash: value })
-                  }}
-                  onBlur={field.handleBlur}
-                />
-              </div>
+              <Field label="Expected URI `h` (optional)">
+                {(id) => (
+                  <Input
+                    id={id}
+                    placeholder="72b-LVh5K_mm7zyN9PXO"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      field.handleChange(value)
+                      onUpdateSearch({ envelopeExpectedHash: value })
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
             )}
           </envelopeForm.Field>
           <envelopeForm.Field name="envelope">
             {(field: ToolsFormFieldApi) => (
-              <div className="space-y-1.5">
-                <p className="font-medium text-muted-foreground text-xs uppercase">Envelope JSON</p>
-                <Textarea
-                  placeholder='{"version":"1.0","payload":"...","pubkey":"...","sig":"..."}'
-                  value={field.state.value}
-                  onChange={(event) => {
-                    field.handleChange(event.target.value)
-                  }}
-                  onBlur={field.handleBlur}
-                  rows={8}
-                />
-              </div>
+              <Field label="Envelope JSON">
+                {(id) => (
+                  <Textarea
+                    id={id}
+                    placeholder='{"version":"1.0","payload":"...","pubkey":"...","sig":"..."}'
+                    value={field.state.value}
+                    onChange={(event) => {
+                      field.handleChange(event.target.value)
+                    }}
+                    onBlur={field.handleBlur}
+                    rows={8}
+                  />
+                )}
+              </Field>
             )}
           </envelopeForm.Field>
           <Button
@@ -416,7 +438,9 @@ export function EnvelopeValidatorCard({
             {validateEnvelopeMutation.isPending ? "Validating..." : "Validate Envelope"}
           </Button>
         </div>
-        {envelopeInputError ? <p className="text-rose-700 text-sm">{envelopeInputError}</p> : null}
+        {envelopeInputError ? (
+          <p className="text-danger-foreground text-sm">{envelopeInputError}</p>
+        ) : null}
         <ValidationResultView
           result={validateEnvelopeMutation.data}
           error={validateEnvelopeMutation.error?.message}
@@ -473,57 +497,63 @@ export function RelayRegistrationCard({
         <div className="grid min-w-0 gap-3 sm:grid-cols-2">
           <registerForm.Field name="id">
             {(field: ToolsFormFieldApi) => (
-              <div className="space-y-1.5 sm:col-span-2">
-                <p className="font-medium text-muted-foreground text-xs uppercase">Payment ID</p>
-                <Input
-                  placeholder="pay-101"
-                  value={field.state.value}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    field.handleChange(value)
-                    onUpdateSearch({ relayRegisterId: value })
-                  }}
-                  onBlur={field.handleBlur}
-                />
-              </div>
+              <Field label="Payment ID" className="sm:col-span-2">
+                {(id) => (
+                  <Input
+                    id={id}
+                    placeholder="pay-101"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      field.handleChange(value)
+                      onUpdateSearch({ relayRegisterId: value })
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
             )}
           </registerForm.Field>
           <registerForm.Field name="scenario">
             {(field: ToolsFormFieldApi) => (
-              <div className="space-y-1.5">
-                <p className="font-medium text-muted-foreground text-xs uppercase">Scenario</p>
-                <select
-                  value={field.state.value}
-                  onChange={(event) => {
-                    const value = event.target.value as RelayScenarioOption
-                    field.handleChange(value)
-                    onUpdateSearch({ relayRegisterScenario: value })
-                  }}
-                  className="h-10 w-full rounded-2xl border border-input bg-background/70 px-3 text-sm"
-                >
-                  <option value="accepted">accepted</option>
-                  <option value="confirmed">confirmed</option>
-                  <option value="declined">declined</option>
-                  <option value="error">error</option>
-                </select>
-              </div>
+              <Field label="Scenario">
+                {(id) => (
+                  <select
+                    id={id}
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const value = event.target.value as RelayScenarioOption
+                      field.handleChange(value)
+                      onUpdateSearch({ relayRegisterScenario: value })
+                    }}
+                    className={selectClassName}
+                  >
+                    <option value="accepted">accepted</option>
+                    <option value="confirmed">confirmed</option>
+                    <option value="declined">declined</option>
+                    <option value="error">error</option>
+                  </select>
+                )}
+              </Field>
             )}
           </registerForm.Field>
           <registerForm.Field name="relayToken">
             {(field: ToolsFormFieldApi) => (
-              <div className="space-y-1.5">
-                <p className="font-medium text-muted-foreground text-xs uppercase">Relay Token</p>
-                <Input
-                  placeholder="optional token"
-                  value={field.state.value}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    field.handleChange(value)
-                    onUpdateSearch({ relayRegisterToken: value })
-                  }}
-                  onBlur={field.handleBlur}
-                />
-              </div>
+              <Field label="Relay Token">
+                {(id) => (
+                  <Input
+                    id={id}
+                    placeholder="optional token"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      field.handleChange(value)
+                      onUpdateSearch({ relayRegisterToken: value })
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
             )}
           </registerForm.Field>
           <registerForm.Field name="required">
@@ -546,21 +576,21 @@ export function RelayRegistrationCard({
           </registerForm.Field>
           <registerForm.Field name="reason">
             {(field: ToolsFormFieldApi) => (
-              <div className="space-y-1.5 sm:col-span-2">
-                <p className="font-medium text-muted-foreground text-xs uppercase">
-                  Decline/Error Reason
-                </p>
-                <Input
-                  placeholder="Used when scenario returns declined/error"
-                  value={field.state.value}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    field.handleChange(value)
-                    onUpdateSearch({ relayRegisterReason: value })
-                  }}
-                  onBlur={field.handleBlur}
-                />
-              </div>
+              <Field label="Decline/Error Reason" className="sm:col-span-2">
+                {(id) => (
+                  <Input
+                    id={id}
+                    placeholder="Used when scenario returns declined/error"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      field.handleChange(value)
+                      onUpdateSearch({ relayRegisterReason: value })
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
             )}
           </registerForm.Field>
           <div className="flex flex-wrap gap-2 sm:col-span-2">
@@ -589,7 +619,7 @@ export function RelayRegistrationCard({
           </div>
         </div>
         {registerScenarioMutation.error ? (
-          <p className="text-rose-700 text-sm">{registerScenarioMutation.error.message}</p>
+          <p className="text-danger-foreground text-sm">{registerScenarioMutation.error.message}</p>
         ) : null}
         <RelayRecordsTable records={relayRecords} />
       </CardContent>
@@ -633,53 +663,73 @@ export function RelayTesterCard({
           <h3 className="font-semibold text-sm">POST /api/relay/pay</h3>
           <relayPayForm.Field name="id">
             {(field: ToolsFormFieldApi) => (
-              <Input
-                placeholder="Payment ID"
-                value={field.state.value}
-                onChange={(event) => {
-                  const value = event.target.value
-                  field.handleChange(value)
-                  onUpdateSearch({ relayPayId: value })
-                }}
-                onBlur={field.handleBlur}
-              />
+              <Field label="Payment ID">
+                {(id) => (
+                  <Input
+                    id={id}
+                    placeholder="pay-101"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      field.handleChange(value)
+                      onUpdateSearch({ relayPayId: value })
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
             )}
           </relayPayForm.Field>
           <relayPayForm.Field name="tx">
             {(field: ToolsFormFieldApi) => (
-              <Textarea
-                placeholder="Hex signed transaction"
-                value={field.state.value}
-                onChange={(event) => {
-                  field.handleChange(event.target.value)
-                }}
-                onBlur={field.handleBlur}
-                rows={4}
-              />
+              <Field label="Transaction hex">
+                {(id) => (
+                  <Textarea
+                    id={id}
+                    placeholder="Hex signed transaction"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      field.handleChange(event.target.value)
+                    }}
+                    onBlur={field.handleBlur}
+                    rows={4}
+                  />
+                )}
+              </Field>
             )}
           </relayPayForm.Field>
           <relayPayForm.Field name="relay_token">
             {(field: ToolsFormFieldApi) => (
-              <Input
-                placeholder="relay_token (optional)"
-                value={field.state.value}
-                onChange={(event) => {
-                  field.handleChange(event.target.value)
-                }}
-                onBlur={field.handleBlur}
-              />
+              <Field label="Relay token (optional)">
+                {(id) => (
+                  <Input
+                    id={id}
+                    placeholder="relay_token (optional)"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      field.handleChange(event.target.value)
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
             )}
           </relayPayForm.Field>
           <relayPayForm.Field name="refund">
             {(field: ToolsFormFieldApi) => (
-              <Input
-                placeholder="refund address (optional)"
-                value={field.state.value}
-                onChange={(event) => {
-                  field.handleChange(event.target.value)
-                }}
-                onBlur={field.handleBlur}
-              />
+              <Field label="Refund address (optional)">
+                {(id) => (
+                  <Input
+                    id={id}
+                    placeholder="refund address (optional)"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      field.handleChange(event.target.value)
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
             )}
           </relayPayForm.Field>
           <Button
@@ -698,16 +748,21 @@ export function RelayTesterCard({
           <h3 className="font-semibold text-sm">POST /api/relay/status</h3>
           <relayStatusForm.Field name="id">
             {(field: ToolsFormFieldApi) => (
-              <Input
-                placeholder="Payment ID"
-                value={field.state.value}
-                onChange={(event) => {
-                  const value = event.target.value
-                  field.handleChange(value)
-                  onUpdateSearch({ relayStatusId: value })
-                }}
-                onBlur={field.handleBlur}
-              />
+              <Field label="Payment ID">
+                {(id) => (
+                  <Input
+                    id={id}
+                    placeholder="pay-101"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      field.handleChange(value)
+                      onUpdateSearch({ relayStatusId: value })
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
             )}
           </relayStatusForm.Field>
           <Button
@@ -729,7 +784,7 @@ export function RelayTesterCard({
           href={openApiDocsHref}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex font-medium text-amber-700 text-sm hover:underline"
+          className="inline-flex font-medium text-sm text-warning-foreground hover:underline"
         >
           Open OpenAPI docs in a new tab
         </a>

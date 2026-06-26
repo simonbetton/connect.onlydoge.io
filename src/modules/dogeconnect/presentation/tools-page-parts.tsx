@@ -1,13 +1,16 @@
+import { Link } from "@tanstack/react-router"
 import * as QRCode from "qrcode"
 import * as React from "react"
 import { JsonCodeBlock } from "@/components/json-code-block"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button-variants"
 import type {
   EnvelopeValidationPayload,
   QrValidationPayload,
   RelayDebugRecordView,
 } from "@/modules/dogeconnect/application/contracts"
+import { flightRecorderQrSearch } from "./deep-link-builders"
 
 export function QrPreviewPanel({ uri }: { uri?: string }) {
   const normalizedUri = (uri ?? "").trim()
@@ -95,8 +98,8 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
 
   if (qrError) {
     return (
-      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
-        <p className="text-rose-700 text-xs">{qrError}</p>
+      <div className="rounded-2xl border border-danger-border bg-danger-muted p-4">
+        <p className="text-danger-foreground text-xs">{qrError}</p>
       </div>
     )
   }
@@ -127,7 +130,7 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
         ) : null}
       </div>
       {downloadState === "failed" ? (
-        <p className="text-rose-700 text-xs">
+        <p className="text-danger-foreground text-xs">
           Could not create download image in this environment.
         </p>
       ) : null}
@@ -138,12 +141,16 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
 export function ValidationResultView({
   result,
   error,
+  traceUri,
+  showEnvelopeToolsLink = false,
 }: {
   result: QrValidationPayload | EnvelopeValidationPayload | undefined
   error?: string
+  traceUri?: string
+  showEnvelopeToolsLink?: boolean
 }) {
   if (error) {
-    return <p className="text-rose-700 text-sm">{error}</p>
+    return <p className="text-danger-foreground text-sm">{error}</p>
   }
 
   if (!result) {
@@ -163,7 +170,7 @@ export function ValidationResultView({
       <div className="space-y-1">
         {(result.checks ?? []).map((check) => (
           <p key={check.name} className="text-muted-foreground text-xs">
-            <span className={check.passed ? "text-emerald-700" : "text-rose-700"}>
+            <span className={check.passed ? "text-success-foreground" : "text-danger-foreground"}>
               {check.passed ? "PASS" : "FAIL"}
             </span>{" "}
             {check.name}: {check.details}
@@ -171,9 +178,9 @@ export function ValidationResultView({
         ))}
       </div>
       {(result.errors ?? []).length > 0 ? (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
+        <div className="rounded-xl border border-danger-border bg-danger-muted p-3">
           {(result.errors ?? []).map((issue) => (
-            <p key={`${issue.field}:${issue.message}`} className="text-rose-700 text-xs">
+            <p key={`${issue.field}:${issue.message}`} className="text-danger-foreground text-xs">
               {issue.field}: {issue.message}
             </p>
           ))}
@@ -181,6 +188,28 @@ export function ValidationResultView({
       ) : null}
       {"parsed" in result && result.parsed ? (
         <JsonCodeBlock filename="result.json" value={JSON.stringify(result.parsed, null, 2)} />
+      ) : null}
+      {traceUri?.trim() || showEnvelopeToolsLink ? (
+        <div className="flex flex-wrap gap-2">
+          {traceUri?.trim() ? (
+            <Link
+              to="/flight-recorder"
+              search={flightRecorderQrSearch(traceUri.trim())}
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              Trace in Flight Recorder
+            </Link>
+          ) : null}
+          {showEnvelopeToolsLink ? (
+            <Link
+              to="/tools"
+              hash="envelope-validator"
+              className={buttonVariants({ variant: "outline", size: "sm" })}
+            >
+              Open Envelope Validator
+            </Link>
+          ) : null}
+        </div>
       ) : null}
     </div>
   )
@@ -341,13 +370,24 @@ export function RelayRecordsTable({ records }: { records: RelayDebugRecordView[]
   return (
     <div className="overflow-x-auto rounded-2xl border border-border/60">
       <table className="min-w-full text-left text-xs">
+        <caption className="sr-only">Registered relay scenarios</caption>
         <thead className="bg-muted/60 text-muted-foreground">
           <tr>
-            <th className="px-3 py-2 font-medium">ID</th>
-            <th className="px-3 py-2 font-medium">Scenario</th>
-            <th className="px-3 py-2 font-medium">Status</th>
-            <th className="px-3 py-2 font-medium">Txid</th>
-            <th className="px-3 py-2 font-medium">Updated</th>
+            <th scope="col" className="px-3 py-2 font-medium">
+              ID
+            </th>
+            <th scope="col" className="px-3 py-2 font-medium">
+              Scenario
+            </th>
+            <th scope="col" className="px-3 py-2 font-medium">
+              Status
+            </th>
+            <th scope="col" className="px-3 py-2 font-medium">
+              Txid
+            </th>
+            <th scope="col" className="px-3 py-2 font-medium">
+              Updated
+            </th>
           </tr>
         </thead>
         <tbody>
