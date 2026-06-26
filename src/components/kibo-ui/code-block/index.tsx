@@ -12,8 +12,8 @@ import {
   transformerNotationWordHighlight,
 } from "@shikijs/transformers"
 import * as React from "react"
-import type { BundledLanguage, CodeOptionsMultipleThemes } from "shiki"
-import { codeToHtml } from "shiki"
+import type { CodeOptionsMultipleThemes } from "@shikijs/types"
+import { type CodeBlockLanguage, codeToHtml } from "@/lib/shiki"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -107,7 +107,7 @@ const wordHighlightClassNames = cn(
 
 const highlightCode = (
   code: string,
-  language?: BundledLanguage,
+  language?: CodeBlockLanguage,
   themes?: CodeOptionsMultipleThemes["themes"]
 ) =>
   codeToHtml(code, {
@@ -309,7 +309,7 @@ export const CodeBlockContent = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
   themes?: CodeOptionsMultipleThemes["themes"]
-  language?: BundledLanguage
+  language?: CodeBlockLanguage
   syntaxHighlighting?: boolean
   children: string
 }) => {

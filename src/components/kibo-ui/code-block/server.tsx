@@ -6,12 +6,12 @@ import {
   transformerNotationWordHighlight,
 } from "@shikijs/transformers"
 import type { HTMLAttributes } from "react"
-import type { BundledLanguage, CodeOptionsMultipleThemes } from "shiki"
-import { codeToHtml } from "shiki"
+import type { CodeOptionsMultipleThemes } from "@shikijs/types"
+import { type CodeBlockLanguage, codeToHtml } from "@/lib/shiki"
 
 export type CodeBlockContentProps = HTMLAttributes<HTMLDivElement> & {
   themes?: CodeOptionsMultipleThemes["themes"]
-  language?: BundledLanguage
+  language?: CodeBlockLanguage
   syntaxHighlighting?: boolean
   children: string
 }
