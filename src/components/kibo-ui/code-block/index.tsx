@@ -1,6 +1,7 @@
 "use client"
 
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import Copy01Icon from "@hugeicons/core-free-icons/Copy01Icon"
+import Tick02Icon from "@hugeicons/core-free-icons/Tick02Icon"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useControllableState } from "@radix-ui/react-use-controllable-state"
 import {

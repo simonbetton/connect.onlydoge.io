@@ -1,4 +1,4 @@
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import ArrowRight01Icon from "@hugeicons/core-free-icons/ArrowRight01Icon"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { buttonVariants } from "@/components/ui/button"
