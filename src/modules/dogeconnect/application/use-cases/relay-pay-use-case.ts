@@ -16,89 +16,25 @@ export class RelayPayUseCase {
     const submissionResult = PaymentSubmission.parse(input)
     const submission = submissionResult.value
     if (!submission || submissionResult.issues.length > 0) {
-      return {
-        ok: false,
-        statusCode: 400,
-        body: {
-          error: "invalid_tx",
-          message:
-            submissionResult.issues.map((issue) => `${issue.field}: ${issue.message}`).join("; ") ||
-            "Invalid payment submission payload",
-        },
-      }
+      return invalidSubmissionResult(submissionResult.issues)
     }
 
     const existing = await this.store.getById(submission.wire.id)
     if (!existing) {
-      return {
-        ok: false,
-        statusCode: 404,
-        body: {
-          error: "not_found",
-          message: "Payment ID was not registered in relay debug state",
-        },
-      }
+      return notFoundResult()
     }
 
-    if (existing.relayToken && existing.relayToken !== submission.wire.relay_token) {
-      return {
-        ok: false,
-        statusCode: 400,
-        body: {
-          error: "invalid_token",
-          message: "relay_token does not match the registered payment token",
-        },
-      }
+    const tokenError = validateRelayToken(existing, submission.wire.relay_token)
+    if (tokenError) {
+      return tokenError
     }
 
     if (existing.scenario === "error") {
-      return {
-        ok: false,
-        statusCode: 400,
-        body: {
-          error: "invalid_tx",
-          message: "Scenario configured to simulate invalid transaction rejection",
-        },
-      }
+      return scenarioErrorResult()
     }
 
-    const txid = submission.txBytes
-      ? bytesToHex(this.crypto.sha256(submission.txBytes))
-      : existing.txid || "00".repeat(32)
-
-    const now = new Date().toISOString()
-    let next: RelayPaymentRecord
-
-    if (existing.scenario === "declined") {
-      next = {
-        ...existing,
-        status: "declined",
-        txid: "",
-        confirmed: 0,
-        confirmedAt: "",
-        updatedAt: now,
-      }
-    } else if (existing.scenario === "confirmed") {
-      next = {
-        ...existing,
-        status: "confirmed",
-        txid,
-        confirmed: existing.required,
-        dueSec: 0,
-        confirmedAt: now,
-        updatedAt: now,
-      }
-    } else {
-      next = {
-        ...existing,
-        status: "accepted",
-        txid,
-        confirmed: Math.min(existing.confirmed, existing.required),
-        confirmedAt: "",
-        updatedAt: now,
-      }
-    }
-
+    const txid = resolvePayTxid(submission, existing, this.crypto)
+    const next = buildPaymentAfterPay(existing, txid, existing.scenario)
     const saved = await this.store.upsert(next)
 
     return {
@@ -106,5 +42,103 @@ export class RelayPayUseCase {
       statusCode: 200,
       body: toPaymentStatusResponse(saved),
     }
+  }
+}
+
+const invalidSubmissionResult = (
+  issues: Array<{ field: string; message: string }>
+): RelayExecutionResult => ({
+  ok: false,
+  statusCode: 400,
+  body: {
+    error: "invalid_tx",
+    message:
+      issues.map((issue) => `${issue.field}: ${issue.message}`).join("; ") ||
+      "Invalid payment submission payload",
+  },
+})
+
+const notFoundResult = (): RelayExecutionResult => ({
+  ok: false,
+  statusCode: 404,
+  body: {
+    error: "not_found",
+    message: "Payment ID was not registered in relay debug state",
+  },
+})
+
+const validateRelayToken = (
+  existing: RelayPaymentRecord,
+  relayToken: string
+): RelayExecutionResult | null => {
+  if (existing.relayToken && existing.relayToken !== relayToken) {
+    return {
+      ok: false,
+      statusCode: 400,
+      body: {
+        error: "invalid_token",
+        message: "relay_token does not match the registered payment token",
+      },
+    }
+  }
+
+  return null
+}
+
+const scenarioErrorResult = (): RelayExecutionResult => ({
+  ok: false,
+  statusCode: 400,
+  body: {
+    error: "invalid_tx",
+    message: "Scenario configured to simulate invalid transaction rejection",
+  },
+})
+
+const resolvePayTxid = (
+  submission: PaymentSubmission,
+  existing: RelayPaymentRecord,
+  crypto: CryptoPort
+): string =>
+  submission.txBytes
+    ? bytesToHex(crypto.sha256(submission.txBytes))
+    : existing.txid || "00".repeat(32)
+
+const buildPaymentAfterPay = (
+  existing: RelayPaymentRecord,
+  txid: string,
+  scenario: RelayPaymentRecord["scenario"]
+): RelayPaymentRecord => {
+  const now = new Date().toISOString()
+
+  if (scenario === "declined") {
+    return {
+      ...existing,
+      status: "declined",
+      txid: "",
+      confirmed: 0,
+      confirmedAt: "",
+      updatedAt: now,
+    }
+  }
+
+  if (scenario === "confirmed") {
+    return {
+      ...existing,
+      status: "confirmed",
+      txid,
+      confirmed: existing.required,
+      dueSec: 0,
+      confirmedAt: now,
+      updatedAt: now,
+    }
+  }
+
+  return {
+    ...existing,
+    status: "accepted",
+    txid,
+    confirmed: Math.min(existing.confirmed, existing.required),
+    confirmedAt: "",
+    updatedAt: now,
   }
 }

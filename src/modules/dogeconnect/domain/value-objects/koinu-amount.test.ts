@@ -25,4 +25,16 @@ describe("KoinuAmount", () => {
     expect(result.value).toBeNull()
     expect(result.issues[0]?.message).toContain("greater than max-money")
   })
+
+  test("parses zero fractional amounts", () => {
+    const result = KoinuAmount.tryCreate("0.5", "amount")
+    expect(result.issues).toHaveLength(0)
+    expect(result.value?.koinu).toBe(50_000_000n)
+  })
+
+  test("parses leading-zero whole amounts", () => {
+    const result = KoinuAmount.tryCreate("00012.25", "amount")
+    expect(result.issues).toHaveLength(0)
+    expect(result.value?.koinu).toBe(1_225_000_000n)
+  })
 })

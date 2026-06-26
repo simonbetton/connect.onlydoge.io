@@ -1,24 +1,15 @@
 import { describe, expect, test } from "vitest"
 import type { FlightRecorderSessionV1 } from "../../application/flight-recorder-contracts"
-import { createTraceEntry } from "../../application/flight-recorder-session"
-import { BuildFlightRecorderSessionUseCase } from "../../application/use-cases/build-flight-recorder-session-use-case"
-import { ExecuteFlightRecorderRelayPayUseCase } from "../../application/use-cases/execute-flight-recorder-relay-pay-use-case"
-import { ExecuteFlightRecorderRelayStatusUseCase } from "../../application/use-cases/execute-flight-recorder-relay-status-use-case"
-import { GenerateMockQrUseCase } from "../../application/use-cases/generate-mock-qr-use-case"
-import { GetMockEnvelopeUseCase } from "../../application/use-cases/get-mock-envelope-use-case"
-import { ListRelayScenariosUseCase } from "../../application/use-cases/list-relay-scenarios-use-case"
 import { createMockDogeConnectFixture } from "../../application/use-cases/mock-dogeconnect-fixture"
-import { RegisterRelayScenarioUseCase } from "../../application/use-cases/register-relay-scenario-use-case"
-import { RelayPayUseCase } from "../../application/use-cases/relay-pay-use-case"
-import { RelayStatusUseCase } from "../../application/use-cases/relay-status-use-case"
-import { ResetRelayStateUseCase } from "../../application/use-cases/reset-relay-state-use-case"
-import { ValidateDogeConnectUriUseCase } from "../../application/use-cases/validate-dogeconnect-uri-use-case"
-import { ValidatePaymentEnvelopeUseCase } from "../../application/use-cases/validate-payment-envelope-use-case"
 import type { EnvelopeFetcherPort } from "../../ports/envelope-fetcher-port"
 import { NobleCryptoAdapter } from "../crypto/noble-crypto-adapter"
-import { InMemoryRelayStateStore } from "../relay/in-memory-relay-state-store"
-import { LocalFlightRecorderRelayClient } from "../relay/local-flight-recorder-relay-client"
+import { createDogeConnectApiDependencies } from "./create-dogeconnect-api-dependencies"
 import { createDogeConnectApiApp } from "./elysia-app"
+import {
+  createStubFlightRecorderEnvelopeClient,
+  createStubLiveFlightRecorderRelayClient,
+  createThrowingEnvelopeFetcher,
+} from "./test-api-stubs"
 
 describe("DogeConnect Elysia API", () => {
   test.each([
@@ -326,125 +317,14 @@ interface TestAppOptions {
   envelopeFetcher?: EnvelopeFetcherPort
 }
 
-const createTestApp = (options: TestAppOptions = {}) => {
-  const crypto = new NobleCryptoAdapter()
-  const relayStore = new InMemoryRelayStateStore()
-  const validatePaymentEnvelopeUseCase = new ValidatePaymentEnvelopeUseCase(crypto)
-  const validateDogeConnectUriUseCase = new ValidateDogeConnectUriUseCase(
-    options.envelopeFetcher ?? {
-      fetchEnvelope: async () => {
-        throw new Error("Envelope fetcher should not be called in this test")
-      },
-    },
-    validatePaymentEnvelopeUseCase
+const createTestApp = (options: TestAppOptions = {}) =>
+  createDogeConnectApiApp(
+    createDogeConnectApiDependencies({
+      envelopeFetcher: options.envelopeFetcher ?? createThrowingEnvelopeFetcher(),
+      envelopeClient: createStubFlightRecorderEnvelopeClient(),
+      liveFlightRecorderRelayClient: createStubLiveFlightRecorderRelayClient(),
+    })
   )
-  const generateMockQrUseCase = new GenerateMockQrUseCase(crypto)
-  const getMockEnvelopeUseCase = new GetMockEnvelopeUseCase(crypto)
-  const relayPayUseCase = new RelayPayUseCase(relayStore, crypto)
-  const relayStatusUseCase = new RelayStatusUseCase(relayStore)
-  const registerRelayScenarioUseCase = new RegisterRelayScenarioUseCase(relayStore)
-  const listRelayScenariosUseCase = new ListRelayScenariosUseCase(relayStore)
-  const resetRelayStateUseCase = new ResetRelayStateUseCase(relayStore)
-  const localFlightRecorderRelayClient = new LocalFlightRecorderRelayClient(
-    registerRelayScenarioUseCase,
-    relayPayUseCase,
-    relayStatusUseCase,
-    relayStore
-  )
-  const liveFlightRecorderRelayClient = {
-    async getStatus() {
-      return {
-        body: {
-          error: "not_found" as const,
-          message: "Live relay client is stubbed in tests",
-        },
-        trace: createTraceEntry({
-          kind: "execution",
-          phase: "relay_status",
-          target: "remote",
-          verdict: "fail",
-          issues: [
-            {
-              field: "relay",
-              message: "Live relay client is stubbed in tests",
-              severity: "error",
-            },
-          ],
-        }),
-      }
-    },
-    async pay() {
-      return {
-        body: {
-          error: "not_found" as const,
-          message: "Live relay client is stubbed in tests",
-        },
-        trace: createTraceEntry({
-          kind: "execution",
-          phase: "relay_pay",
-          target: "remote",
-          verdict: "fail",
-          issues: [
-            {
-              field: "relay",
-              message: "Live relay client is stubbed in tests",
-              severity: "error",
-            },
-          ],
-        }),
-      }
-    },
-  }
-  const buildFlightRecorderSessionUseCase = new BuildFlightRecorderSessionUseCase(
-    generateMockQrUseCase,
-    validatePaymentEnvelopeUseCase,
-    {
-      async fetchEnvelope() {
-        return {
-          envelope: null,
-          trace: createTraceEntry({
-            kind: "network",
-            phase: "envelope_fetch",
-            target: "remote",
-            verdict: "fail",
-            issues: [
-              {
-                field: "dc",
-                message: "Envelope client is stubbed in tests",
-                severity: "error",
-              },
-            ],
-          }),
-        }
-      },
-    },
-    localFlightRecorderRelayClient,
-    liveFlightRecorderRelayClient
-  )
-  const executeFlightRecorderRelayPayUseCase = new ExecuteFlightRecorderRelayPayUseCase(
-    localFlightRecorderRelayClient,
-    liveFlightRecorderRelayClient
-  )
-  const executeFlightRecorderRelayStatusUseCase = new ExecuteFlightRecorderRelayStatusUseCase(
-    localFlightRecorderRelayClient,
-    liveFlightRecorderRelayClient
-  )
-
-  return createDogeConnectApiApp({
-    validateDogeConnectUriUseCase,
-    validatePaymentEnvelopeUseCase,
-    generateMockQrUseCase,
-    getMockEnvelopeUseCase,
-    relayPayUseCase,
-    relayStatusUseCase,
-    registerRelayScenarioUseCase,
-    listRelayScenariosUseCase,
-    resetRelayStateUseCase,
-    buildFlightRecorderSessionUseCase,
-    executeFlightRecorderRelayPayUseCase,
-    executeFlightRecorderRelayStatusUseCase,
-  })
-}
 
 const requestJson = async (
   app: ReturnType<typeof createTestApp>,

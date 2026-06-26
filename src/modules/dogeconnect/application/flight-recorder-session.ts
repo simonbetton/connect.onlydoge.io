@@ -100,20 +100,28 @@ export const createTraceEntry = (input: {
     durationMs: input.durationMs ?? 0,
     verdict: input.verdict,
     issues: input.issues ?? [],
-    requestSummary: {
-      method: input.requestSummary?.method ?? "LOCAL",
-      endpoint: input.requestSummary?.endpoint ?? "session://flight-recorder",
-      note: input.requestSummary?.note ?? "",
-      body: input.requestSummary?.body ?? null,
-    },
-    responseSummary: {
-      statusCode: input.responseSummary?.statusCode ?? null,
-      note: input.responseSummary?.note ?? "",
-      body: input.responseSummary?.body ?? null,
-    },
+    requestSummary: buildTraceRequestSummary(input.requestSummary),
+    responseSummary: buildTraceResponseSummary(input.responseSummary),
     artifactsChanged: input.artifactsChanged ?? [],
   }
 }
+
+const buildTraceRequestSummary = (
+  summary: Partial<FlightTraceEntry["requestSummary"]> | undefined
+): FlightTraceEntry["requestSummary"] => ({
+  method: summary?.method ?? "LOCAL",
+  endpoint: summary?.endpoint ?? "session://flight-recorder",
+  note: summary?.note ?? "",
+  body: summary?.body ?? null,
+})
+
+const buildTraceResponseSummary = (
+  summary: Partial<FlightTraceResponseSummary> | undefined
+): FlightTraceResponseSummary => ({
+  statusCode: summary?.statusCode ?? null,
+  note: summary?.note ?? "",
+  body: summary?.body ?? null,
+})
 
 export const createEmptyArtifacts = (): FlightRecorderArtifacts => ({
   qr: {
@@ -322,33 +330,56 @@ const validateImportedRelayArtifacts = (
     return
   }
 
-  if (
-    !isRecord(meta) ||
-    !FLIGHT_RECORDER_TARGET_MODES.includes(meta.targetMode as FlightRecorderTargetMode)
-  ) {
+  const targetMode = readImportedTargetMode(meta)
+  if (!targetMode) {
     return
   }
 
-  const targetMode = meta.targetMode as FlightRecorderTargetMode
   if (relayMode !== targetMode) {
     issues.push(validationError("artifacts.relay.mode", "must match meta.targetMode"))
     return
   }
 
   if (targetMode === "simulator") {
-    if (relay.payUrl !== "/api/relay/pay") {
-      issues.push(
-        validationError("artifacts.relay.payUrl", "must use the simulator relay pay path")
-      )
-    }
-    if (relay.statusUrl !== "/api/relay/status") {
-      issues.push(
-        validationError("artifacts.relay.statusUrl", "must use the simulator relay status path")
-      )
-    }
+    validateSimulatorRelayUrls(relay, issues)
     return
   }
 
+  validateLiveRelayUrls(relay, targetMode, issues)
+}
+
+const readImportedTargetMode = (meta: unknown): FlightRecorderTargetMode | null => {
+  if (!isRecord(meta)) {
+    return null
+  }
+
+  const targetMode = meta.targetMode as FlightRecorderTargetMode
+  if (!FLIGHT_RECORDER_TARGET_MODES.includes(targetMode)) {
+    return null
+  }
+
+  return targetMode
+}
+
+const validateSimulatorRelayUrls = (
+  relay: Record<string, unknown>,
+  issues: ValidationIssue[]
+): void => {
+  if (relay.payUrl !== "/api/relay/pay") {
+    issues.push(validationError("artifacts.relay.payUrl", "must use the simulator relay pay path"))
+  }
+  if (relay.statusUrl !== "/api/relay/status") {
+    issues.push(
+      validationError("artifacts.relay.statusUrl", "must use the simulator relay status path")
+    )
+  }
+}
+
+const validateLiveRelayUrls = (
+  relay: Record<string, unknown>,
+  targetMode: FlightRecorderTargetMode,
+  issues: ValidationIssue[]
+): void => {
   const sourceRelayUrl = typeof relay.sourceRelayUrl === "string" ? relay.sourceRelayUrl : ""
   const payUrl = typeof relay.payUrl === "string" ? relay.payUrl : ""
   const statusUrl = typeof relay.statusUrl === "string" ? relay.statusUrl : ""
@@ -358,18 +389,33 @@ const validateImportedRelayArtifacts = (
     return
   }
 
-  if (!isHttpsExternalUrl(payUrl)) {
-    issues.push(validationError("artifacts.relay.payUrl", "must be a non-empty HTTPS URL"))
-  }
+  validateLiveRelayEndpointUrl("payUrl", payUrl, issues)
+  validateLiveRelayEndpointUrl("statusUrl", statusUrl, issues)
+  validateLiveRelayEndpointMatches(sourceRelayUrl, payUrl, statusUrl, targetMode, issues)
+}
 
-  if (!isHttpsExternalUrl(statusUrl)) {
-    issues.push(validationError("artifacts.relay.statusUrl", "must be a non-empty HTTPS URL"))
+const validateLiveRelayEndpointUrl = (
+  field: "payUrl" | "statusUrl",
+  value: string,
+  issues: ValidationIssue[]
+): void => {
+  if (!isHttpsExternalUrl(value)) {
+    issues.push(validationError(`artifacts.relay.${field}`, "must be a non-empty HTTPS URL"))
   }
+}
 
+const validateLiveRelayEndpointMatches = (
+  sourceRelayUrl: string,
+  payUrl: string,
+  statusUrl: string,
+  targetMode: FlightRecorderTargetMode,
+  issues: ValidationIssue[]
+): void => {
   const expected = deriveFlightRecorderRelayTarget({
     targetMode,
     sourceRelayUrl,
   })
+
   if (payUrl && payUrl !== expected.payUrl) {
     issues.push(validationError("artifacts.relay.payUrl", "must match the source relay pay URL"))
   }

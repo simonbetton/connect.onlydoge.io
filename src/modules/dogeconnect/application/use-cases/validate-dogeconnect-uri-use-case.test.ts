@@ -1,12 +1,14 @@
 import { describe, expect, test } from "vitest"
 import { NobleCryptoAdapter } from "../../adapters/crypto/noble-crypto-adapter"
 import type { EnvelopeFetcherPort } from "../../ports/envelope-fetcher-port"
+import { expectPublicKeyHashMismatch } from "./envelope-validation-test-helpers"
 import { createMockDogeConnectFixture } from "./mock-dogeconnect-fixture"
-import { ValidateDogeConnectUriUseCase } from "./validate-dogeconnect-uri-use-case"
+import { createWrongExpectedHash } from "./signed-envelope-test-fixture"
+import { createValidateDogeConnectUriUseCase } from "./validate-dogeconnect-uri-use-case"
 import { ValidatePaymentEnvelopeUseCase } from "./validate-payment-envelope-use-case"
 
 const PLAIN_DOGECOIN_ADDRESS = "DPD7uK4B1kRmbfGmytBhG1DZjaMWNfbpwY"
-const WRONG_EXPECTED_HASH = Buffer.from(new Uint8Array(15).fill(255)).toString("base64url")
+const WRONG_EXPECTED_HASH = createWrongExpectedHash()
 
 describe("ValidateDogeConnectUriUseCase", () => {
   test("returns inconclusive for a plain non-connect Dogecoin URI", async () => {
@@ -95,19 +97,17 @@ describe("ValidateDogeConnectUriUseCase", () => {
       fetchEnvelope: true,
     })
 
-    expect(WRONG_EXPECTED_HASH).not.toBe(fixture.h)
-    expect(result.verdict).toBe("invalid")
-    expect(
-      result.checks.some(
-        (check) => check.name === "Envelope: Public key hash match" && !check.passed
-      )
-    ).toBe(true)
-    expect(result.errors.some((issue) => issue.field === "pubkey")).toBe(true)
+    expectPublicKeyHashMismatch(
+      WRONG_EXPECTED_HASH,
+      fixture.h,
+      result,
+      "Envelope: Public key hash match"
+    )
   })
 })
 
 const createUseCase = (fetchEnvelope: EnvelopeFetcherPort["fetchEnvelope"]) =>
-  new ValidateDogeConnectUriUseCase(
+  createValidateDogeConnectUriUseCase(
     { fetchEnvelope },
     new ValidatePaymentEnvelopeUseCase(new NobleCryptoAdapter())
   )

@@ -35,57 +35,84 @@ export class DogeUri {
     const encodedAddress = queryIndex === -1 ? remainder : remainder.slice(0, queryIndex)
     const query = queryIndex === -1 ? "" : remainder.slice(queryIndex + 1)
 
-    let address = encodedAddress
-    try {
-      address = decodeURIComponent(encodedAddress)
-    } catch {
-      issues.push(validationError("address", "invalid URI encoding"))
-    }
-
-    if (!address) {
-      issues.push(validationError("address", "required"))
-    }
-
+    const address = parseDogeUriAddress(encodedAddress, issues)
     const params = new URLSearchParams(query)
     const amount = params.get("amount") ?? ""
     const connectUrl = params.get("dc") ?? ""
     const hash = params.get("h") ?? ""
 
-    if ((connectUrl !== "") !== (hash !== "")) {
-      issues.push(validationError("uri", "'dc' and 'h' parameters must both be present"))
-    }
+    validateDogeConnectParamPair(connectUrl, hash, issues)
+    validateDogeUriAmount(amount, issues)
 
-    if (amount !== "") {
-      const amountResult = KoinuAmount.tryCreate(amount, "amount")
-      issues.push(...amountResult.issues)
-      if (amountResult.value && amountResult.value.koinu <= 0n) {
-        issues.push(validationError("amount", "must be positive"))
-      }
-    }
-
-    let parsedHash: RelayPubKeyHash | null = null
-    if (hash !== "") {
-      const hashResult = RelayPubKeyHash.tryCreate(hash, "h")
-      parsedHash = hashResult.value
-      issues.push(...hashResult.issues)
-    }
-
-    if (connectUrl.startsWith("https://")) {
-      issues.push(
-        validationWarning(
-          "dc",
-          "dc parameter usually omits protocol and should only include host/path"
-        )
-      )
-    }
+    const parsedHash = parseDogeUriPubKeyHash(hash, issues)
+    validateDogeConnectUrlProtocol(connectUrl, issues)
 
     return {
       value: new DogeUri(value, address, amount, connectUrl, parsedHash),
       issues,
     }
   }
+}
 
-  get isConnectUri(): boolean {
-    return this.connectUrl.length > 0 && this.pubKeyHash !== null
+const parseDogeUriAddress = (encodedAddress: string, issues: ValidationIssue[]): string => {
+  let address = encodedAddress
+  try {
+    address = decodeURIComponent(encodedAddress)
+  } catch {
+    issues.push(validationError("address", "invalid URI encoding"))
+  }
+
+  if (!address) {
+    issues.push(validationError("address", "required"))
+  }
+
+  return address
+}
+
+const validateDogeConnectParamPair = (
+  connectUrl: string,
+  hash: string,
+  issues: ValidationIssue[]
+): void => {
+  if ((connectUrl !== "") !== (hash !== "")) {
+    issues.push(validationError("uri", "'dc' and 'h' parameters must both be present"))
   }
 }
+
+const validateDogeUriAmount = (amount: string, issues: ValidationIssue[]): void => {
+  if (amount === "") {
+    return
+  }
+
+  const amountResult = KoinuAmount.tryCreate(amount, "amount")
+  issues.push(...amountResult.issues)
+  if (amountResult.value && amountResult.value.koinu <= 0n) {
+    issues.push(validationError("amount", "must be positive"))
+  }
+}
+
+const parseDogeUriPubKeyHash = (
+  hash: string,
+  issues: ValidationIssue[]
+): RelayPubKeyHash | null => {
+  if (hash === "") {
+    return null
+  }
+
+  const hashResult = RelayPubKeyHash.tryCreate(hash, "h")
+  issues.push(...hashResult.issues)
+  return hashResult.value
+}
+
+const validateDogeConnectUrlProtocol = (connectUrl: string, issues: ValidationIssue[]): void => {
+  if (!connectUrl.startsWith("https://")) {
+    return
+  }
+
+  issues.push(
+    validationWarning("dc", "dc parameter usually omits protocol and should only include host/path")
+  )
+}
+
+export const isDogeConnectUri = (uri: DogeUri): boolean =>
+  uri.connectUrl.length > 0 && uri.pubKeyHash !== null

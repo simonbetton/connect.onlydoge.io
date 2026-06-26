@@ -117,7 +117,7 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
           {downloadState === "running" ? "Rendering..." : "Download Branded QR"}
         </Button>
       </div>
-      <div className="rounded-xl border border-border/60 bg-gradient-to-br from-amber-100/40 to-orange-100/30 p-4">
+      <div className="rounded-xl border border-border/60 bg-linear-to-br from-amber-100/40 to-orange-100/30 p-4">
         {qrDataUrl ? (
           <img
             src={qrDataUrl}

@@ -47,10 +47,6 @@ export class RelayPubKeyHash {
     return new RelayPubKeyHash(bytes)
   }
 
-  toBase64Url(): string {
-    return bytesToBase64Url(this.bytes)
-  }
-
   equals(other: RelayPubKeyHash): boolean {
     if (this.bytes.length !== other.bytes.length) {
       return false
@@ -65,3 +61,6 @@ export class RelayPubKeyHash {
     return true
   }
 }
+
+export const encodeRelayPubKeyHashBase64Url = (hash: RelayPubKeyHash): string =>
+  bytesToBase64Url(hash.bytes)

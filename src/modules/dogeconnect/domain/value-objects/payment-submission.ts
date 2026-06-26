@@ -1,7 +1,8 @@
 import { hexToBytesStrict } from "../shared/encoding"
 import { type ValidationIssue, validationError } from "../shared/validation"
+import { isRecord, readOptionalString, readRequiredString } from "../shared/wire-field-parsing"
 
-export interface PaymentSubmissionWire {
+interface PaymentSubmissionWire {
   id: string
   tx: string
   refund: string
@@ -65,49 +66,4 @@ export class StatusQuery {
       issues,
     }
   }
-}
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null
-
-const readRequiredString = (
-  value: Record<string, unknown>,
-  field: string,
-  issues: ValidationIssue[]
-): string => {
-  const candidate = value[field]
-
-  if (typeof candidate !== "string") {
-    if (candidate === undefined || candidate === null) {
-      issues.push(validationError(field, "required"))
-    } else {
-      issues.push(validationError(field, "must be a string"))
-    }
-    return ""
-  }
-
-  if (candidate.length === 0) {
-    issues.push(validationError(field, "required"))
-  }
-
-  return candidate
-}
-
-const readOptionalString = (
-  value: Record<string, unknown>,
-  field: string,
-  issues: ValidationIssue[]
-): string => {
-  const candidate = value[field]
-
-  if (candidate === undefined || candidate === null) {
-    return ""
-  }
-
-  if (typeof candidate !== "string") {
-    issues.push(validationError(field, "must be a string"))
-    return ""
-  }
-
-  return candidate
 }

@@ -35,9 +35,36 @@ type ToolsFormFieldApi = {
   handleBlur: () => void
 }
 
+function RelayRegisterNumberField({
+  label,
+  field,
+  onCommit,
+}: {
+  label: string
+  field: ToolsFormFieldApi
+  onCommit: (value: number) => void
+}) {
+  return (
+    <div className="space-y-1.5">
+      <p className="font-medium text-muted-foreground text-xs uppercase">{label}</p>
+      <Input
+        type="number"
+        min={1}
+        value={field.state.value}
+        onChange={(event) => {
+          const value = Number(event.target.value) || 1
+          field.handleChange(value)
+          onCommit(value)
+        }}
+        onBlur={field.handleBlur}
+      />
+    </div>
+  )
+}
+
 export function ToolsPageHero() {
   return (
-    <section className="rounded-3xl border border-border/70 bg-gradient-to-br from-amber-100/70 via-background to-orange-100/70 p-6">
+    <section className="rounded-3xl border border-border/70 bg-linear-to-br from-amber-100/70 via-background to-orange-100/70 p-6">
       <h1 className="font-semibold text-2xl tracking-tight">DogeConnect Tools</h1>
       <p className="mt-2 max-w-3xl text-muted-foreground text-sm leading-relaxed">
         Strict protocol and cryptographic checks are enabled by default. Use these tools to verify
@@ -501,40 +528,20 @@ export function RelayRegistrationCard({
           </registerForm.Field>
           <registerForm.Field name="required">
             {(field: ToolsFormFieldApi) => (
-              <div className="space-y-1.5">
-                <p className="font-medium text-muted-foreground text-xs uppercase">
-                  Required Confirmations
-                </p>
-                <Input
-                  type="number"
-                  min={1}
-                  value={field.state.value}
-                  onChange={(event) => {
-                    const value = Number(event.target.value) || 1
-                    field.handleChange(value)
-                    onUpdateSearch({ relayRegisterRequired: value })
-                  }}
-                  onBlur={field.handleBlur}
-                />
-              </div>
+              <RelayRegisterNumberField
+                label="Required Confirmations"
+                field={field}
+                onCommit={(value) => onUpdateSearch({ relayRegisterRequired: value })}
+              />
             )}
           </registerForm.Field>
           <registerForm.Field name="dueSec">
             {(field: ToolsFormFieldApi) => (
-              <div className="space-y-1.5">
-                <p className="font-medium text-muted-foreground text-xs uppercase">ETA Seconds</p>
-                <Input
-                  type="number"
-                  min={1}
-                  value={field.state.value}
-                  onChange={(event) => {
-                    const value = Number(event.target.value) || 1
-                    field.handleChange(value)
-                    onUpdateSearch({ relayRegisterDueSec: value })
-                  }}
-                  onBlur={field.handleBlur}
-                />
-              </div>
+              <RelayRegisterNumberField
+                label="ETA Seconds"
+                field={field}
+                onCommit={(value) => onUpdateSearch({ relayRegisterDueSec: value })}
+              />
             )}
           </registerForm.Field>
           <registerForm.Field name="reason">

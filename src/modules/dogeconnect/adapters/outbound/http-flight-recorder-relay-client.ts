@@ -1,5 +1,6 @@
 import type { FlightRecorderRelayActionResult } from "../../application/flight-recorder-contracts"
 import { createTraceEntry } from "../../application/flight-recorder-session"
+import { isRecord } from "../../domain/shared/wire-field-parsing"
 import {
   ERROR_CODE_VALUES,
   type PaymentStatusResponse,
@@ -12,29 +13,30 @@ import type {
 } from "../../ports/traced-relay-client-port"
 import { safeFetchJson } from "./public-target-guard"
 
-export class HttpFlightRecorderRelayClient implements TracedRelayClientPort {
-  async getStatus(input: TracedRelayStatusInput): Promise<FlightRecorderRelayActionResult> {
-    return executeRelayRequest({
-      method: "POST",
-      endpoint: input.relay.statusUrl,
-      requestBody: {
-        id: input.session.artifacts.payDraft?.id ?? input.session.source.paymentId,
-      },
-      phase: "relay_status",
-      note: "Read current status from the relay target.",
-    })
-  }
+export const createHttpFlightRecorderRelayClient = (): TracedRelayClientPort => ({
+  getStatus: (input) => relayGetStatus(input),
+  pay: (input) => relayPay(input),
+})
 
-  async pay(input: TracedRelayPayInput): Promise<FlightRecorderRelayActionResult> {
-    return executeRelayRequest({
-      method: "POST",
-      endpoint: input.relay.payUrl,
-      requestBody: input.submission,
-      phase: "relay_pay",
-      note: "Submitted the current pay draft to the relay target.",
-    })
-  }
-}
+const relayGetStatus = (input: TracedRelayStatusInput): Promise<FlightRecorderRelayActionResult> =>
+  executeRelayRequest({
+    method: "POST",
+    endpoint: input.relay.statusUrl,
+    requestBody: {
+      id: input.session.artifacts.payDraft?.id ?? input.session.source.paymentId,
+    },
+    phase: "relay_status",
+    note: "Read current status from the relay target.",
+  })
+
+const relayPay = (input: TracedRelayPayInput): Promise<FlightRecorderRelayActionResult> =>
+  executeRelayRequest({
+    method: "POST",
+    endpoint: input.relay.payUrl,
+    requestBody: input.submission,
+    phase: "relay_pay",
+    note: "Submitted the current pay draft to the relay target.",
+  })
 
 const executeRelayRequest = async (input: {
   method: "POST"
@@ -111,9 +113,6 @@ const executeRelayRequest = async (input: {
     }
   }
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null
 
 const normalizeRelayBody = (
   value: unknown

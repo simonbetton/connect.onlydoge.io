@@ -1,6 +1,9 @@
 import { openapi } from "@elysiajs/openapi"
 import { Elysia, t } from "elysia"
-import type { BuildFlightRecorderSessionInput } from "../../application/flight-recorder-contracts"
+import type {
+  BuildFlightRecorderSessionInput,
+  FlightRecorderSessionV1,
+} from "../../application/flight-recorder-contracts"
 import { parseImportedFlightRecorderSession } from "../../application/flight-recorder-session"
 import type { BuildFlightRecorderSessionUseCase } from "../../application/use-cases/build-flight-recorder-session-use-case"
 import type { ExecuteFlightRecorderRelayPayUseCase } from "../../application/use-cases/execute-flight-recorder-relay-pay-use-case"
@@ -14,8 +17,9 @@ import type { RelayStatusUseCase } from "../../application/use-cases/relay-statu
 import type { ResetRelayStateUseCase } from "../../application/use-cases/reset-relay-state-use-case"
 import type { ValidateDogeConnectUriUseCase } from "../../application/use-cases/validate-dogeconnect-uri-use-case"
 import type { ValidatePaymentEnvelopeUseCase } from "../../application/use-cases/validate-payment-envelope-use-case"
+import type { ValidationIssue } from "../../domain/shared/validation"
 
-interface DogeConnectApiDependencies {
+export interface DogeConnectApiDependencies {
   validateDogeConnectUriUseCase: ValidateDogeConnectUriUseCase
   validatePaymentEnvelopeUseCase: ValidatePaymentEnvelopeUseCase
   generateMockQrUseCase: GenerateMockQrUseCase
@@ -322,14 +326,13 @@ export const createDogeConnectApiApp = (dependencies: DogeConnectApiDependencies
     .post(
       "/flight-recorder/relay/status",
       async ({ body, set }) => {
-        const parsed = parseImportedFlightRecorderSession(body.session)
-        if (!parsed.value) {
-          set.status = 400
-          return { errors: parsed.issues }
+        const parsedSession = parseFlightRecorderSessionRequest(body.session, set)
+        if (!parsedSession.ok) {
+          return { errors: parsedSession.errors }
         }
 
         return dependencies.executeFlightRecorderRelayStatusUseCase.execute({
-          session: parsed.value,
+          session: parsedSession.session,
         })
       },
       {
@@ -351,14 +354,13 @@ export const createDogeConnectApiApp = (dependencies: DogeConnectApiDependencies
     .post(
       "/flight-recorder/relay/pay",
       async ({ body, set }) => {
-        const parsed = parseImportedFlightRecorderSession(body.session)
-        if (!parsed.value) {
-          set.status = 400
-          return { errors: parsed.issues }
+        const parsedSession = parseFlightRecorderSessionRequest(body.session, set)
+        if (!parsedSession.ok) {
+          return { errors: parsedSession.errors }
         }
 
         return dependencies.executeFlightRecorderRelayPayUseCase.execute({
-          session: parsed.value,
+          session: parsedSession.session,
           liveWriteArmed: body.liveWriteArmed,
         })
       },
@@ -613,3 +615,20 @@ export const createDogeConnectApiApp = (dependencies: DogeConnectApiDependencies
         }),
       }
     )
+
+type ParsedFlightRecorderSessionRequest =
+  | { ok: true; session: FlightRecorderSessionV1 }
+  | { ok: false; errors: ValidationIssue[] }
+
+const parseFlightRecorderSessionRequest = (
+  session: unknown,
+  set: { status?: number | string }
+): ParsedFlightRecorderSessionRequest => {
+  const parsed = parseImportedFlightRecorderSession(session)
+  if (!parsed.value) {
+    set.status = 400
+    return { ok: false, errors: parsed.issues }
+  }
+
+  return { ok: true, session: parsed.value }
+}

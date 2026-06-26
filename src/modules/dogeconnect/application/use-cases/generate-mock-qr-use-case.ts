@@ -7,7 +7,7 @@ interface GenerateMockQrInput {
   paymentId?: string
 }
 
-export interface GenerateMockQrPayload {
+interface GenerateMockQrPayload {
   uri: string
   paymentId: string
   address: string
@@ -23,11 +23,9 @@ export interface GenerateMockQrPayload {
   payment: ConnectPaymentWire
 }
 
-export class GenerateMockQrUseCase {
-  constructor(private readonly crypto: CryptoPort) {}
-
+export const createGenerateMockQrUseCase = (crypto: CryptoPort) => ({
   execute(input: GenerateMockQrInput): GenerateMockQrPayload {
-    const fixture = createMockDogeConnectFixture(this.crypto, input.paymentId)
+    const fixture = createMockDogeConnectFixture(crypto, input.paymentId)
     const dc = buildDcUrl(input.origin, fixture.paymentId)
     const query = new URLSearchParams({
       amount: fixture.amount,
@@ -45,8 +43,10 @@ export class GenerateMockQrUseCase {
       envelope: fixture.envelope,
       payment: fixture.payment,
     }
-  }
-}
+  },
+})
+
+export type GenerateMockQrUseCase = ReturnType<typeof createGenerateMockQrUseCase>
 
 const buildDcUrl = (origin: string, paymentId: string): string => {
   const trimmedOrigin = origin.endsWith("/") ? origin.slice(0, -1) : origin

@@ -37,6 +37,13 @@ describe("public target guard", () => {
     expect(isUnsafeIpAddress("172.20.0.10")).toBe(true)
     expect(isUnsafeIpAddress("192.168.1.1")).toBe(true)
     expect(isUnsafeIpAddress("169.254.169.254")).toBe(true)
+    expect(isUnsafeIpAddress("0.0.0.0")).toBe(true)
+    expect(isUnsafeIpAddress("127.0.0.1")).toBe(true)
+    expect(isUnsafeIpAddress("100.64.0.1")).toBe(true)
+    expect(isUnsafeIpAddress("100.127.255.255")).toBe(true)
+    expect(isUnsafeIpAddress("8.8.8.8")).toBe(false)
+    expect(isUnsafeIpAddress("1.2.3")).toBe(true)
+    expect(isUnsafeIpAddress("1.2.3.4.5")).toBe(true)
   })
 
   test("flags mapped ipv6 ranges", () => {

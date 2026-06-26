@@ -33,39 +33,32 @@ export class ConnectEnvelope {
       issues.push(validationError("version", `must be "${ENVELOPE_VERSION}"`))
     }
 
-    let payloadBytes: Uint8Array | null = null
-    if (!payload) {
-      issues.push(validationError("payload", "required"))
-    } else {
-      payloadBytes = base64ToBytesStrict(payload)
-      if (!payloadBytes) {
-        issues.push(validationError("payload", "invalid base64"))
-      }
-    }
+    const payloadBytes = decodeRequiredFieldBytes({
+      value: payload,
+      field: "payload",
+      decoder: base64ToBytesStrict,
+      invalidMessage: "invalid base64",
+      expectedLength: null,
+      issues,
+    })
 
-    let pubKeyBytes: Uint8Array | null = null
-    if (!pubkey) {
-      issues.push(validationError("pubkey", "required"))
-    } else {
-      pubKeyBytes = hexToBytesStrict(pubkey)
-      if (!pubKeyBytes) {
-        issues.push(validationError("pubkey", "invalid hex"))
-      } else if (pubKeyBytes.length !== 32) {
-        issues.push(validationError("pubkey", `must be 32 bytes, got ${pubKeyBytes.length}`))
-      }
-    }
+    const pubKeyBytes = decodeRequiredFieldBytes({
+      value: pubkey,
+      field: "pubkey",
+      decoder: hexToBytesStrict,
+      invalidMessage: "invalid hex",
+      expectedLength: 32,
+      issues,
+    })
 
-    let signatureBytes: Uint8Array | null = null
-    if (!signature) {
-      issues.push(validationError("sig", "required"))
-    } else {
-      signatureBytes = hexToBytesStrict(signature)
-      if (!signatureBytes) {
-        issues.push(validationError("sig", "invalid hex"))
-      } else if (signatureBytes.length !== 64) {
-        issues.push(validationError("sig", `must be 64 bytes, got ${signatureBytes.length}`))
-      }
-    }
+    const signatureBytes = decodeRequiredFieldBytes({
+      value: signature,
+      field: "sig",
+      decoder: hexToBytesStrict,
+      invalidMessage: "invalid hex",
+      expectedLength: 64,
+      issues,
+    })
 
     return {
       value: new ConnectEnvelope(
@@ -80,6 +73,34 @@ export class ConnectEnvelope {
       issues,
     }
   }
+}
+
+const decodeRequiredFieldBytes = (input: {
+  value: string
+  field: string
+  decoder: (value: string) => Uint8Array | null
+  invalidMessage: string
+  expectedLength: number | null
+  issues: ValidationIssue[]
+}): Uint8Array | null => {
+  if (!input.value) {
+    input.issues.push(validationError(input.field, "required"))
+    return null
+  }
+
+  const bytes = input.decoder(input.value)
+  if (!bytes) {
+    input.issues.push(validationError(input.field, input.invalidMessage))
+    return null
+  }
+
+  if (input.expectedLength !== null && bytes.length !== input.expectedLength) {
+    input.issues.push(
+      validationError(input.field, `must be ${input.expectedLength} bytes, got ${bytes.length}`)
+    )
+  }
+
+  return bytes
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>

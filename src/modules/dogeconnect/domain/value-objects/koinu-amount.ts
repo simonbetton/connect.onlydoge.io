@@ -1,7 +1,7 @@
 import { type ValidationIssue, validationError } from "../shared/validation"
 
-export const KOINU_PER_DOGE = 100_000_000n
-export const MAX_MONEY_KOINU = 10_000_000_000n * KOINU_PER_DOGE
+const KOINU_PER_DOGE = 100_000_000n
+const MAX_MONEY_KOINU = 10_000_000_000n * KOINU_PER_DOGE
 const MAX_MONEY_WHOLE_DOGE = MAX_MONEY_KOINU / KOINU_PER_DOGE
 
 const KOINU_REGEX = /^(-?)(\d*)(?:\.(\d*))?$/
@@ -52,15 +52,26 @@ export class KoinuAmount {
   }
 }
 
-const parseKoinu = (value: string): bigint | string => {
+interface KoinuMatchParts {
+  sign: bigint
+  wholeRaw: string
+  fractionRaw: string
+}
+
+const matchKoinuParts = (value: string): KoinuMatchParts | string => {
   const match = value.match(KOINU_REGEX)
   if (!match) {
     return "invalid koinu value: invalid number (unexpected character)"
   }
 
-  const sign = match[1] === "-" ? -1n : 1n
-  const wholeRaw = match[2] ?? ""
-  const fractionRaw = match[3] ?? ""
+  return {
+    sign: match[1] === "-" ? -1n : 1n,
+    wholeRaw: match[2] ?? "",
+    fractionRaw: match[3] ?? "",
+  }
+}
+
+const parseWholePart = (wholeRaw: string): { wholePart: bigint; wholeDigits: number } | string => {
   const wholeTrimmed = wholeRaw.replace(/^0+/, "")
   const wholeDigits = wholeTrimmed.length
   const wholePart = BigInt(wholeTrimmed || "0")
@@ -69,17 +80,34 @@ const parseKoinu = (value: string): bigint | string => {
     return "invalid koinu value: greater than max-money (10,000,000,000 DOGE)"
   }
 
-  if (wholeRaw.length === 0 && fractionRaw.length === 0) {
+  return { wholePart, wholeDigits }
+}
+
+const parseFractionPart = (fractionRaw: string): bigint => {
+  const scaledFraction = `${fractionRaw.slice(0, 8)}00000000`.slice(0, 8)
+  return BigInt(scaledFraction || "0")
+}
+
+const parseKoinu = (value: string): bigint | string => {
+  const parts = matchKoinuParts(value)
+  if (typeof parts === "string") {
+    return parts
+  }
+
+  const wholeResult = parseWholePart(parts.wholeRaw)
+  if (typeof wholeResult === "string") {
+    return wholeResult
+  }
+
+  if (parts.wholeRaw.length === 0 && parts.fractionRaw.length === 0) {
     return "invalid koinu value: invalid number (unexpected character)"
   }
 
-  const scaledFraction = `${fractionRaw.slice(0, 8)}00000000`.slice(0, 8)
-  const fractionPart = BigInt(scaledFraction || "0")
-
-  const unsignedTotal = wholePart * KOINU_PER_DOGE + fractionPart
+  const fractionPart = parseFractionPart(parts.fractionRaw)
+  const unsignedTotal = wholeResult.wholePart * KOINU_PER_DOGE + fractionPart
   if (unsignedTotal > MAX_MONEY_KOINU) {
     return "invalid koinu value: greater than max-money (10,000,000,000 DOGE)"
   }
 
-  return unsignedTotal * sign
+  return unsignedTotal * parts.sign
 }

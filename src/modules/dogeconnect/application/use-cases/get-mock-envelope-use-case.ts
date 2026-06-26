@@ -5,10 +5,10 @@ interface GetMockEnvelopeInput {
   paymentId?: string
 }
 
-export class GetMockEnvelopeUseCase {
-  constructor(private readonly crypto: CryptoPort) {}
+export const createGetMockEnvelopeUseCase = (crypto: CryptoPort) => ({
+  execute(input: GetMockEnvelopeInput = {}) {
+    return createMockDogeConnectFixture(crypto, input.paymentId).envelope
+  },
+})
 
-  execute(input: GetMockEnvelopeInput) {
-    return createMockDogeConnectFixture(this.crypto, input.paymentId).envelope
-  }
-}
+export type GetMockEnvelopeUseCase = ReturnType<typeof createGetMockEnvelopeUseCase>

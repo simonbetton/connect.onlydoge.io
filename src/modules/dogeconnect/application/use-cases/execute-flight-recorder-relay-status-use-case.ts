@@ -5,12 +5,10 @@ import type {
 } from "../flight-recorder-contracts"
 import { createTraceEntry, summarizeFlightRecorderSession } from "../flight-recorder-session"
 
-export class ExecuteFlightRecorderRelayStatusUseCase {
-  constructor(
-    private readonly localRelayClient: TracedRelayClientPort,
-    private readonly liveRelayClient: TracedRelayClientPort
-  ) {}
-
+export const createExecuteFlightRecorderRelayStatusUseCase = (
+  localRelayClient: TracedRelayClientPort,
+  liveRelayClient: TracedRelayClientPort
+) => ({
   async execute(input: ExecuteFlightRecorderStatusInput): Promise<FlightRecorderSessionV1> {
     const relay = input.session.artifacts.relay
     if (!relay) {
@@ -50,15 +48,19 @@ export class ExecuteFlightRecorderRelayStatusUseCase {
       )
     }
 
-    const client = targetMode === "simulator" ? this.localRelayClient : this.liveRelayClient
+    const client = targetMode === "simulator" ? localRelayClient : liveRelayClient
     const result = await client.getStatus({
       session: input.session,
       relay,
     })
 
     return updateSession(input.session, result.trace)
-  }
-}
+  },
+})
+
+export type ExecuteFlightRecorderRelayStatusUseCase = ReturnType<
+  typeof createExecuteFlightRecorderRelayStatusUseCase
+>
 
 const updateSession = (
   session: FlightRecorderSessionV1,

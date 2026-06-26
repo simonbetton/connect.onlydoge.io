@@ -2,6 +2,14 @@ import {
   type FlightRecorderFaultPreset,
   isFlightRecorderFaultPreset,
 } from "@/modules/dogeconnect/application/flight-recorder-contracts"
+import {
+  compactPartialSearch,
+  isSearchParamRecord,
+  readSearchParamBoolean,
+  readSearchParamNumber,
+  readSearchParamString,
+  readSearchParamStringList,
+} from "./search-param-parsing"
 
 export type FlightRecorderSearchState = {
   sourceTab: "qr" | "mock" | "import"
@@ -41,82 +49,12 @@ export const defaultFlightRecorderSearch: FlightRecorderSearchState = {
   liveWriteArmed: false,
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null
-
-const readString = (record: Record<string, unknown>, key: string): string | undefined => {
-  if (!(key in record)) {
-    return undefined
-  }
-
-  const value = record[key]
-  if (typeof value === "string") {
-    return value
-  }
-
-  if (Array.isArray(value) && typeof value[0] === "string") {
-    return value[0]
-  }
-
-  return undefined
-}
-
-const readBoolean = (record: Record<string, unknown>, key: string): boolean | undefined => {
-  const value = record[key]
-  if (typeof value === "boolean") {
-    return value
-  }
-
-  if (typeof value === "string") {
-    if (value === "true" || value === "1") {
-      return true
-    }
-    if (value === "false" || value === "0") {
-      return false
-    }
-  }
-
-  return undefined
-}
-
-const readNumber = (record: Record<string, unknown>, key: string): number | undefined => {
-  const value = record[key]
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value
-  }
-
-  if (typeof value === "string") {
-    const parsed = Number(value)
-    if (Number.isFinite(parsed)) {
-      return parsed
-    }
-  }
-
-  return undefined
-}
-
-const readStringList = (record: Record<string, unknown>, key: string): string[] | undefined => {
-  const value = record[key]
-  const entries =
-    typeof value === "string"
-      ? value.split(",")
-      : Array.isArray(value)
-        ? value.flatMap((entry) => (typeof entry === "string" ? entry.split(",") : []))
-        : []
-  const normalized = entries.flatMap((entry) => {
-    const trimmed = entry.trim()
-    return trimmed ? [trimmed] : []
-  })
-
-  return normalized.length > 0 ? normalized : undefined
-}
-
 export const validateFlightRecorderSearch = (input: unknown): FlightRecorderSearch => {
-  const record = isRecord(input) ? input : {}
-  const sourceTab = readString(record, "sourceTab")
-  const targetMode = readString(record, "targetMode")
-  const pollIntervalSec = readNumber(record, "poll")
-  const rawFaults = readStringList(record, "faults")
+  const record = isSearchParamRecord(input) ? input : {}
+  const sourceTab = readSearchParamString(record, "sourceTab")
+  const targetMode = readSearchParamString(record, "targetMode")
+  const pollIntervalSec = readSearchParamNumber(record, "poll")
+  const rawFaults = readSearchParamStringList(record, "faults")
   const selectedFaults = rawFaults?.reduce<FlightRecorderFaultPreset[]>((faults, fault) => {
     if (!isFlightRecorderFaultPreset(fault) || faults.includes(fault)) {
       return faults
@@ -126,19 +64,19 @@ export const validateFlightRecorderSearch = (input: unknown): FlightRecorderSear
     return faults
   }, [])
 
-  return compactSearch({
+  return compactPartialSearch({
     sourceTab:
       sourceTab === "qr" || sourceTab === "mock" || sourceTab === "import" ? sourceTab : undefined,
     targetMode: targetMode === "simulator" || targetMode === "live" ? targetMode : undefined,
-    qrUri: readString(record, "qr"),
-    mockPaymentId: readString(record, "mock"),
-    includeInitialStatus: readBoolean(record, "initial"),
+    qrUri: readSearchParamString(record, "qr"),
+    mockPaymentId: readSearchParamString(record, "mock"),
+    includeInitialStatus: readSearchParamBoolean(record, "initial"),
     selectedFaults,
-    selectedTraceId: readString(record, "trace"),
-    autoPoll: readBoolean(record, "autoPoll"),
+    selectedTraceId: readSearchParamString(record, "trace"),
+    autoPoll: readSearchParamBoolean(record, "autoPoll"),
     pollIntervalSec: pollIntervalSec === undefined ? undefined : Math.max(1, pollIntervalSec),
-    payDraftId: readString(record, "draftId"),
-    liveWriteArmed: readBoolean(record, "armed"),
+    payDraftId: readSearchParamString(record, "draftId"),
+    liveWriteArmed: readSearchParamBoolean(record, "armed"),
   })
 }
 
@@ -174,10 +112,5 @@ export const resolveFlightRecorderSearch = (
   search: FlightRecorderSearch
 ): FlightRecorderSearchState => ({
   ...defaultFlightRecorderSearch,
-  ...compactSearch(search),
+  ...compactPartialSearch(search),
 })
-
-const compactSearch = (search: FlightRecorderSearch): FlightRecorderSearch =>
-  Object.fromEntries(
-    Object.entries(search).filter(([, value]) => value !== undefined)
-  ) as FlightRecorderSearch

@@ -7,40 +7,11 @@ import { FlightRecorderTimelinePanel } from "./flight-recorder-timeline-panel"
 import { useFlightRecorderPage } from "./use-flight-recorder-page"
 
 export function FlightRecorderPage() {
-  const {
-    search,
-    sessionView,
-    selectedTrace,
-    updateSearch,
-    importJson,
-    importError,
-    qrImageError,
-    qrImageName,
-    qrImageDecodePending,
-    pageMessage,
-    buildSessionMutation,
-    ignoredLiveFaults,
-    setSourceTab,
-    setTargetMode,
-    setImportJson,
-    loadQrImage,
-    loadImportFile,
-    importSession,
-    buildSession,
-    toggleFault,
-    resetBuilder,
-    payDraftFields,
-    requiresLiveWriteArm,
-    statusMutation,
-    payMutation,
-    setPayDraftFields,
-    setLiveWriteArmed,
-    exportSession,
-  } = useFlightRecorderPage()
+  const page = useFlightRecorderPage()
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6">
-      <section className="rounded-3xl border border-border/70 bg-gradient-to-br from-amber-100/75 via-background to-orange-100/75 p-6">
+      <section className="rounded-3xl border border-border/70 bg-linear-to-br from-amber-100/75 via-background to-orange-100/75 p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-3xl space-y-2">
             <h1 className="font-semibold text-2xl tracking-tight">Flight Recorder</h1>
@@ -53,13 +24,15 @@ export function FlightRecorderPage() {
           <div className="flex flex-wrap gap-2">
             <Badge
               variant={
-                sessionView ? badgeVariantForVerdict(sessionView.summary.verdict) : "neutral"
+                page.sessionView
+                  ? badgeVariantForVerdict(page.sessionView.summary.verdict)
+                  : "neutral"
               }
             >
-              {sessionView ? sessionView.summary.verdict : "idle"}
+              {page.sessionView ? page.sessionView.summary.verdict : "idle"}
             </Badge>
-            <Badge variant={search.targetMode === "live" ? "warning" : "neutral"}>
-              {search.targetMode === "live" ? "builder: live target" : "builder: simulator"}
+            <Badge variant={page.search.targetMode === "live" ? "warning" : "neutral"}>
+              {page.search.targetMode === "live" ? "builder: live target" : "builder: simulator"}
             </Badge>
           </div>
         </div>
@@ -67,51 +40,54 @@ export function FlightRecorderPage() {
 
       <div className="grid gap-6 xl:grid-cols-2">
         <FlightRecorderSessionBuilder
-          search={search}
-          importJson={importJson}
-          importError={importError}
-          qrImageError={qrImageError}
-          qrImageName={qrImageName}
-          qrImageDecodePending={qrImageDecodePending}
-          pageMessage={pageMessage}
-          buildPending={buildSessionMutation.isPending}
-          buildError={buildSessionMutation.error?.message}
-          ignoredLiveFaultCount={ignoredLiveFaults.length}
-          onUpdateSearch={updateSearch}
-          onSetSourceTab={setSourceTab}
-          onSetTargetMode={setTargetMode}
-          onSetImportJson={setImportJson}
-          onLoadQrImage={loadQrImage}
-          onLoadImportFile={loadImportFile}
-          onImportSession={importSession}
+          search={page.search}
+          importJson={page.importJson}
+          importError={page.importError}
+          qrImageError={page.qrImageError}
+          qrImageName={page.qrImageName}
+          qrImageDecodePending={page.qrImageDecodePending}
+          pageMessage={page.pageMessage}
+          buildPending={page.buildSessionMutation.isPending}
+          buildError={page.buildSessionMutation.error?.message}
+          ignoredLiveFaultCount={page.ignoredLiveFaults.length}
+          onUpdateSearch={page.updateSearch}
+          onSetSourceTab={page.setSourceTab}
+          onSetTargetMode={page.setTargetMode}
+          onSetImportJson={page.setImportJson}
+          onLoadQrImage={page.loadQrImage}
+          onLoadImportFile={page.loadImportFile}
+          onImportSession={page.importSession}
           onBuildSession={() => {
-            void buildSession()
+            void page.buildSession()
           }}
-          onToggleFault={toggleFault}
-          onResetBuilder={resetBuilder}
+          onToggleFault={page.toggleFault}
+          onResetBuilder={page.resetBuilder}
         />
 
         <FlightRecorderTimelinePanel
-          sessionView={sessionView}
-          selectedTrace={selectedTrace}
-          onSelectTrace={(traceId) => updateSearch({ selectedTraceId: traceId })}
+          sessionView={page.sessionView}
+          selectedTrace={page.selectedTrace}
+          onSelectTrace={(traceId) => page.updateSearch({ selectedTraceId: traceId })}
         />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <FlightRecorderInspectorPanel sessionView={sessionView} selectedTrace={selectedTrace} />
+        <FlightRecorderInspectorPanel
+          sessionView={page.sessionView}
+          selectedTrace={page.selectedTrace}
+        />
 
         <FlightRecorderExecutionControlsPanel
-          sessionView={sessionView}
-          search={search}
-          payDraftFields={payDraftFields}
-          requiresLiveWriteArm={requiresLiveWriteArm}
-          statusMutation={statusMutation}
-          payMutation={payMutation}
-          onUpdateSearch={updateSearch}
-          onSetPayDraftFields={setPayDraftFields}
-          onSetLiveWriteArmed={setLiveWriteArmed}
-          onExportSession={exportSession}
+          sessionView={page.sessionView}
+          search={page.search}
+          payDraftFields={page.payDraftFields}
+          requiresLiveWriteArm={page.requiresLiveWriteArm}
+          statusMutation={page.statusMutation}
+          payMutation={page.payMutation}
+          onUpdateSearch={page.updateSearch}
+          onSetPayDraftFields={page.setPayDraftFields}
+          onSetLiveWriteArmed={page.setLiveWriteArmed}
+          onExportSession={page.exportSession}
         />
       </div>
     </div>

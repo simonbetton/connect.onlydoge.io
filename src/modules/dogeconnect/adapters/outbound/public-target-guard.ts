@@ -59,38 +59,17 @@ export const assertPublicTargetUrl = async (input: string | URL): Promise<URL> =
 
 export const safeFetchJson = async (input: SafeJsonFetchInput): Promise<SafeJsonFetchResult> => {
   let current = await assertPublicTargetUrl(input.url)
+  const maxBytes = input.maxBytes ?? DEFAULT_MAX_BYTES
 
   for (let redirectCount = 0; redirectCount <= MAX_REDIRECTS; redirectCount += 1) {
     const response = await fetchWithTimeout(current, input)
 
     if (isRedirect(response.status)) {
-      const location = response.headers.get("location")
-      if (!location) {
-        throw new Error("Redirect response is missing a location header")
-      }
-
-      current = await resolveRedirectTarget(current, location)
+      current = await followRedirect(current, response)
       continue
     }
 
-    const contentLength = response.headers.get("content-length")
-    const maxBytes = input.maxBytes ?? DEFAULT_MAX_BYTES
-    if (contentLength && Number(contentLength) > maxBytes) {
-      throw new Error(`Response exceeded ${maxBytes} bytes`)
-    }
-
-    const raw = await response.text()
-    if (Buffer.byteLength(raw, "utf8") > maxBytes) {
-      throw new Error(`Response exceeded ${maxBytes} bytes`)
-    }
-
-    let body: unknown
-    try {
-      body = raw.length > 0 ? JSON.parse(raw) : null
-    } catch {
-      throw new Error("Response was not valid JSON")
-    }
-
+    const body = await readJsonResponseBody(response, maxBytes)
     return {
       url: current.toString(),
       statusCode: response.status,
@@ -110,6 +89,43 @@ export const resolveRedirectTarget = async (current: URL, location: string): Pro
   return assertPublicTargetUrl(redirected)
 }
 
+const followRedirect = async (current: URL, response: Response): Promise<URL> => {
+  const location = response.headers.get("location")
+  if (!location) {
+    throw new Error("Redirect response is missing a location header")
+  }
+
+  return resolveRedirectTarget(current, location)
+}
+
+const readJsonResponseBody = async (response: Response, maxBytes: number): Promise<unknown> => {
+  assertContentLengthWithinLimit(response, maxBytes)
+  const raw = await response.text()
+  assertRawBodyWithinLimit(raw, maxBytes)
+  return parseJsonText(raw)
+}
+
+const assertContentLengthWithinLimit = (response: Response, maxBytes: number): void => {
+  const contentLength = response.headers.get("content-length")
+  if (contentLength && Number(contentLength) > maxBytes) {
+    throw new Error(`Response exceeded ${maxBytes} bytes`)
+  }
+}
+
+const assertRawBodyWithinLimit = (raw: string, maxBytes: number): void => {
+  if (Buffer.byteLength(raw, "utf8") > maxBytes) {
+    throw new Error(`Response exceeded ${maxBytes} bytes`)
+  }
+}
+
+const parseJsonText = (raw: string): unknown => {
+  try {
+    return raw.length > 0 ? JSON.parse(raw) : null
+  } catch {
+    throw new Error("Response was not valid JSON")
+  }
+}
+
 const isUnsafeHostName = (hostname: string): boolean => {
   const normalized = hostname.trim().toLowerCase()
   return (
@@ -124,25 +140,30 @@ export const isUnsafeIpAddress = (value: string): boolean => {
   }
 
   if (version === 6) {
-    const normalized = value.toLowerCase()
-    const mappedIpv4Address = getMappedIpv4Address(normalized)
-    if (mappedIpv4Address) {
-      return isUnsafeIpv4Address(mappedIpv4Address)
-    }
-
-    return (
-      normalized === "::1" ||
-      normalized.startsWith("fc") ||
-      normalized.startsWith("fd") ||
-      normalized.startsWith("fe8") ||
-      normalized.startsWith("fe9") ||
-      normalized.startsWith("fea") ||
-      normalized.startsWith("feb")
-    )
+    return isUnsafeIpv6Address(value)
   }
 
   return true
 }
+
+const isUnsafeIpv6Address = (value: string): boolean => {
+  const normalized = value.toLowerCase()
+  const mappedIpv4Address = getMappedIpv4Address(normalized)
+  if (mappedIpv4Address) {
+    return isUnsafeIpv4Address(mappedIpv4Address)
+  }
+
+  return isPrivateIpv6Prefix(normalized)
+}
+
+const isPrivateIpv6Prefix = (normalized: string): boolean =>
+  normalized === "::1" ||
+  normalized.startsWith("fc") ||
+  normalized.startsWith("fd") ||
+  normalized.startsWith("fe8") ||
+  normalized.startsWith("fe9") ||
+  normalized.startsWith("fea") ||
+  normalized.startsWith("feb")
 
 const getMappedIpv4Address = (value: string): string | null => {
   const prefix = "::ffff:"
@@ -154,22 +175,35 @@ const getMappedIpv4Address = (value: string): string | null => {
   return isIP(embedded) === 4 ? embedded : null
 }
 
-const isUnsafeIpv4Address = (value: string): boolean => {
+const parseIpv4LeadingOctets = (value: string): [number, number] | null => {
   const octets = value.split(".").map((part) => Number(part))
   if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet))) {
+    return null
+  }
+
+  return [octets[0], octets[1]]
+}
+
+const UNSAFE_IPV4_RULES: Array<(a: number, b: number) => boolean> = [
+  (a) => a === 0,
+  (a) => a === 10,
+  (a) => a === 127,
+  (a, b) => a === 169 && b === 254,
+  (a, b) => a === 172 && b >= 16 && b <= 31,
+  (a, b) => a === 192 && b === 168,
+  (a, b) => a === 100 && b >= 64 && b <= 127,
+]
+
+const isUnsafeIpv4OctetPair = (a: number, b: number): boolean =>
+  UNSAFE_IPV4_RULES.some((rule) => rule(a, b))
+
+const isUnsafeIpv4Address = (value: string): boolean => {
+  const octets = parseIpv4LeadingOctets(value)
+  if (!octets) {
     return true
   }
 
-  const [a, b] = octets
-  return (
-    a === 0 ||
-    a === 10 ||
-    a === 127 ||
-    (a === 169 && b === 254) ||
-    (a === 172 && b >= 16 && b <= 31) ||
-    (a === 192 && b === 168) ||
-    (a === 100 && b >= 64 && b <= 127)
-  )
+  return isUnsafeIpv4OctetPair(octets[0], octets[1])
 }
 
 const fetchWithTimeout = async (current: URL, input: SafeJsonFetchInput): Promise<Response> => {

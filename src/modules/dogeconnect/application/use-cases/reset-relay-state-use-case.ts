@@ -1,9 +1,9 @@
 import type { RelayStateStorePort } from "../../ports/relay-state-store-port"
 
-export class ResetRelayStateUseCase {
-  constructor(private readonly store: RelayStateStorePort) {}
-
+export const createResetRelayStateUseCase = (store: RelayStateStorePort) => ({
   async execute(): Promise<void> {
-    await this.store.clear()
-  }
-}
+    await store.clear()
+  },
+})
+
+export type ResetRelayStateUseCase = ReturnType<typeof createResetRelayStateUseCase>

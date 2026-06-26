@@ -1,3 +1,11 @@
+import {
+  compactPartialSearch,
+  isSearchParamRecord,
+  readSearchParamBoolean,
+  readSearchParamNumber,
+  readSearchParamString,
+} from "./search-param-parsing"
+
 export type RelayScenarioOption = "accepted" | "confirmed" | "declined" | "error"
 
 export type ToolsSearchState = {
@@ -40,70 +48,11 @@ export const defaultToolsSearch: ToolsSearchState = {
   relayStatusId: "",
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null
-
-const compactSearch = (search: ToolsSearch): ToolsSearch =>
-  Object.fromEntries(
-    Object.entries(search).filter(([, value]) => value !== undefined)
-  ) as ToolsSearch
-
-const readString = (record: Record<string, unknown>, key: string): string | undefined => {
-  const value = record[key]
-
-  if (typeof value === "string") {
-    return value || undefined
-  }
-
-  if (Array.isArray(value) && typeof value[0] === "string") {
-    return value[0] || undefined
-  }
-
-  return undefined
-}
-
-const readBoolean = (record: Record<string, unknown>, key: string): boolean | undefined => {
-  const value = record[key]
-
-  if (typeof value === "boolean") {
-    return value
-  }
-
-  if (typeof value === "string") {
-    if (value === "true" || value === "1") {
-      return true
-    }
-
-    if (value === "false" || value === "0") {
-      return false
-    }
-  }
-
-  return undefined
-}
-
-const readNumber = (record: Record<string, unknown>, key: string): number | undefined => {
-  const value = record[key]
-
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value
-  }
-
-  if (typeof value === "string") {
-    const parsed = Number(value)
-    if (Number.isFinite(parsed)) {
-      return parsed
-    }
-  }
-
-  return undefined
-}
-
 const readScenario = (
   record: Record<string, unknown>,
   key: string
 ): RelayScenarioOption | undefined => {
-  const value = readString(record, key)
+  const value = readSearchParamString(record, key, { emptyAsUndefined: true })
 
   if (value === "accepted" || value === "confirmed" || value === "declined" || value === "error") {
     return value
@@ -113,21 +62,23 @@ const readScenario = (
 }
 
 export const validateToolsSearch = (input: unknown): ToolsSearch => {
-  const record = isRecord(input) ? input : {}
+  const record = isSearchParamRecord(input) ? input : {}
 
-  return compactSearch({
-    mockPaymentId: readString(record, "mock"),
-    qrUri: readString(record, "uri"),
-    qrFetchEnvelope: readBoolean(record, "fetchEnvelope"),
-    envelopeExpectedHash: readString(record, "expectedHash"),
-    relayRegisterId: readString(record, "registerId"),
+  return compactPartialSearch({
+    mockPaymentId: readSearchParamString(record, "mock", { emptyAsUndefined: true }),
+    qrUri: readSearchParamString(record, "uri", { emptyAsUndefined: true }),
+    qrFetchEnvelope: readSearchParamBoolean(record, "fetchEnvelope"),
+    envelopeExpectedHash: readSearchParamString(record, "expectedHash", { emptyAsUndefined: true }),
+    relayRegisterId: readSearchParamString(record, "registerId", { emptyAsUndefined: true }),
     relayRegisterScenario: readScenario(record, "registerScenario"),
-    relayRegisterReason: readString(record, "registerReason"),
-    relayRegisterToken: readString(record, "registerToken"),
-    relayRegisterRequired: readNumber(record, "registerRequired"),
-    relayRegisterDueSec: readNumber(record, "registerDueSec"),
-    relayPayId: readString(record, "payId"),
-    relayStatusId: readString(record, "statusId"),
+    relayRegisterReason: readSearchParamString(record, "registerReason", {
+      emptyAsUndefined: true,
+    }),
+    relayRegisterToken: readSearchParamString(record, "registerToken", { emptyAsUndefined: true }),
+    relayRegisterRequired: readSearchParamNumber(record, "registerRequired"),
+    relayRegisterDueSec: readSearchParamNumber(record, "registerDueSec"),
+    relayPayId: readSearchParamString(record, "payId", { emptyAsUndefined: true }),
+    relayStatusId: readSearchParamString(record, "statusId", { emptyAsUndefined: true }),
   })
 }
 
@@ -158,5 +109,5 @@ export const cleanToolsSearch = (
 
 export const resolveToolsSearch = (search: ToolsSearch): ToolsSearchState => ({
   ...defaultToolsSearch,
-  ...compactSearch(search),
+  ...compactPartialSearch(search),
 })

@@ -2,9 +2,9 @@ import { describe, expect, test } from "vitest"
 import { NobleCryptoAdapter } from "../../adapters/crypto/noble-crypto-adapter"
 import type { FlightRecorderSessionV1 } from "../flight-recorder-contracts"
 import { createTraceEntry } from "../flight-recorder-session"
-import { BuildFlightRecorderSessionUseCase } from "./build-flight-recorder-session-use-case"
-import { ExecuteFlightRecorderRelayPayUseCase } from "./execute-flight-recorder-relay-pay-use-case"
-import { GenerateMockQrUseCase } from "./generate-mock-qr-use-case"
+import { createBuildFlightRecorderSessionUseCase } from "./build-flight-recorder-session-use-case"
+import { createExecuteFlightRecorderRelayPayUseCase } from "./execute-flight-recorder-relay-pay-use-case"
+import { createGenerateMockQrUseCase } from "./generate-mock-qr-use-case"
 import { ValidatePaymentEnvelopeUseCase } from "./validate-payment-envelope-use-case"
 
 describe("BuildFlightRecorderSessionUseCase", () => {
@@ -53,11 +53,31 @@ describe("BuildFlightRecorderSessionUseCase", () => {
     expect(session.trace).toHaveLength(1)
     expect(session.artifacts.relay).toBeNull()
   })
+
+  test("records payment decode failures for invalid mock payment payloads", async () => {
+    const useCase = createBuildUseCase()
+
+    const session = await useCase.execute({
+      source: {
+        mode: "mock",
+      },
+      targetMode: "simulator",
+      options: {
+        includeInitialStatus: false,
+      },
+      faults: ["expired_timeout"],
+      origin: "https://www.onlydoge.io",
+    })
+
+    const paymentDecode = session.trace.find((entry) => entry.phase === "payment_decode")
+    expect(paymentDecode).toBeDefined()
+    expect(paymentDecode?.verdict).toBe("fail")
+  })
 })
 
 describe("ExecuteFlightRecorderRelayPayUseCase", () => {
   test("refuses live pay execution while disarmed", async () => {
-    const useCase = new ExecuteFlightRecorderRelayPayUseCase(
+    const useCase = createExecuteFlightRecorderRelayPayUseCase(
       createRelayClientStub(),
       createRelayClientStub()
     )
@@ -76,10 +96,10 @@ describe("ExecuteFlightRecorderRelayPayUseCase", () => {
 
 const createBuildUseCase = () => {
   const crypto = new NobleCryptoAdapter()
-  return new BuildFlightRecorderSessionUseCase(
-    new GenerateMockQrUseCase(crypto),
-    new ValidatePaymentEnvelopeUseCase(crypto),
-    {
+  return createBuildFlightRecorderSessionUseCase({
+    generateMockQrUseCase: createGenerateMockQrUseCase(crypto),
+    validatePaymentEnvelopeUseCase: new ValidatePaymentEnvelopeUseCase(crypto),
+    envelopeClient: {
       async fetchEnvelope() {
         return {
           envelope: null,
@@ -92,9 +112,9 @@ const createBuildUseCase = () => {
         }
       },
     },
-    createRelayClientStub(),
-    createRelayClientStub()
-  )
+    localRelayClient: createRelayClientStub(),
+    liveRelayClient: createRelayClientStub(),
+  })
 }
 
 const createRelayClientStub = () => ({

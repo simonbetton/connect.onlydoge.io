@@ -25,76 +25,14 @@ export class ValidatePaymentEnvelopeUseCase {
     const envelopeResult = ConnectEnvelope.parse(input.envelope)
     const envelope = envelopeResult.value
     errors.push(...envelopeResult.issues)
-    checks.push({
-      name: "Envelope structure",
-      passed: !hasValidationErrors(envelopeResult.issues),
-      details:
-        envelopeResult.issues.length === 0
-          ? "Envelope fields are valid."
-          : "Envelope has validation issues.",
-    })
+    checks.push(buildEnvelopeStructureCheck(envelopeResult.issues))
 
     if (!envelope) {
-      return {
-        verdict: "invalid",
-        checks,
-        errors,
-        envelope: null,
-        payment: null,
-      }
+      return invalidEnvelopeResult(checks, errors)
     }
 
-    let payload: unknown = null
-    let paymentValue: ConnectPayment | null = null
-
-    if (!envelope.payloadBytes) {
-      errors.push(validationError("payload", "cannot decode payload"))
-      checks.push({
-        name: "Payload JSON decode",
-        passed: false,
-        details: "Payload bytes could not be decoded.",
-      })
-    } else {
-      const payloadText = bytesToUtf8(envelope.payloadBytes)
-      if (!payloadText) {
-        errors.push(validationError("payload", "malformed UTF-8 payload"))
-        checks.push({
-          name: "Payload JSON decode",
-          passed: false,
-          details: "Payload is not valid UTF-8.",
-        })
-      } else {
-        try {
-          payload = JSON.parse(payloadText)
-          checks.push({
-            name: "Payload JSON decode",
-            passed: true,
-            details: "Payload JSON decoded successfully.",
-          })
-        } catch {
-          errors.push(validationError("payload", "malformed payload JSON"))
-          checks.push({
-            name: "Payload JSON decode",
-            passed: false,
-            details: "Payload is not valid JSON.",
-          })
-        }
-      }
-    }
-
-    if (payload !== null) {
-      const paymentResult = ConnectPayment.parse(payload)
-      paymentValue = paymentResult.value
-      errors.push(...paymentResult.issues)
-      checks.push({
-        name: "Payment payload schema",
-        passed: !hasValidationErrors(paymentResult.issues),
-        details:
-          paymentResult.issues.length === 0
-            ? "Payment payload matches protocol rules."
-            : "Payment payload has validation issues.",
-      })
-    }
+    const payloadResult = decodeEnvelopePayload(envelope, checks, errors)
+    const paymentValue = validateDecodedPayment(payloadResult.payload, checks, errors)
 
     const signatureCheck = this.verifySignature(envelope)
     checks.push(signatureCheck.check)
@@ -201,6 +139,90 @@ export class ValidatePaymentEnvelopeUseCase {
       errorMessage: passed ? null : "wrong public key",
     }
   }
+}
+
+const buildEnvelopeStructureCheck = (issues: ValidationIssue[]): ValidationCheck => ({
+  name: "Envelope structure",
+  passed: !hasValidationErrors(issues),
+  details: issues.length === 0 ? "Envelope fields are valid." : "Envelope has validation issues.",
+})
+
+const invalidEnvelopeResult = (
+  checks: ValidationCheck[],
+  errors: ValidationIssue[]
+): EnvelopeValidationPayload => ({
+  verdict: "invalid",
+  checks,
+  errors,
+  envelope: null,
+  payment: null,
+})
+
+const decodeEnvelopePayload = (
+  envelope: ConnectEnvelope,
+  checks: ValidationCheck[],
+  errors: ValidationIssue[]
+): { payload: unknown } => {
+  if (!envelope.payloadBytes) {
+    errors.push(validationError("payload", "cannot decode payload"))
+    checks.push({
+      name: "Payload JSON decode",
+      passed: false,
+      details: "Payload bytes could not be decoded.",
+    })
+    return { payload: null }
+  }
+
+  const payloadText = bytesToUtf8(envelope.payloadBytes)
+  if (!payloadText) {
+    errors.push(validationError("payload", "malformed UTF-8 payload"))
+    checks.push({
+      name: "Payload JSON decode",
+      passed: false,
+      details: "Payload is not valid UTF-8.",
+    })
+    return { payload: null }
+  }
+
+  try {
+    const payload = JSON.parse(payloadText)
+    checks.push({
+      name: "Payload JSON decode",
+      passed: true,
+      details: "Payload JSON decoded successfully.",
+    })
+    return { payload }
+  } catch {
+    errors.push(validationError("payload", "malformed payload JSON"))
+    checks.push({
+      name: "Payload JSON decode",
+      passed: false,
+      details: "Payload is not valid JSON.",
+    })
+    return { payload: null }
+  }
+}
+
+const validateDecodedPayment = (
+  payload: unknown,
+  checks: ValidationCheck[],
+  errors: ValidationIssue[]
+): ConnectPayment | null => {
+  if (payload === null) {
+    return null
+  }
+
+  const paymentResult = ConnectPayment.parse(payload)
+  errors.push(...paymentResult.issues)
+  checks.push({
+    name: "Payment payload schema",
+    passed: !hasValidationErrors(paymentResult.issues),
+    details:
+      paymentResult.issues.length === 0
+        ? "Payment payload matches protocol rules."
+        : "Payment payload has validation issues.",
+  })
+  return paymentResult.value
 }
 
 const normalizePayment = (payment: ConnectPayment): Record<string, unknown> => ({
