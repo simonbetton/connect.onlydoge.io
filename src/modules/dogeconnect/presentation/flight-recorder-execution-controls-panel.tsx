@@ -1,4 +1,5 @@
 import type { UseMutationResult } from "@tanstack/react-query"
+import { PanelCard } from "@/components/panel-card"
 import type { FlightRecorderSessionV1 } from "@/modules/dogeconnect/application/flight-recorder-contracts"
 import {
   AutoPollSettingsPanel,
@@ -8,7 +9,7 @@ import {
   PayDraftFieldsPanel,
   SessionExportButtons,
 } from "./flight-recorder-execution-controls-parts"
-import { EmptyPanelMessage, PanelCard } from "./flight-recorder-page-parts"
+import { EmptyPanelMessage } from "./flight-recorder-page-parts"
 import type { FlightRecorderPayDraftFields } from "./flight-recorder-page-utils"
 import type { FlightRecorderSearchState } from "./flight-recorder-search"
 

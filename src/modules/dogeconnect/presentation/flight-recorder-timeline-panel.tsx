@@ -1,3 +1,4 @@
+import { PanelCard } from "@/components/panel-card"
 import { Badge } from "@/components/ui/badge"
 import { idleInteractiveClass, selectedInteractiveClass } from "@/lib/selection-styles"
 import { cn } from "@/lib/utils"
@@ -5,7 +6,7 @@ import type {
   FlightRecorderSessionV1,
   FlightTraceEntry,
 } from "@/modules/dogeconnect/application/flight-recorder-contracts"
-import { EmptyPanelMessage, PanelCard, SessionSummaryView } from "./flight-recorder-page-parts"
+import { EmptyPanelMessage, SessionSummaryView } from "./flight-recorder-page-parts"
 import { badgeVariantForVerdict, formatPhaseLabel } from "./flight-recorder-page-utils"
 
 export function FlightRecorderTimelinePanel({

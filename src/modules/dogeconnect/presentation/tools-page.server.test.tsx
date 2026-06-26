@@ -12,6 +12,21 @@ vi.mock("@tanstack/react-router", async () => {
     ...actual,
     useNavigate: () => () => Promise.resolve(),
     useSearch: () => defaultToolsSearch,
+    Link: ({
+      to,
+      hash,
+      children,
+      className,
+    }: {
+      to: string
+      hash?: string
+      children: React.ReactNode
+      className?: string
+    }) => (
+      <a href={hash ? `${to}#${hash}` : to} className={className}>
+        {children}
+      </a>
+    ),
   }
 })
 
@@ -28,5 +43,8 @@ describe("ToolsPage server render", () => {
     expect(html).toContain("Validate Payment Envelope")
     expect(html).toContain("Relay Scenario Registration")
     expect(html).toContain("Relay Pay / Status Tester")
+    expect(html).toContain("Quick Start")
+    expect(html).toContain('id="mock-fixture"')
+    expect(html).toContain("strict validation")
   })
 })

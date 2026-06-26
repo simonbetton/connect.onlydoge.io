@@ -1,5 +1,5 @@
+import { PanelCard } from "@/components/panel-card"
 import type { FlightRecorderFaultPreset } from "@/modules/dogeconnect/application/flight-recorder-contracts"
-import { PanelCard } from "./flight-recorder-page-parts"
 import type { FlightRecorderSearchState } from "./flight-recorder-search"
 import {
   BuilderActionButtons,

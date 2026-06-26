@@ -1,3 +1,4 @@
+import { PageJumpNav } from "@/components/page-jump-nav"
 import {
   EnvelopeValidatorCard,
   MockQrFixtureCard,
@@ -9,6 +10,14 @@ import {
 } from "./tools-page-sections"
 import { useToolsPageController } from "./use-tools-page-controller"
 
+const sectionNavItems = [
+  { href: "#mock-fixture", label: "Mock QR" },
+  { href: "#qr-validator", label: "QR Validator" },
+  { href: "#envelope-validator", label: "Envelope" },
+  { href: "#relay-registration", label: "Relay Setup" },
+  { href: "#relay-tester", label: "Relay Tester" },
+] as const
+
 export function ToolsPage() {
   const controller = useToolsPageController()
 
@@ -16,6 +25,7 @@ export function ToolsPage() {
     <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6">
       <ToolsPageHero />
       <ToolsQuickStartSection />
+      <PageJumpNav items={[...sectionNavItems]} ariaLabel="Tools sections" />
 
       <MockQrFixtureCard
         mockQrForm={controller.mockQrForm}

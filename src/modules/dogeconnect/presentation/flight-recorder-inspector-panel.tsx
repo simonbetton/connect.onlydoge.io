@@ -1,9 +1,10 @@
+import { PanelCard } from "@/components/panel-card"
 import { Badge } from "@/components/ui/badge"
 import type {
   FlightRecorderSessionV1,
   FlightTraceEntry,
 } from "@/modules/dogeconnect/application/flight-recorder-contracts"
-import { EmptyPanelMessage, JsonSection, PanelCard } from "./flight-recorder-page-parts"
+import { EmptyPanelMessage, JsonSection } from "./flight-recorder-page-parts"
 import { badgeVariantForVerdict, formatPhaseLabel } from "./flight-recorder-page-utils"
 
 export function FlightRecorderInspectorPanel({

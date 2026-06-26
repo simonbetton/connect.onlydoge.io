@@ -13,7 +13,7 @@ export function NotFoundPage() {
   })
 
   return (
-    <section className="mx-auto flex w-full max-w-6xl px-4 py-10 sm:px-6">
+    <section className="mx-auto flex w-full max-w-7xl px-4 py-8 sm:px-6">
       <PageHero title="This route is missing." variant="brand" className="w-full">
         <Badge variant="warning" className="w-fit">
           HTTP 404

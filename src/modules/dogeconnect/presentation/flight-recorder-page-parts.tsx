@@ -1,7 +1,5 @@
-import type { ReactNode } from "react"
 import { JsonCodeBlock } from "@/components/json-code-block"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { idleInteractiveClass, selectedInteractiveClass } from "@/lib/selection-styles"
 import { cn } from "@/lib/utils"
 import type {
@@ -56,30 +54,6 @@ export function FaultSelector({
         ))}
       </div>
     </div>
-  )
-}
-
-export function PanelCard({
-  id,
-  title,
-  description,
-  children,
-}: {
-  id?: string
-  title: string
-  description: string
-  children: ReactNode
-}) {
-  return (
-    <Card id={id} className={id ? "scroll-mt-24" : undefined}>
-      <CardHeader>
-        <div>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
   )
 }
 
