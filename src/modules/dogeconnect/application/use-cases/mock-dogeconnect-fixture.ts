@@ -15,7 +15,7 @@ const MOCK_MAX_SIZE_BYTES = 100_000
 
 const readMockPrivateKey = (): Uint8Array => {
   const bytes = hexToBytesStrict(MOCK_PRIVATE_KEY_HEX)
-  if (!bytes || bytes.length !== 32) {
+  if (bytes?.length !== 32) {
     throw new Error("Mock private key is invalid")
   }
   return bytes

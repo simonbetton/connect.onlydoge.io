@@ -1,7 +1,6 @@
 "use client"
 
-import Copy01Icon from "@hugeicons/core-free-icons/Copy01Icon"
-import Tick02Icon from "@hugeicons/core-free-icons/Tick02Icon"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useControllableState } from "@radix-ui/react-use-controllable-state"
 import {
@@ -11,10 +10,10 @@ import {
   transformerNotationHighlight,
   transformerNotationWordHighlight,
 } from "@shikijs/transformers"
-import * as React from "react"
 import type { CodeOptionsMultipleThemes } from "@shikijs/types"
-import { type CodeBlockLanguage, codeToHtml } from "@/lib/shiki"
+import * as React from "react"
 import { Button } from "@/components/ui/button"
+import { type CodeBlockLanguage, codeToHtml } from "@/lib/shiki"
 import { cn } from "@/lib/utils"
 
 type CodeBlockData = {
@@ -162,7 +161,7 @@ export const CodeBlock = ({
 export const CodeBlockHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex min-w-0 items-center justify-between gap-3 border-b border-border/70 bg-muted/50 px-3 py-2",
+      "flex min-w-0 items-center justify-between gap-3 border-border/70 border-b bg-muted/50 px-3 py-2",
       className
     )}
     {...props}
@@ -183,7 +182,7 @@ export const CodeBlockFilename = ({
 
   return (
     <div
-      className={cn("min-w-0 truncate font-mono text-xs text-muted-foreground", className)}
+      className={cn("min-w-0 truncate font-mono text-muted-foreground text-xs", className)}
       {...props}
     >
       {children}

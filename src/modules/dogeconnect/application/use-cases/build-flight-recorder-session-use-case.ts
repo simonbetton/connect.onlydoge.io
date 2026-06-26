@@ -94,7 +94,7 @@ export class BuildFlightRecorderSessionUseCase {
       })
     )
 
-    if (!parsedQr || !parsedQr.isConnectUri) {
+    if (!parsedQr?.isConnectUri) {
       const session = this.createSession({
         now,
         input,

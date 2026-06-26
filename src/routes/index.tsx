@@ -1,4 +1,4 @@
-import ArrowRight01Icon from "@hugeicons/core-free-icons/ArrowRight01Icon"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { buttonVariants } from "@/components/ui/button"
@@ -10,15 +10,15 @@ export const Route = createFileRoute("/")({ component: App })
 function App() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6">
-      <section className="relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-br from-primary/80 via-background to-primary/40 p-8 shadow-sm">
+      <section className="relative overflow-hidden rounded-3xl border border-border/70 bg-linear-to-br from-primary/80 via-background to-primary/40 p-8 shadow-sm">
         <div className="absolute -top-24 -right-14 size-56 rounded-full bg-primary/20 blur-3xl" />
         <div className="absolute -bottom-16 -left-20 size-56 rounded-full bg-primary/20 blur-3xl" />
         <div className="relative flex max-w-3xl flex-col gap-5">
-          <p className="text-xs tracking-[0.18em] text-muted-foreground uppercase">OnlyDoge</p>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+          <p className="text-muted-foreground text-xs uppercase tracking-[0.18em]">OnlyDoge</p>
+          <h1 className="font-semibold text-3xl text-foreground tracking-tight sm:text-4xl">
             Debug DogeConnect flows with confidence.
           </h1>
-          <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
             Validate QR payloads, inspect envelope signatures, and test relay behaviors in one
             place. Start with tools for quick checks or use Flight Recorder for full trace-level
             debugging.
@@ -30,7 +30,10 @@ function App() {
             </Link>
             <Link
               to="/flight-recorder"
-              className={buttonVariants({ variant: "outline", className: "gap-1.5" })}
+              className={buttonVariants({
+                variant: "outline",
+                className: "gap-1.5",
+              })}
             >
               Open Flight Recorder
               <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
@@ -55,7 +58,7 @@ function App() {
               Fast checks for QR URIs, envelopes, and relay simulator responses.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+          <CardContent className="space-y-3 text-muted-foreground text-sm leading-relaxed">
             <p>
               Use this when you need to quickly verify one payload, reproduce an issue, or inspect a
               response contract without building a full trace session.
@@ -75,7 +78,7 @@ function App() {
               End-to-end traces for investigation and repeatable debugging.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm leading-relaxed text-muted-foreground">
+          <CardContent className="space-y-3 text-muted-foreground text-sm leading-relaxed">
             <p>
               Build a timeline from QR parsing through relay pay/status execution, then export
               sanitized sessions to share clear bug reports.
@@ -91,8 +94,8 @@ function App() {
       </section>
 
       <section className="rounded-3xl border border-border/70 bg-card/50 p-6">
-        <h2 className="text-lg font-semibold">What You Can Check Here</h2>
-        <div className="mt-4 grid gap-3 text-sm text-muted-foreground md:grid-cols-2 xl:grid-cols-4">
+        <h2 className="font-semibold text-lg">What You Can Check Here</h2>
+        <div className="mt-4 grid gap-3 text-muted-foreground text-sm md:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-border/60 bg-background/70 p-4">
             <p className="font-medium text-foreground">QR URI Validation</p>
             <p className="mt-2">
@@ -125,8 +128,8 @@ function App() {
       </section>
 
       <section className="rounded-3xl border border-border/70 bg-card/50 p-6">
-        <h2 className="text-lg font-semibold">Typical Workflow</h2>
-        <ol className="mt-4 grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
+        <h2 className="font-semibold text-lg">Typical Workflow</h2>
+        <ol className="mt-4 grid gap-3 text-muted-foreground text-sm md:grid-cols-2">
           <li className="rounded-2xl border border-border/60 bg-background/70 p-4">
             <p className="font-medium text-foreground">1. Validate the QR URI</p>
             <p className="mt-2">Confirm `dc` and `h` values and optionally fetch the envelope.</p>

@@ -11,16 +11,13 @@ const PURE_ANNOTATION = /\/\*[#@]?\s*__PURE__\s*\*\//
 
 /** Annotation before a non-call expression (array, object, literal, etc.). */
 const INVALID_PURE_BEFORE_EXPRESSION =
-  /\/\*[#@]?\s*__PURE__\s*\*\/\s*(?=[\[\{]|null\b|undefined\b|'|"|`|\d)/g
+  /\/\*[#@]?\s*__PURE__\s*\*\/\s*(?=[[{]|null\b|undefined\b|'|"|`|\d)/g
 
 /** Annotation between a binding and `=` in a declarator. */
-const INVALID_PURE_IN_DECLARATOR =
-  /(\b(?:const|let|var)\s+[\w$]+)\s*\/\*[#@]?\s*__PURE__\s*\*\//g
+const INVALID_PURE_IN_DECLARATOR = /(\b(?:const|let|var)\s+[\w$]+)\s*\/\*[#@]?\s*__PURE__\s*\*\//g
 
 export function stripInvalidPureAnnotations(code: string): string {
-  return code
-    .replace(INVALID_PURE_BEFORE_EXPRESSION, "")
-    .replace(INVALID_PURE_IN_DECLARATOR, "$1")
+  return code.replace(INVALID_PURE_BEFORE_EXPRESSION, "").replace(INVALID_PURE_IN_DECLARATOR, "$1")
 }
 
 export type StripInvalidPureAnnotationsOptions = {
@@ -31,11 +28,11 @@ export type StripInvalidPureAnnotationsOptions = {
 const DEFAULT_PACKAGES = ["@hugeicons/core-free-icons"]
 
 export default function stripInvalidPureAnnotationsPlugin(
-  options: StripInvalidPureAnnotationsOptions = {},
+  options: StripInvalidPureAnnotationsOptions = {}
 ): Plugin {
   const packages = options.packages ?? DEFAULT_PACKAGES
   const idPattern = new RegExp(
-    `[\\\\/]node_modules[\\\\/](${packages.map((pkg) => pkg.replace("/", "[\\\\/]")).join("|")})[\\\\/]`,
+    `[\\\\/]node_modules[\\\\/](${packages.map((pkg) => pkg.replace("/", "[\\\\/]")).join("|")})[\\\\/]`
   )
 
   return {

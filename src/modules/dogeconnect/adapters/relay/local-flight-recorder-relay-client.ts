@@ -134,7 +134,7 @@ export class LocalFlightRecorderRelayClient implements TracedRelayClientPort {
     }
 
     const existing = await this.store.getById(paymentId)
-    if (!existing || existing.status !== "accepted") {
+    if (existing?.status !== "accepted") {
       return
     }
 

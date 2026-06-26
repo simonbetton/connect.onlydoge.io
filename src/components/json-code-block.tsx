@@ -33,11 +33,11 @@ export const JsonCodeBlock = ({ filename, value }: JsonCodeBlockProps) => (
       <CodeBlockItem
         value="json"
         lineNumbers={false}
-        className="[&_pre]:overflow-x-hidden [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:whitespace-pre-wrap [&_code]:break-words [&_.line]:whitespace-pre-wrap [&_.line]:break-all"
+        className="[&_.line]:whitespace-pre-wrap [&_.line]:break-all [&_code]:whitespace-pre-wrap [&_code]:break-words [&_pre]:overflow-x-hidden [&_pre]:whitespace-pre-wrap [&_pre]:break-words"
       >
         <CodeBlockContent
           language="json"
-          className="[&_pre]:overflow-x-hidden [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_code]:whitespace-pre-wrap [&_code]:break-words [&_.line]:whitespace-pre-wrap [&_.line]:break-all"
+          className="[&_.line]:whitespace-pre-wrap [&_.line]:break-all [&_code]:whitespace-pre-wrap [&_code]:break-words [&_pre]:overflow-x-hidden [&_pre]:whitespace-pre-wrap [&_pre]:break-words"
         >
           {value}
         </CodeBlockContent>

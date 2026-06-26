@@ -3,10 +3,9 @@ import { stripInvalidPureAnnotations } from "./strip-invalid-pure-annotations"
 
 describe("stripInvalidPureAnnotations", () => {
   it("removes pure annotations before array literals", () => {
-    const input =
-      'const ArrowRight01Icon = /*#__PURE__*/ [\n  ["path", { d: "M9 6" }]\n];'
+    const input = 'const ArrowRight01Icon = /*#__PURE__*/ [\n  ["path", { d: "M9 6" }]\n];'
     expect(stripInvalidPureAnnotations(input)).toBe(
-      'const ArrowRight01Icon = [\n  ["path", { d: "M9 6" }]\n];',
+      'const ArrowRight01Icon = [\n  ["path", { d: "M9 6" }]\n];'
     )
   })
 

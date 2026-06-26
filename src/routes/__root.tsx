@@ -76,7 +76,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <QueryClientProvider client={queryClient}>
           <div className="relative flex min-h-svh flex-col">
-            <header className="sticky top-0 z-20 border-b border-border/70 bg-background/95 shadow-xs backdrop-blur">
+            <header className="sticky top-0 z-20 border-border/70 border-b bg-background/95 shadow-xs backdrop-blur">
               <nav className="mx-auto w-full max-w-7xl px-4 sm:px-6">
                 <div className="flex items-center justify-between gap-3 py-3">
                   <Link
@@ -86,10 +86,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                   >
                     <img src="/favicon.svg" alt="OnlyDoge" className="size-9 shrink-0 sm:size-10" />
                     <div className="flex flex-col">
-                      <span className="doge-logo truncate text-sm font-bold text-foreground sm:text-base">
+                      <span className="doge-logo truncate font-bold text-foreground text-sm sm:text-base">
                         DogeConnect Debugger
                       </span>
-                      <span className="-mt-1 ml-0.5 text-xs font-normal text-muted-foreground">
+                      <span className="-mt-1 ml-0.5 font-normal text-muted-foreground text-xs">
                         by EasyDoge
                       </span>
                     </div>
@@ -97,7 +97,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
                   <button
                     type="button"
-                    className="inline-flex rounded-2xl border border-border bg-background/80 px-3 py-1.5 text-sm font-medium text-foreground md:hidden"
+                    className="inline-flex rounded-2xl border border-border bg-background/80 px-3 py-1.5 font-medium text-foreground text-sm md:hidden"
                     aria-expanded={isMenuOpen}
                     aria-controls="mobile-nav"
                     onClick={() => setIsMenuOpen((open) => !open)}
@@ -105,7 +105,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                     {isMenuOpen ? "Close" : "Menu"}
                   </button>
 
-                  <div className="hidden items-center gap-4 text-sm text-muted-foreground md:flex">
+                  <div className="hidden items-center gap-4 text-muted-foreground text-sm md:flex">
                     <Link
                       to="/"
                       className="rounded-xl px-2 py-1 transition hover:bg-muted/70 hover:text-foreground"
@@ -152,7 +152,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 </div>
 
                 {isMenuOpen ? (
-                  <div id="mobile-nav" className="border-t border-border/70 py-3 md:hidden">
+                  <div id="mobile-nav" className="border-border/70 border-t py-3 md:hidden">
                     <div className="grid gap-2 text-sm">
                       <Link
                         to="/"
@@ -214,8 +214,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
             <main className="flex-1">{children}</main>
 
-            <footer className="border-t border-border/70 bg-background/90">
-              <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <footer className="border-border/70 border-t bg-background/90">
+              <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 py-4 text-muted-foreground text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6">
                 <p>Unaffiliated with Dogecoin or any other organization.</p>
                 <p className="flex flex-wrap items-center gap-3">
                   <a
@@ -281,21 +281,21 @@ function NotFoundPage() {
         <div className="absolute -top-16 -right-12 size-40 rounded-full bg-amber-300/25 blur-3xl" />
         <div className="absolute -bottom-20 -left-18 size-44 rounded-full bg-orange-400/20 blur-3xl" />
         <div className="relative space-y-5">
-          <div className="inline-flex items-center rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-xs font-medium text-amber-900">
+          <div className="inline-flex items-center rounded-full border border-amber-300 bg-amber-100 px-3 py-1 font-medium text-amber-900 text-xs">
             HTTP 404
           </div>
           <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <h1 className="font-semibold text-3xl text-foreground tracking-tight sm:text-4xl">
               This route is missing.
             </h1>
-            <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            <p className="max-w-2xl text-muted-foreground text-sm leading-relaxed sm:text-base">
               OnlyDoge DogeConnect Debugger could not resolve the requested page. Use one of the
               shortcuts below to get back to active debugging workflows.
             </p>
           </div>
           <div className="max-w-full overflow-x-auto rounded-2xl border border-border/70 bg-background/80 px-4 py-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase">Requested Path</p>
-            <p className="mt-1 font-mono text-sm text-foreground">{unresolvedPath || "/"}</p>
+            <p className="font-medium text-muted-foreground text-xs uppercase">Requested Path</p>
+            <p className="mt-1 font-mono text-foreground text-sm">{unresolvedPath || "/"}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Link to="/" className={cn(buttonVariants())}>

@@ -1,7 +1,14 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
   "files": {
-    "includes": ["**", "!node_modules", "!.output", "!src/routeTree.gen.ts"]
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.output",
+      "!.agents",
+      "!src/routeTree.gen.ts",
+      "!public/favicon.svg"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -11,7 +18,16 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "preset": "recommended",
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "fix": "safe",
+          "options": {
+            "functions": ["cn", "clsx", "cva", "tw", "tw.*"]
+          }
+        }
+      }
     }
   },
   "javascript": {

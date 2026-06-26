@@ -1,7 +1,4 @@
-import {
-  createBundledHighlighter,
-  createSingletonShorthands,
-} from "@shikijs/core"
+import { createBundledHighlighter, createSingletonShorthands } from "@shikijs/core"
 import { createJavaScriptRegexEngine } from "@shikijs/engine-javascript"
 
 export type CodeBlockLanguage = "json"

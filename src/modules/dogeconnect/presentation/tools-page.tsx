@@ -238,10 +238,10 @@ export function ToolsPage() {
   }
 
   return (
-    <div className="mx-auto flex min-w-0 w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6">
+    <div className="mx-auto flex w-full min-w-0 max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6">
       <section className="rounded-3xl border border-border/70 bg-gradient-to-br from-amber-100/70 via-background to-orange-100/70 p-6">
-        <h1 className="text-2xl font-semibold tracking-tight">DogeConnect Tools</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+        <h1 className="font-semibold text-2xl tracking-tight">DogeConnect Tools</h1>
+        <p className="mt-2 max-w-3xl text-muted-foreground text-sm leading-relaxed">
           Strict protocol and cryptographic checks are enabled by default. Use these tools to verify
           QR URIs and payment envelopes, then test pay/status behavior against the no-op relay
           simulator.
@@ -251,8 +251,8 @@ export function ToolsPage() {
       <section className="rounded-3xl border border-border/70 bg-card/60 p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold">Quick Start</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <h2 className="font-semibold text-base">Quick Start</h2>
+            <p className="mt-1 text-muted-foreground text-sm">
               New here? Follow this path to get from QR input to relay response quickly.
             </p>
           </div>
@@ -341,7 +341,7 @@ export function ToolsPage() {
           </form>
 
           {generateMockQrMutation.error ? (
-            <p className="text-sm text-rose-700">{generateMockQrMutation.error.message}</p>
+            <p className="text-rose-700 text-sm">{generateMockQrMutation.error.message}</p>
           ) : null}
 
           {generateMockQrMutation.data ? (
@@ -391,10 +391,10 @@ export function ToolsPage() {
                 </Button>
               </div>
               {mockCopyState === "copied" ? (
-                <p className="text-xs text-emerald-700">URI copied to clipboard.</p>
+                <p className="text-emerald-700 text-xs">URI copied to clipboard.</p>
               ) : null}
               {mockCopyState === "failed" ? (
-                <p className="text-xs text-rose-700">
+                <p className="text-rose-700 text-xs">
                   Clipboard copy failed in this environment. Copy from the textarea above.
                 </p>
               ) : null}
@@ -424,7 +424,7 @@ export function ToolsPage() {
               <qrForm.Field name="uri">
                 {(field) => (
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">URI</p>
+                    <p className="font-medium text-muted-foreground text-xs uppercase">URI</p>
                     <Textarea
                       placeholder="dogecoin:DPD7...?...&dc=example.com/dc/id&h=..."
                       value={field.state.value}
@@ -492,7 +492,7 @@ export function ToolsPage() {
               <envelopeForm.Field name="expectedHash">
                 {(field) => (
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">
+                    <p className="font-medium text-muted-foreground text-xs uppercase">
                       Expected URI `h` (optional)
                     </p>
                     <Input
@@ -511,7 +511,7 @@ export function ToolsPage() {
               <envelopeForm.Field name="envelope">
                 {(field) => (
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">
+                    <p className="font-medium text-muted-foreground text-xs uppercase">
                       Envelope JSON
                     </p>
                     <Textarea
@@ -535,7 +535,7 @@ export function ToolsPage() {
               </Button>
             </form>
             {envelopeInputError ? (
-              <p className="text-sm text-rose-700">{envelopeInputError}</p>
+              <p className="text-rose-700 text-sm">{envelopeInputError}</p>
             ) : null}
             <ValidationResultView
               result={validateEnvelopeMutation.data}
@@ -565,7 +565,7 @@ export function ToolsPage() {
               <registerForm.Field name="id">
                 {(field) => (
                   <div className="space-y-1.5 sm:col-span-2">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">
+                    <p className="font-medium text-muted-foreground text-xs uppercase">
                       Payment ID
                     </p>
                     <Input
@@ -584,7 +584,7 @@ export function ToolsPage() {
               <registerForm.Field name="scenario">
                 {(field) => (
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">Scenario</p>
+                    <p className="font-medium text-muted-foreground text-xs uppercase">Scenario</p>
                     <select
                       value={field.state.value}
                       onChange={(event) => {
@@ -605,7 +605,7 @@ export function ToolsPage() {
               <registerForm.Field name="relayToken">
                 {(field) => (
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">
+                    <p className="font-medium text-muted-foreground text-xs uppercase">
                       Relay Token
                     </p>
                     <Input
@@ -624,7 +624,7 @@ export function ToolsPage() {
               <registerForm.Field name="required">
                 {(field) => (
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">
+                    <p className="font-medium text-muted-foreground text-xs uppercase">
                       Required Confirmations
                     </p>
                     <Input
@@ -644,7 +644,7 @@ export function ToolsPage() {
               <registerForm.Field name="dueSec">
                 {(field) => (
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">
+                    <p className="font-medium text-muted-foreground text-xs uppercase">
                       ETA Seconds
                     </p>
                     <Input
@@ -664,7 +664,7 @@ export function ToolsPage() {
               <registerForm.Field name="reason">
                 {(field) => (
                   <div className="space-y-1.5 sm:col-span-2">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">
+                    <p className="font-medium text-muted-foreground text-xs uppercase">
                       Decline/Error Reason
                     </p>
                     <Input
@@ -680,7 +680,7 @@ export function ToolsPage() {
                   </div>
                 )}
               </registerForm.Field>
-              <div className="sm:col-span-2 flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 sm:col-span-2">
                 <Button type="submit" disabled={registerScenarioMutation.isPending}>
                   {registerScenarioMutation.isPending ? "Saving..." : "Save Scenario"}
                 </Button>
@@ -706,7 +706,7 @@ export function ToolsPage() {
               </div>
             </form>
             {registerScenarioMutation.error ? (
-              <p className="text-sm text-rose-700">{registerScenarioMutation.error.message}</p>
+              <p className="text-rose-700 text-sm">{registerScenarioMutation.error.message}</p>
             ) : null}
             <RelayRecordsTable records={relayRecordsQuery.data ?? []} />
           </CardContent>
@@ -728,7 +728,7 @@ export function ToolsPage() {
                 void relayPayForm.handleSubmit()
               }}
             >
-              <h3 className="text-sm font-semibold">POST /api/relay/pay</h3>
+              <h3 className="font-semibold text-sm">POST /api/relay/pay</h3>
               <relayPayForm.Field name="id">
                 {(field) => (
                   <Input
@@ -790,14 +790,14 @@ export function ToolsPage() {
             </form>
 
             <form
-              className="space-y-3 border-t border-border/60 pt-4"
+              className="space-y-3 border-border/60 border-t pt-4"
               onSubmit={(event) => {
                 event.preventDefault()
                 event.stopPropagation()
                 void relayStatusForm.handleSubmit()
               }}
             >
-              <h3 className="text-sm font-semibold">POST /api/relay/status</h3>
+              <h3 className="font-semibold text-sm">POST /api/relay/status</h3>
               <relayStatusForm.Field name="id">
                 {(field) => (
                   <Input
@@ -828,7 +828,7 @@ export function ToolsPage() {
               href="/api/openapi"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex text-sm font-medium text-amber-700 hover:underline"
+              className="inline-flex font-medium text-amber-700 text-sm hover:underline"
             >
               Open OpenAPI docs in a new tab
             </a>
@@ -904,7 +904,7 @@ function QrPreviewPanel({ uri }: { uri?: string }) {
   if (!normalizedUri) {
     return (
       <div className="rounded-2xl border border-border/70 bg-background/60 p-4">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Enter a DogeConnect URI above to generate a live QR preview.
         </p>
       </div>
@@ -914,7 +914,7 @@ function QrPreviewPanel({ uri }: { uri?: string }) {
   if (qrError) {
     return (
       <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
-        <p className="text-xs text-rose-700">{qrError}</p>
+        <p className="text-rose-700 text-xs">{qrError}</p>
       </div>
     )
   }
@@ -922,7 +922,7 @@ function QrPreviewPanel({ uri }: { uri?: string }) {
   return (
     <div className="min-w-0 space-y-3 rounded-2xl border border-border/70 bg-background/60 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs font-medium text-muted-foreground uppercase">Live QR Preview</p>
+        <p className="font-medium text-muted-foreground text-xs uppercase">Live QR Preview</p>
         <Button
           type="button"
           size="sm"
@@ -945,7 +945,7 @@ function QrPreviewPanel({ uri }: { uri?: string }) {
         ) : null}
       </div>
       {downloadState === "failed" ? (
-        <p className="text-xs text-rose-700">
+        <p className="text-rose-700 text-xs">
           Could not create download image in this environment.
         </p>
       ) : null}
@@ -961,7 +961,7 @@ function ValidationResultView({
   error?: string
 }) {
   if (error) {
-    return <p className="text-sm text-rose-700">{error}</p>
+    return <p className="text-rose-700 text-sm">{error}</p>
   }
 
   if (!result) {
@@ -975,12 +975,12 @@ function ValidationResultView({
   return (
     <div className="min-w-0 space-y-3 rounded-2xl border border-border/70 bg-background/60 p-4">
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">Result</span>
+        <span className="font-medium text-sm">Result</span>
         <Badge variant={badgeVariant}>{verdict}</Badge>
       </div>
       <div className="space-y-1">
         {(result.checks ?? []).map((check) => (
-          <p key={check.name} className="text-xs text-muted-foreground">
+          <p key={check.name} className="text-muted-foreground text-xs">
             <span className={check.passed ? "text-emerald-700" : "text-rose-700"}>
               {check.passed ? "PASS" : "FAIL"}
             </span>{" "}
@@ -991,7 +991,7 @@ function ValidationResultView({
       {(result.errors ?? []).length > 0 ? (
         <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
           {(result.errors ?? []).map((issue) => (
-            <p key={`${issue.field}:${issue.message}`} className="text-xs text-rose-700">
+            <p key={`${issue.field}:${issue.message}`} className="text-rose-700 text-xs">
               {issue.field}: {issue.message}
             </p>
           ))}
@@ -1150,7 +1150,7 @@ const loadImage = (source: string): Promise<HTMLImageElement> =>
 function RelayRecordsTable({ records }: { records: RelayDebugRecordView[] }) {
   if (!records.length) {
     return (
-      <p className="rounded-2xl border border-border/60 bg-background/50 p-3 text-sm text-muted-foreground">
+      <p className="rounded-2xl border border-border/60 bg-background/50 p-3 text-muted-foreground text-sm">
         No relay scenarios registered yet.
       </p>
     )
@@ -1170,7 +1170,7 @@ function RelayRecordsTable({ records }: { records: RelayDebugRecordView[] }) {
         </thead>
         <tbody>
           {records.map((record) => (
-            <tr key={record.id} className="border-t border-border/60">
+            <tr key={record.id} className="border-border/60 border-t">
               <td className="px-3 py-2">{record.id}</td>
               <td className="px-3 py-2">{record.scenario}</td>
               <td className="px-3 py-2">{record.status}</td>
@@ -1203,7 +1203,7 @@ function ApiResponseView({
 
   return (
     <div className="min-w-0 space-y-1.5">
-      <p className="text-xs font-medium text-muted-foreground uppercase">
+      <p className="font-medium text-muted-foreground text-xs uppercase">
         {label} ({response.status})
       </p>
       <JsonCodeBlock

@@ -216,7 +216,7 @@ export function FlightRecorderPage() {
   }, [search.selectedTraceId, sessionView])
 
   const runStatusCheck = React.useEffectEvent(() => {
-    if (!sessionView || !sessionView.artifacts.relay || statusMutation.isPending) {
+    if (!sessionView?.artifacts.relay || statusMutation.isPending) {
       return
     }
 
@@ -377,7 +377,7 @@ export function FlightRecorderPage() {
   }
 
   const setLiveWriteArmed = (liveWriteArmed: boolean) => {
-    if (!sessionView?.artifacts.relay || sessionView.artifacts.relay.mode !== "live") {
+    if (sessionView?.artifacts.relay?.mode !== "live") {
       return
     }
 
@@ -406,8 +406,8 @@ export function FlightRecorderPage() {
       <section className="rounded-3xl border border-border/70 bg-gradient-to-br from-amber-100/75 via-background to-orange-100/75 p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-3xl space-y-2">
-            <h1 className="text-2xl font-semibold tracking-tight">Flight Recorder</h1>
-            <p className="text-sm leading-relaxed text-muted-foreground">
+            <h1 className="font-semibold text-2xl tracking-tight">Flight Recorder</h1>
+            <p className="text-muted-foreground text-sm leading-relaxed">
               Build replayable DogeConnect sessions that trace QR parsing, envelope fetch and
               verification, relay targeting, and pay/status execution against simulator or live
               endpoints.
@@ -448,7 +448,7 @@ export function FlightRecorderPage() {
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground uppercase">Target Mode</p>
+              <p className="font-medium text-muted-foreground text-xs uppercase">Target Mode</p>
               <div className="grid gap-3 sm:grid-cols-2">
                 <TargetModeCard
                   active={search.targetMode === "simulator"}
@@ -472,7 +472,7 @@ export function FlightRecorderPage() {
             {search.sourceTab === "qr" ? (
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <p className="text-xs font-medium text-muted-foreground uppercase">
+                  <p className="font-medium text-muted-foreground text-xs uppercase">
                     Dogecoin URI
                   </p>
                   <Textarea
@@ -482,12 +482,12 @@ export function FlightRecorderPage() {
                     placeholder="dogecoin:DPD7...?amount=12.25&dc=example.com/dc/id&h=..."
                   />
                 </div>
-                <div className="space-y-3 rounded-2xl border border-dashed border-border/70 bg-background/50 p-4">
+                <div className="space-y-3 rounded-2xl border border-border/70 border-dashed bg-background/50 p-4">
                   <div className="space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground uppercase">
+                    <p className="font-medium text-muted-foreground text-xs uppercase">
                       QR Image Upload
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       Pick a QR image to decode it locally in your browser. Nothing is sent to the
                       server.
                     </p>
@@ -503,20 +503,20 @@ export function FlightRecorderPage() {
                     }}
                   />
                   {qrImageName ? (
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       {qrImageDecodePending
                         ? `Decoding ${qrImageName} locally...`
                         : `Last image: ${qrImageName}`}
                     </p>
                   ) : null}
-                  {qrImageError ? <p className="text-sm text-rose-700">{qrImageError}</p> : null}
+                  {qrImageError ? <p className="text-rose-700 text-sm">{qrImageError}</p> : null}
                 </div>
               </div>
             ) : null}
 
             {search.sourceTab === "mock" ? (
               <div className="space-y-1.5">
-                <p className="text-xs font-medium text-muted-foreground uppercase">
+                <p className="font-medium text-muted-foreground text-xs uppercase">
                   Mock Payment ID
                 </p>
                 <Input
@@ -530,7 +530,7 @@ export function FlightRecorderPage() {
             {search.sourceTab === "import" ? (
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <p className="text-xs font-medium text-muted-foreground uppercase">
+                  <p className="font-medium text-muted-foreground text-xs uppercase">
                     Session JSON
                   </p>
                   <Textarea
@@ -552,7 +552,7 @@ export function FlightRecorderPage() {
                     Import Session
                   </Button>
                 </div>
-                {importError ? <p className="text-sm text-rose-700">{importError}</p> : null}
+                {importError ? <p className="text-rose-700 text-sm">{importError}</p> : null}
               </div>
             ) : null}
 
@@ -612,9 +612,9 @@ export function FlightRecorderPage() {
             </div>
 
             {buildSessionMutation.error ? (
-              <p className="text-sm text-rose-700">{buildSessionMutation.error.message}</p>
+              <p className="text-rose-700 text-sm">{buildSessionMutation.error.message}</p>
             ) : null}
-            {pageMessage ? <p className="text-sm text-emerald-700">{pageMessage}</p> : null}
+            {pageMessage ? <p className="text-emerald-700 text-sm">{pageMessage}</p> : null}
           </div>
         </PanelCard>
 
@@ -639,20 +639,20 @@ export function FlightRecorderPage() {
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div>
-                        <p className="text-sm font-medium text-foreground">
+                        <p className="font-medium text-foreground text-sm">
                           {formatPhaseLabel(entry.phase)}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-muted-foreground text-xs">
                           {entry.target} · {entry.durationMs}ms
                         </p>
                       </div>
                       <Badge variant={badgeVariantForVerdict(entry.verdict)}>{entry.verdict}</Badge>
                     </div>
-                    <p className="mt-2 text-xs text-muted-foreground">
+                    <p className="mt-2 text-muted-foreground text-xs">
                       {entry.responseSummary.note}
                     </p>
                     {entry.issues.length > 0 ? (
-                      <p className="mt-2 text-xs text-rose-700">
+                      <p className="mt-2 text-rose-700 text-xs">
                         {entry.issues[0]?.field}: {entry.issues[0]?.message}
                       </p>
                     ) : null}
@@ -701,8 +701,8 @@ export function FlightRecorderPage() {
               <div className="rounded-2xl border border-border/70 bg-background/60 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <p className="text-sm font-medium">Current relay target</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="font-medium text-sm">Current relay target</p>
+                    <p className="text-muted-foreground text-xs">
                       {sessionView.artifacts.relay?.statusUrl || "No relay target derived"}
                     </p>
                   </div>
@@ -715,13 +715,13 @@ export function FlightRecorderPage() {
                 {sessionView.artifacts.relay?.mode === "live" ? (
                   <div className="mt-4 space-y-3 rounded-2xl border border-amber-300/80 bg-amber-50/80 p-4">
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-foreground">Live relay write gate</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="font-medium text-foreground text-sm">Live relay write gate</p>
+                      <p className="text-muted-foreground text-xs">
                         Status checks are safe live reads. Pay requests stay disabled until you arm
                         outbound writes for this session.
                       </p>
                     </div>
-                    <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+                    <div className="grid gap-2 text-muted-foreground text-xs sm:grid-cols-2">
                       <div>
                         <p className="font-medium text-foreground">Status URL</p>
                         <p>{sessionView.artifacts.relay.statusUrl}</p>
@@ -743,7 +743,7 @@ export function FlightRecorderPage() {
                         <span className="block font-medium text-foreground">
                           Arm outbound pay requests to this live relay
                         </span>
-                        <span className="block text-xs text-muted-foreground">
+                        <span className="block text-muted-foreground text-xs">
                           Leave this off to inspect the live target without sending a pay request.
                         </span>
                       </span>
@@ -753,7 +753,7 @@ export function FlightRecorderPage() {
               </div>
 
               <div className="space-y-3">
-                <p className="text-xs font-medium text-muted-foreground uppercase">Pay Draft</p>
+                <p className="font-medium text-muted-foreground text-xs uppercase">Pay Draft</p>
                 <Input
                   value={sessionView.artifacts.payDraft?.id ?? ""}
                   onChange={(event) => updateSearch({ payDraftId: event.target.value })}
@@ -826,7 +826,7 @@ export function FlightRecorderPage() {
               </div>
 
               {requiresLiveWriteArm ? (
-                <p className="text-sm text-amber-800">
+                <p className="text-amber-800 text-sm">
                   Arm live relay writes above to enable pay submission against the live target.
                 </p>
               ) : null}
@@ -842,7 +842,7 @@ export function FlightRecorderPage() {
                   Auto-poll status
                 </label>
                 <div className="space-y-1.5">
-                  <p className="text-xs font-medium text-muted-foreground uppercase">
+                  <p className="font-medium text-muted-foreground text-xs uppercase">
                     Poll Interval (seconds)
                   </p>
                   <Input
@@ -868,10 +868,10 @@ export function FlightRecorderPage() {
               </div>
 
               {statusMutation.error ? (
-                <p className="text-sm text-rose-700">{statusMutation.error.message}</p>
+                <p className="text-rose-700 text-sm">{statusMutation.error.message}</p>
               ) : null}
               {payMutation.error ? (
-                <p className="text-sm text-rose-700">{payMutation.error.message}</p>
+                <p className="text-rose-700 text-sm">{payMutation.error.message}</p>
               ) : null}
             </div>
           ) : (
@@ -900,7 +900,7 @@ function FaultSelector({
 }) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-muted-foreground uppercase">{title}</p>
+      <p className="font-medium text-muted-foreground text-xs uppercase">{title}</p>
       <div className="grid gap-2 sm:grid-cols-2">
         {faults.map((fault) => (
           <label
@@ -920,8 +920,8 @@ function FaultSelector({
               className="mt-0.5 size-4 rounded border-border accent-amber-500"
             />
             <span className="space-y-1">
-              <span className="block text-sm font-medium text-foreground">{fault.label}</span>
-              <span className="block text-xs text-muted-foreground">
+              <span className="block font-medium text-foreground text-sm">{fault.label}</span>
+              <span className="block text-muted-foreground text-xs">
                 {disabled ? disabledHint || fault.hint : fault.hint}
               </span>
             </span>
@@ -975,8 +975,8 @@ function TargetModeCard({
           : "border-border/70 bg-background/60 hover:border-amber-300 hover:bg-amber-50/60"
       }`}
     >
-      <p className="text-sm font-medium text-foreground">{title}</p>
-      <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+      <p className="font-medium text-foreground text-sm">{title}</p>
+      <p className="mt-1 text-muted-foreground text-xs">{description}</p>
     </button>
   )
 }
@@ -988,12 +988,12 @@ function LiveModeNotice({ ignoredFaultCount }: { ignoredFaultCount: number }) {
         <Badge variant="warning">Live target mode</Badge>
         <Badge variant="neutral">Read-only until armed</Badge>
       </div>
-      <p className="mt-3 text-sm text-foreground">
+      <p className="mt-3 text-foreground text-sm">
         Builds in this mode resolve the real relay target from the QR or imported session. Status
         reads can hit live infrastructure, and pay submission stays blocked until you explicitly arm
         outbound writes for the built session.
       </p>
-      <p className="mt-2 text-xs text-muted-foreground">
+      <p className="mt-2 text-muted-foreground text-xs">
         {ignoredFaultCount > 0
           ? `${ignoredFaultCount} simulator preset${ignoredFaultCount === 1 ? "" : "s"} remain selected in the URL but will be ignored while live mode is active.`
           : "Simulator execution presets are disabled here and will reactivate if you switch back to simulator mode."}
@@ -1012,14 +1012,14 @@ function SessionSummaryView({ session }: { session: FlightRecorderSessionV1 }) {
         <Badge variant="neutral">{session.meta.sourceMode}</Badge>
         <Badge variant="neutral">{session.meta.targetMode}</Badge>
       </div>
-      <p className="mt-3 text-sm text-foreground">
+      <p className="mt-3 text-foreground text-sm">
         {session.summary.firstFailingStep
           ? `First divergence: ${formatPhaseLabel(session.summary.firstFailingStep)}`
           : "No failing trace step detected."}
       </p>
       <div className="mt-2 space-y-1">
         {session.summary.likelyCauses.map((cause) => (
-          <p key={cause} className="text-xs text-muted-foreground">
+          <p key={cause} className="text-muted-foreground text-xs">
             {cause}
           </p>
         ))}
@@ -1031,7 +1031,7 @@ function SessionSummaryView({ session }: { session: FlightRecorderSessionV1 }) {
 function JsonSection({ title, value }: { title: string; value: unknown }) {
   return (
     <div className="space-y-2 rounded-2xl border border-border/70 bg-background/60 p-4">
-      <p className="text-xs font-medium text-muted-foreground uppercase">{title}</p>
+      <p className="font-medium text-muted-foreground text-xs uppercase">{title}</p>
       <JsonCodeBlock
         filename={`${title.toLowerCase().replaceAll(" ", "-")}.json`}
         value={JSON.stringify(value, null, 2)}
@@ -1042,7 +1042,7 @@ function JsonSection({ title, value }: { title: string; value: unknown }) {
 
 function EmptyPanelMessage({ message }: { message: string }) {
   return (
-    <div className="rounded-2xl border border-dashed border-border/70 bg-background/40 p-4 text-sm text-muted-foreground">
+    <div className="rounded-2xl border border-border/70 border-dashed bg-background/40 p-4 text-muted-foreground text-sm">
       {message}
     </div>
   )

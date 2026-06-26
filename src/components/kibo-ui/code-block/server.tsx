@@ -5,8 +5,8 @@ import {
   transformerNotationHighlight,
   transformerNotationWordHighlight,
 } from "@shikijs/transformers"
-import type { HTMLAttributes } from "react"
 import type { CodeOptionsMultipleThemes } from "@shikijs/types"
+import type { HTMLAttributes } from "react"
 import { type CodeBlockLanguage, codeToHtml } from "@/lib/shiki"
 
 export type CodeBlockContentProps = HTMLAttributes<HTMLDivElement> & {
