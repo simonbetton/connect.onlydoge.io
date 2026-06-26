@@ -1,8 +1,8 @@
 import {
   createBundledHighlighter,
   createSingletonShorthands,
-} from "shiki/core"
-import { createJavaScriptRegexEngine } from "shiki/engine/javascript"
+} from "@shikijs/core"
+import { createJavaScriptRegexEngine } from "@shikijs/engine-javascript"
 
 export type CodeBlockLanguage = "json"
 
