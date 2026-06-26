@@ -5,12 +5,14 @@ import transformImports from "@rolldown/plugin-transform-imports"
 import viteReact from "@vitejs/plugin-react"
 import { nitro } from "nitro/vite"
 import { defineConfig } from "vite"
+import stripInvalidPureAnnotations from "./vite/strip-invalid-pure-annotations"
 
 const config = defineConfig(({ mode }) => ({
   resolve: {
     tsconfigPaths: true,
   },
   plugins: [
+    stripInvalidPureAnnotations(),
     transformImports({
       "@hugeicons/core-free-icons": {
         transform: "@hugeicons/core-free-icons/{{member}}",
