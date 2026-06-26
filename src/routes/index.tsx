@@ -1,9 +1,11 @@
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { createFileRoute, Link } from "@tanstack/react-router"
-import { buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button-variants"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+
+const openApiDocsHref = "/api/openapi"
 
 export const Route = createFileRoute("/")({ component: App })
 
@@ -39,7 +41,7 @@ function App() {
               <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
             </Link>
             <a
-              href="/api/openapi"
+              href={openApiDocsHref}
               target="_blank"
               rel="noreferrer"
               className={buttonVariants({ variant: "outline" })}

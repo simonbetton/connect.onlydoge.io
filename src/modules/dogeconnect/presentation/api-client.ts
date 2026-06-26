@@ -73,7 +73,10 @@ const createResponseError = (response: Response, body: unknown): Error => {
   }
 
   if (Array.isArray(body.errors)) {
-    const messages = body.errors.map(formatIssue).filter(Boolean)
+    const messages = body.errors.flatMap((issue) => {
+      const formatted = formatIssue(issue)
+      return formatted ? [formatted] : []
+    })
     if (messages.length > 0) {
       return new Error(messages.join("; "))
     }

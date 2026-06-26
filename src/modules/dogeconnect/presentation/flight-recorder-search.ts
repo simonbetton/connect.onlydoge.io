@@ -103,7 +103,10 @@ const readStringList = (record: Record<string, unknown>, key: string): string[] 
       : Array.isArray(value)
         ? value.flatMap((entry) => (typeof entry === "string" ? entry.split(",") : []))
         : []
-  const normalized = entries.map((entry) => entry.trim()).filter(Boolean)
+  const normalized = entries.flatMap((entry) => {
+    const trimmed = entry.trim()
+    return trimmed ? [trimmed] : []
+  })
 
   return normalized.length > 0 ? normalized : undefined
 }
@@ -113,9 +116,15 @@ export const validateFlightRecorderSearch = (input: unknown): FlightRecorderSear
   const sourceTab = readString(record, "sourceTab")
   const targetMode = readString(record, "targetMode")
   const pollIntervalSec = readNumber(record, "poll")
-  const selectedFaults = readStringList(record, "faults")
-    ?.filter((fault): fault is FlightRecorderFaultPreset => isFlightRecorderFaultPreset(fault))
-    .filter((fault, index, faults) => faults.indexOf(fault) === index)
+  const rawFaults = readStringList(record, "faults")
+  const selectedFaults = rawFaults?.reduce<FlightRecorderFaultPreset[]>((faults, fault) => {
+    if (!isFlightRecorderFaultPreset(fault) || faults.includes(fault)) {
+      return faults
+    }
+
+    faults.push(fault)
+    return faults
+  }, [])
 
   return compactSearch({
     sourceTab:

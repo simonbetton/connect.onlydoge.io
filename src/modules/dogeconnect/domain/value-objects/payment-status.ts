@@ -1,6 +1,6 @@
 import { type ValidationIssue, validationError } from "../shared/validation"
 
-export const PAYMENT_STATUS_VALUES = ["unpaid", "accepted", "confirmed", "declined"] as const
+const PAYMENT_STATUS_VALUES = ["unpaid", "accepted", "confirmed", "declined"] as const
 
 export type PaymentStatus = (typeof PAYMENT_STATUS_VALUES)[number]
 
@@ -30,7 +30,7 @@ export interface PaymentStatusResponse {
   due_sec?: number
 }
 
-export const isPaymentStatus = (value: unknown): value is PaymentStatus =>
+const isPaymentStatus = (value: unknown): value is PaymentStatus =>
   typeof value === "string" && PAYMENT_STATUS_VALUES.includes(value as PaymentStatus)
 
 export const validatePaymentStatusResponse = (value: PaymentStatusResponse): ValidationIssue[] => {

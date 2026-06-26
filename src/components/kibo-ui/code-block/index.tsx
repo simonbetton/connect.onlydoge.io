@@ -143,8 +143,10 @@ export const CodeBlock = ({
     prop: controlledValue,
   })
 
+  const contextValue = React.useMemo(() => ({ data, value }), [data, value])
+
   return (
-    <CodeBlockContext.Provider value={{ data, value }}>
+    <CodeBlockContext.Provider value={contextValue}>
       <div
         className={cn(
           "min-w-0 overflow-hidden rounded-2xl border border-border/70 bg-background/70",
@@ -174,7 +176,7 @@ export const CodeBlockFilename = ({
   children,
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & { value?: string }) => {
-  const context = React.useContext(CodeBlockContext)
+  const context = React.use(CodeBlockContext)
 
   if (value && context.value !== value) {
     return null
@@ -196,7 +198,7 @@ export const CodeBlockCopyButton = ({
   ...props
 }: Omit<React.ComponentProps<typeof Button>, "onClick"> & { timeout?: number }) => {
   const [isCopied, setIsCopied] = React.useState(false)
-  const { data, value } = React.useContext(CodeBlockContext)
+  const { data, value } = React.use(CodeBlockContext)
   const code = data.find((item) => item.language === value)?.code ?? ""
 
   const onCopy = async () => {
@@ -250,7 +252,7 @@ export const CodeBlockItem = ({
   value: string
   lineNumbers?: boolean
 }) => {
-  const context = React.useContext(CodeBlockContext)
+  const context = React.use(CodeBlockContext)
 
   if (context.value !== value) {
     return null

@@ -110,7 +110,7 @@ export const resolveRedirectTarget = async (current: URL, location: string): Pro
   return assertPublicTargetUrl(redirected)
 }
 
-export const isUnsafeHostName = (hostname: string): boolean => {
+const isUnsafeHostName = (hostname: string): boolean => {
   const normalized = hostname.trim().toLowerCase()
   return (
     normalized === "localhost" || normalized.endsWith(".localhost") || normalized.endsWith(".local")

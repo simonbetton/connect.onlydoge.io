@@ -11,7 +11,10 @@
     "format": "biome check --write .",
     "check": "biome check .",
     "typecheck": "tsc --noEmit",
-    "doctor": "npx react-doctor@latest"
+    "doctor": "react-doctor --yes --no-telemetry",
+    "doctor:staged": "react-doctor --staged --yes --no-telemetry --blocking error",
+    "doctor:ci": "react-doctor --yes --no-telemetry --blocking error",
+    "prepare": "husky"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -30,9 +33,7 @@
     "@tanstack/react-query": "^5.101.1",
     "@tanstack/react-router": "^1.170.16",
     "@tanstack/react-router-devtools": "^1.167.0",
-    "@tanstack/react-router-ssr-query": "^1.167.1",
     "@tanstack/react-start": "^1.168.26",
-    "@tanstack/router-plugin": "^1.168.18",
     "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -59,7 +60,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
-    "fallow": "^2.102.0",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "react-doctor": "^0.5.8",
     "typescript": "^6.0.3",

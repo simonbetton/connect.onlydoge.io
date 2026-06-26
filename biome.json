@@ -6,6 +6,7 @@
       "!node_modules",
       "!.output",
       "!.agents",
+      "!.tanstack",
       "!src/routeTree.gen.ts",
       "!public/favicon.svg"
     ]

@@ -4,7 +4,7 @@ import type { EnvelopeValidationPayload } from "./contracts"
 
 export const FLIGHT_RECORDER_SESSION_VERSION = "flight-recorder/v1"
 
-export const FLIGHT_RECORDER_SOURCE_MODES = ["qr", "mock"] as const
+const FLIGHT_RECORDER_SOURCE_MODES = ["qr", "mock"] as const
 export type FlightRecorderSourceMode = (typeof FLIGHT_RECORDER_SOURCE_MODES)[number]
 
 export const FLIGHT_RECORDER_TARGET_MODES = ["simulator", "live"] as const
@@ -33,7 +33,7 @@ export type FlightTraceTarget = (typeof FLIGHT_TRACE_TARGETS)[number]
 export const FLIGHT_TRACE_VERDICTS = ["pass", "warn", "fail"] as const
 export type FlightTraceVerdict = (typeof FLIGHT_TRACE_VERDICTS)[number]
 
-export const FLIGHT_RECORDER_FAULT_PRESETS = [
+const FLIGHT_RECORDER_FAULT_PRESETS = [
   "wrong_hash",
   "missing_hash",
   "bad_signature",
@@ -209,9 +209,3 @@ export interface FlightRecorderRelayActionResult {
 export const isFlightRecorderFaultPreset = (value: unknown): value is FlightRecorderFaultPreset =>
   typeof value === "string" &&
   FLIGHT_RECORDER_FAULT_PRESETS.includes(value as FlightRecorderFaultPreset)
-
-export const isFlightRecorderSimulatorFaultPreset = (
-  value: unknown
-): value is FlightRecorderSimulatorFaultPreset =>
-  typeof value === "string" &&
-  FLIGHT_RECORDER_SIMULATOR_FAULT_PRESETS.includes(value as FlightRecorderSimulatorFaultPreset)

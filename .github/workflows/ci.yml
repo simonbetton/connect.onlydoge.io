@@ -21,8 +21,11 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Check
+      - name: Biome Check
         run: bun run check
+
+      - name: React Doctor
+        run: bun run doctor:ci
 
       - name: Typecheck
         run: bun run typecheck

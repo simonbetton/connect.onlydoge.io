@@ -1,7 +1,7 @@
 import { base64ToBytesStrict, hexToBytesStrict } from "../shared/encoding"
 import { type ValidationIssue, validationError } from "../shared/validation"
 
-export const ENVELOPE_VERSION = "1.0"
+const ENVELOPE_VERSION = "1.0"
 
 export class ConnectEnvelope {
   private constructor(

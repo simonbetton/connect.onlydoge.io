@@ -267,7 +267,7 @@ export const parseImportedFlightRecorderSession = (
   }
 }
 
-export const resolveSimulatorFault = (
+const resolveSimulatorFault = (
   faults: FlightRecorderFaultPreset[]
 ): FlightRecorderSimulatorFaultPreset | null =>
   faults.find((fault) =>
@@ -282,11 +282,18 @@ export const listIncompatibleFaultIssues = (
     return []
   }
 
-  return faults
-    .filter((fault) => FLIGHT_RECORDER_SIMULATOR_FAULT_PRESETS.includes(fault as never))
-    .map((fault) =>
-      validationWarning("faults", `${fault} is simulator-only and will be ignored for live targets`)
-    )
+  return faults.reduce<ValidationIssue[]>((issues, fault) => {
+    if (FLIGHT_RECORDER_SIMULATOR_FAULT_PRESETS.includes(fault as never)) {
+      issues.push(
+        validationWarning(
+          "faults",
+          `${fault} is simulator-only and will be ignored for live targets`
+        )
+      )
+    }
+
+    return issues
+  }, [])
 }
 
 const validateImportedRelayArtifacts = (
@@ -486,7 +493,7 @@ const sanitizeValue = (value: unknown): unknown => {
   )
 }
 
-const cloneJson = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T
+const cloneJson = <T>(value: T): T => structuredClone(value)
 
 const createTraceId = (phase: string): string =>
   `${phase}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`

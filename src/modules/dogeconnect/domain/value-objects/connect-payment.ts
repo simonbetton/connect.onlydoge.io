@@ -3,7 +3,7 @@ import { KoinuAmount } from "./koinu-amount"
 import { RelayUrl } from "./relay-url"
 import { Rfc3339Timestamp } from "./rfc3339-timestamp"
 
-export const ENVELOPE_TYPE_PAYMENT = "payment"
+const ENVELOPE_TYPE_PAYMENT = "payment"
 
 export const ITEM_TYPE_VALUES = ["item", "tax", "fee", "shipping", "discount", "donation"] as const
 

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://react.doctor/schema/config.json",
+  "ignore": {
+    "files": [".agents/**", ".output/**"],
+    "overrides": [
+      {
+        "files": ["src/components/kibo-ui/code-block/index.tsx"],
+        "rules": ["react-doctor/dangerous-html-sink"]
+      }
+    ]
+  }
+}

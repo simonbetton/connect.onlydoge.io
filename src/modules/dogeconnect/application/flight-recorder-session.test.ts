@@ -84,7 +84,7 @@ const expectRejectedWithField = (
 }
 
 const cloneSession = (session: FlightRecorderSessionV1): FlightRecorderSessionV1 =>
-  JSON.parse(JSON.stringify(session)) as FlightRecorderSessionV1
+  structuredClone(session) as FlightRecorderSessionV1
 
 const createSimulatorSessionFixture = (): FlightRecorderSessionV1 => {
   const session = cloneSession(createSessionFixture())
