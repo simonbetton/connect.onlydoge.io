@@ -2,15 +2,18 @@ import { Link } from "@tanstack/react-router"
 import * as QRCode from "qrcode"
 import * as React from "react"
 import { JsonCodeBlock } from "@/components/json-code-block"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { buttonVariants } from "@/components/ui/button-variants"
+import { Paragraph } from "@/components/ui/paragraph"
+import { ValidationDiagnosisPanel } from "@/components/validation-diagnosis-panel"
+import { VerdictBadgeEmbed } from "@/components/verdict-badge-embed"
 import type {
   EnvelopeValidationPayload,
   QrValidationPayload,
   RelayDebugRecordView,
 } from "@/modules/dogeconnect/application/contracts"
 import { flightRecorderQrSearch } from "./deep-link-builders"
+import { validationVerdictTextClass } from "./flight-recorder-page-utils"
 
 export function QrPreviewPanel({ uri }: { uri?: string }) {
   const normalizedUri = (uri ?? "").trim()
@@ -88,10 +91,10 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
 
   if (!uri) {
     return (
-      <div className="rounded-2xl border border-border/70 bg-background/60 p-4">
-        <p className="text-muted-foreground text-xs">
-          Enter a DogeConnect URI above to generate a live QR preview.
-        </p>
+      <div className="rounded-2xl border border-border/70 border-dashed bg-muted/25 p-4">
+        <Paragraph size="xs">
+          Generate or paste a DogeConnect URI to preview its QR code here.
+        </Paragraph>
       </div>
     )
   }
@@ -99,15 +102,19 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
   if (qrError) {
     return (
       <div className="rounded-2xl border border-danger-border bg-danger-muted p-4">
-        <p className="text-danger-foreground text-xs">{qrError}</p>
+        <Paragraph size="xs" color="danger">
+          {qrError}
+        </Paragraph>
       </div>
     )
   }
 
   return (
-    <div className="min-w-0 space-y-3 rounded-2xl border border-border/70 bg-background/60 p-4">
+    <div className="min-w-0 space-y-3 rounded-2xl border border-border/70 bg-muted/25 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="font-medium text-muted-foreground text-xs uppercase">Live QR Preview</p>
+        <Paragraph size="xs-medium" className="uppercase tracking-(--tracking-label)">
+          Live QR Preview
+        </Paragraph>
         <Button
           type="button"
           size="sm"
@@ -117,22 +124,26 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
           }}
           disabled={!qrDataUrl || downloadState === "running"}
         >
-          {downloadState === "running" ? "Rendering..." : "Download Branded QR"}
+          <Button.Text>
+            {downloadState === "running" ? "Rendering..." : "Download Branded QR"}
+          </Button.Text>
         </Button>
       </div>
-      <div className="rounded-xl border border-border/60 bg-linear-to-br from-amber-100/40 to-orange-100/30 p-4">
+      <div className="flex justify-center rounded-2xl border border-border/70 bg-background/80 p-4 shadow-[0_1px_0_oklch(1_0_0/0.55)_inset]">
         {qrDataUrl ? (
           <img
             src={qrDataUrl}
             alt="QR code preview for current URI"
-            className="mx-auto size-56 rounded-xl border border-border/60 bg-white p-2 sm:size-64"
+            width={256}
+            height={256}
+            className="aspect-square w-full max-w-56 rounded-2xl bg-white object-contain p-2 outline-1 outline-black/10 -outline-offset-1"
           />
         ) : null}
       </div>
       {downloadState === "failed" ? (
-        <p className="text-danger-foreground text-xs">
+        <Paragraph size="xs" color="danger">
           Could not create download image in this environment.
-        </p>
+        </Paragraph>
       ) : null}
     </div>
   )
@@ -150,7 +161,11 @@ export function ValidationResultView({
   showEnvelopeToolsLink?: boolean
 }) {
   if (error) {
-    return <p className="text-danger-foreground text-sm">{error}</p>
+    return (
+      <Paragraph size="sm" color="danger">
+        {error}
+      </Paragraph>
+    )
   }
 
   if (!result) {
@@ -158,58 +173,122 @@ export function ValidationResultView({
   }
 
   const verdict = result.verdict
-  const badgeVariant =
-    verdict === "valid" ? "success" : verdict === "inconclusive" ? "warning" : "danger"
 
   return (
-    <div className="min-w-0 space-y-3 rounded-2xl border border-border/70 bg-background/60 p-4">
-      <div className="flex items-center gap-2">
-        <span className="font-medium text-sm">Result</span>
-        <Badge variant={badgeVariant}>{verdict}</Badge>
-      </div>
-      <div className="space-y-1">
-        {(result.checks ?? []).map((check) => (
-          <p key={check.name} className="text-muted-foreground text-xs">
-            <span className={check.passed ? "text-success-foreground" : "text-danger-foreground"}>
-              {check.passed ? "PASS" : "FAIL"}
-            </span>{" "}
-            {check.name}: {check.details}
-          </p>
-        ))}
-      </div>
-      {(result.errors ?? []).length > 0 ? (
-        <div className="rounded-xl border border-danger-border bg-danger-muted p-3">
-          {(result.errors ?? []).map((issue) => (
-            <p key={`${issue.field}:${issue.message}`} className="text-danger-foreground text-xs">
-              {issue.field}: {issue.message}
-            </p>
-          ))}
-        </div>
-      ) : null}
+    <div className="min-w-0 space-y-3 rounded-2xl border border-border/70 bg-muted/25 p-4">
+      <Paragraph size="sm" color="foreground">
+        Result:{" "}
+        <Paragraph
+          as="span"
+          size="inherit"
+          color="inherit"
+          className={validationVerdictTextClass(verdict)}
+        >
+          {verdict}
+        </Paragraph>
+      </Paragraph>
+      <ValidationDiagnosisPanel result={result} />
+      <ValidationResultVerdictBadge verdict={verdict} />
+      <ValidationResultChecks checks={result.checks ?? []} />
+      <ValidationResultErrors errors={result.errors ?? []} />
       {"parsed" in result && result.parsed ? (
         <JsonCodeBlock filename="result.json" value={JSON.stringify(result.parsed, null, 2)} />
       ) : null}
-      {traceUri?.trim() || showEnvelopeToolsLink ? (
-        <div className="flex flex-wrap gap-2">
-          {traceUri?.trim() ? (
-            <Link
-              to="/flight-recorder"
-              search={flightRecorderQrSearch(traceUri.trim())}
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              Trace in Flight Recorder
-            </Link>
-          ) : null}
-          {showEnvelopeToolsLink ? (
-            <Link
-              to="/tools"
-              hash="envelope-validator"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              Open Envelope Validator
-            </Link>
-          ) : null}
-        </div>
+      <ValidationResultLinks traceUri={traceUri} showEnvelopeToolsLink={showEnvelopeToolsLink} />
+    </div>
+  )
+}
+
+function ValidationResultVerdictBadge({
+  verdict,
+}: {
+  verdict: QrValidationPayload["verdict"] | EnvelopeValidationPayload["verdict"]
+}) {
+  if (verdict !== "valid" && verdict !== "invalid" && verdict !== "inconclusive") {
+    return null
+  }
+  return <VerdictBadgeEmbed verdict={verdict} />
+}
+
+function ValidationResultChecks({ checks }: { checks: QrValidationPayload["checks"] }) {
+  if (checks.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="space-y-1">
+      {checks.map((check) => (
+        <Paragraph key={check.name} size="xs">
+          <Paragraph
+            as="span"
+            size="inherit"
+            color="inherit"
+            className={check.passed ? "text-success-foreground" : "text-danger-foreground"}
+          >
+            {check.passed ? "PASS" : "FAIL"}
+          </Paragraph>{" "}
+          {check.name}: {check.details}
+        </Paragraph>
+      ))}
+    </div>
+  )
+}
+
+function ValidationResultErrors({
+  errors,
+}: {
+  errors: NonNullable<QrValidationPayload["errors"]>
+}) {
+  if (errors.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="rounded-xl border border-danger-border bg-danger-muted p-3">
+      {errors.map((issue) => (
+        <Paragraph key={`${issue.field}:${issue.message}`} size="xs" color="danger">
+          {issue.field}: {issue.message}
+        </Paragraph>
+      ))}
+    </div>
+  )
+}
+
+function ValidationResultLinks({
+  traceUri,
+  showEnvelopeToolsLink,
+}: {
+  traceUri?: string
+  showEnvelopeToolsLink: boolean
+}) {
+  const trimmedTraceUri = traceUri?.trim()
+  if (!trimmedTraceUri && !showEnvelopeToolsLink) {
+    return null
+  }
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {trimmedTraceUri ? (
+        <Link
+          to="/flight-recorder"
+          search={flightRecorderQrSearch(trimmedTraceUri)}
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+        >
+          <Paragraph as="span" size="sm-medium" color="inherit">
+            Trace in Flight Recorder
+          </Paragraph>
+        </Link>
+      ) : null}
+      {showEnvelopeToolsLink ? (
+        <Link
+          to="/tools"
+          hash="envelope-validator"
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+        >
+          <Paragraph as="span" size="sm-medium" color="inherit">
+            Open Envelope Validator
+          </Paragraph>
+        </Link>
       ) : null}
     </div>
   )
@@ -361,47 +440,79 @@ const loadImage = (source: string): Promise<HTMLImageElement> =>
 export function RelayRecordsTable({ records }: { records: RelayDebugRecordView[] }) {
   if (!records.length) {
     return (
-      <p className="rounded-2xl border border-border/60 bg-background/50 p-3 text-muted-foreground text-sm">
+      <Paragraph size="sm" className="rounded-lg border border-border bg-muted/25 p-4">
         No relay scenarios registered yet.
-      </p>
+      </Paragraph>
     )
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border/60">
-      <table className="min-w-full text-left text-xs">
-        <caption className="sr-only">Registered relay scenarios</caption>
-        <thead className="bg-muted/60 text-muted-foreground">
-          <tr>
-            <th scope="col" className="px-3 py-2 font-medium">
-              ID
-            </th>
-            <th scope="col" className="px-3 py-2 font-medium">
-              Scenario
-            </th>
-            <th scope="col" className="px-3 py-2 font-medium">
-              Status
-            </th>
-            <th scope="col" className="px-3 py-2 font-medium">
-              Txid
-            </th>
-            <th scope="col" className="px-3 py-2 font-medium">
-              Updated
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {records.map((record) => (
-            <tr key={record.id} className="border-border/60 border-t">
-              <td className="px-3 py-2">{record.id}</td>
-              <td className="px-3 py-2">{record.scenario}</td>
-              <td className="px-3 py-2">{record.status}</td>
-              <td className="max-w-40 truncate px-3 py-2">{record.txid || "—"}</td>
-              <td className="px-3 py-2">{record.updatedAt}</td>
+    <div className="-mx-4 -my-2 overflow-x-auto whitespace-nowrap sm:-mx-6">
+      <div className="inline-block min-w-full px-4 py-2 align-middle sm:px-6">
+        <table className="w-full min-w-full text-left">
+          <caption className="sr-only">Registered relay scenarios</caption>
+          <thead>
+            <tr>
+              <th scope="col" className="whitespace-nowrap px-3 py-2">
+                <Paragraph as="span" size="xs-medium">
+                  ID
+                </Paragraph>
+              </th>
+              <th scope="col" className="whitespace-nowrap px-3 py-2">
+                <Paragraph as="span" size="xs-medium">
+                  Scenario
+                </Paragraph>
+              </th>
+              <th scope="col" className="whitespace-nowrap px-3 py-2">
+                <Paragraph as="span" size="xs-medium">
+                  Status
+                </Paragraph>
+              </th>
+              <th scope="col" className="whitespace-nowrap px-3 py-2">
+                <Paragraph as="span" size="xs-medium">
+                  Txid
+                </Paragraph>
+              </th>
+              <th scope="col" className="whitespace-nowrap px-3 py-2">
+                <Paragraph as="span" size="xs-medium">
+                  Updated
+                </Paragraph>
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {records.map((record) => (
+              <tr key={record.id} className="border-border/60 border-t">
+                <td className="px-3 py-2">
+                  <Paragraph as="span" size="xs" color="foreground">
+                    {record.id}
+                  </Paragraph>
+                </td>
+                <td className="px-3 py-2">
+                  <Paragraph as="span" size="xs" color="foreground">
+                    {record.scenario}
+                  </Paragraph>
+                </td>
+                <td className="px-3 py-2">
+                  <Paragraph as="span" size="xs" color="foreground">
+                    {record.status}
+                  </Paragraph>
+                </td>
+                <td className="max-w-40 truncate px-3 py-2">
+                  <Paragraph as="span" size="xs" color="foreground">
+                    {record.txid || "—"}
+                  </Paragraph>
+                </td>
+                <td className="px-3 py-2">
+                  <Paragraph as="span" size="xs" color="foreground">
+                    {record.updatedAt}
+                  </Paragraph>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
@@ -425,9 +536,9 @@ export function ApiResponseView({
 
   return (
     <div className="min-w-0 space-y-1.5">
-      <p className="font-medium text-muted-foreground text-xs uppercase">
+      <Paragraph size="xs-medium" className="uppercase tracking-(--tracking-label)">
         {label} ({response.status})
-      </p>
+      </Paragraph>
       <JsonCodeBlock
         filename={`${label.toLowerCase().replaceAll(" ", "-")}.json`}
         value={JSON.stringify(response.body, null, 2)}

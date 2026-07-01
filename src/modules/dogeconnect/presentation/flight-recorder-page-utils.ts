@@ -12,6 +12,20 @@ export type FlightRecorderPayDraftFields = Pick<
 export const badgeVariantForVerdict = (verdict: "pass" | "warn" | "fail") =>
   verdict === "pass" ? "success" : verdict === "warn" ? "warning" : "danger"
 
+export const verdictTextClass = (verdict: "pass" | "warn" | "fail") =>
+  verdict === "pass"
+    ? "text-success-foreground"
+    : verdict === "warn"
+      ? "text-warning-foreground"
+      : "text-danger-foreground"
+
+export const validationVerdictTextClass = (verdict: string) =>
+  verdict === "valid"
+    ? "text-success-foreground"
+    : verdict === "invalid"
+      ? "text-danger-foreground"
+      : "text-warning-foreground"
+
 export const formatPhaseLabel = (phase: string): string =>
   phase.replaceAll("_", " ").replace(/\b\w/g, (char) => char.toUpperCase())
 

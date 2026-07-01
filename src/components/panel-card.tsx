@@ -18,7 +18,10 @@ export function PanelCard({
   contentClassName?: string
 }) {
   return (
-    <Card id={id} className={cn(id ? "scroll-mt-24" : undefined, className)}>
+    <Card
+      id={id}
+      className={cn("min-w-0 overflow-hidden", id ? "scroll-mt-24" : undefined, className)}
+    >
       <CardHeader>
         <div>
           <CardTitle>{title}</CardTitle>

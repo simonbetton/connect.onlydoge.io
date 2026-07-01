@@ -2,6 +2,15 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/figtree";
+@import "../tokens.css";
+@import "./microinteractions.css";
+
+/* Hallmark · macrostructure: Workbench · H5 hero + H7 mock stack · tone: utilitarian
+ * theme: studied-DNA (source: https://getfernand.com/) · paper oklch(0.987 0.012 94.2)
+ * accent oklch(0.9032 0.1817 98.27) warm-gold · display: DogeSans · body: Figtree
+ * nav: N1b · footer: Ft3 dark · studied: yes · enrichment: Tier-A workbench mocks
+ * pre-emit critique: P5 H4 E5 S5 R5 V5
+ */
 
 @font-face {
   font-family: "DogeSans";
@@ -23,20 +32,20 @@
 
 :root {
   --font-doge: "DogeSans", "Figtree Variable", sans-serif;
-  --background: oklch(0.987 0.012 94.2);
-  --foreground: oklch(0.25 0.01 50);
+  --background: oklch(0.985 0.01 94.2);
+  --foreground: oklch(0.16 0.012 52);
   --card: oklch(1 0.004 95);
-  --card-foreground: oklch(0.24 0.012 54);
+  --card-foreground: oklch(0.16 0.012 52);
   --popover: oklch(1 0.004 95);
-  --popover-foreground: oklch(0.24 0.012 54);
+  --popover-foreground: oklch(0.16 0.012 52);
   --primary: oklch(0.9032 0.1817 98.27);
   --primary-foreground: oklch(0.21 0.018 40);
   --secondary: oklch(0.95 0.03 88);
-  --secondary-foreground: oklch(0.24 0.012 54);
-  --muted: oklch(0.95 0.012 80);
-  --muted-foreground: oklch(0.5 0.02 55);
+  --secondary-foreground: oklch(0.16 0.012 52);
+  --muted: oklch(0.94 0.014 82);
+  --muted-foreground: oklch(0.34 0.018 52);
   --accent: oklch(0.95 0.025 90);
-  --accent-foreground: oklch(0.24 0.012 54);
+  --accent-foreground: oklch(0.16 0.012 52);
   --destructive: oklch(0.577 0.245 27.325);
   --success: oklch(0.62 0.17 155);
   --success-foreground: oklch(0.28 0.06 155);
@@ -61,7 +70,7 @@
   --chart-3: oklch(0.546 0.245 262.881);
   --chart-4: oklch(0.488 0.243 264.376);
   --chart-5: oklch(0.424 0.199 265.638);
-  --radius: 0.625rem;
+  --radius: 0.5rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -74,6 +83,18 @@
 
 @theme inline {
   --font-sans: "Figtree Variable", sans-serif;
+  --font-display: "DogeSans", "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-outlier: ui-monospace, "SF Mono", Menlo, monospace;
+  --color-paper: oklch(0.987 0.012 94.2);
+  --color-paper-2: oklch(0.97 0.014 92);
+  --color-hero-wash: oklch(0.96 0.055 95);
+  --color-accent-ink: oklch(0.16 0.018 40);
+  --color-focus: oklch(0.75 0.15 85);
+  --color-status: oklch(0.62 0.17 155);
+  --color-footer-bg: oklch(0.2 0.018 52);
+  --color-footer-ink: oklch(0.96 0.01 95);
+  --color-footer-muted: oklch(0.68 0.02 80);
+  --color-footer-rule: oklch(0.32 0.015 55);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -127,18 +148,57 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-reveal-fade-up: reveal-fade-up var(--dur-long) var(--ease-out) both;
+  --animate-status-pulse: status-pulse 2.4s var(--ease-in-out) infinite;
+  --animate-mobile-nav-enter: mobile-nav-reveal var(--dur-short) var(--ease-out) both;
+
+  @keyframes reveal-fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes status-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.65;
+      transform: scale(0.92);
+    }
+  }
+
+  @keyframes mobile-nav-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 @layer base {
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(circle at 8% 10%, oklch(0.82 0.14 85 / 22%) 0, transparent 35%),
-      radial-gradient(circle at 90% 0%, oklch(0.9 0.06 100 / 30%) 0, transparent 35%);
-    background-attachment: fixed;
+    font-family: var(--font-body);
   }
   html {
     @apply font-sans;
@@ -148,8 +208,25 @@
   h3,
   h4,
   h5,
-  h6,
-  .doge-logo {
-    font-family: var(--font-doge);
+  h6 {
+    font-family: var(--font-display);
+    font-style: normal;
+  }
+
+  button,
+  [data-slot="button"],
+  [class*="group/button"] {
+    border-width: 1px;
+    box-shadow: none;
+  }
+
+  table,
+  thead,
+  tbody,
+  tfoot,
+  tr,
+  th,
+  td {
+    border-width: 1px;
   }
 }

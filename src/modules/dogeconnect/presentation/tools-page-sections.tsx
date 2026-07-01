@@ -24,7 +24,7 @@ import {
 import type { RelayScenarioOption } from "./tools-search"
 
 const selectClassName =
-  "h-10 w-full rounded-2xl border border-input bg-background/70 px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30"
+  "h-11 w-full rounded-2xl border border-input bg-background/75 px-3.5 text-base outline-none shadow-[0_1px_0_oklch(1_0_0/0.55)_inset] transition-[border-color,box-shadow,background-color] duration-200 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/30 sm:h-10 sm:text-sm"
 
 const openApiDocsHref = "/api/openapi"
 
@@ -194,8 +194,8 @@ export function MockQrFixtureCard({
       id="mock-fixture"
       className="min-w-0"
       contentClassName="min-w-0 space-y-4"
-      title="Mock QR Fixture Generator"
-      description="Create a fully valid DogeConnect QR URI with a live mock `dc` envelope endpoint on this app. Use this for wallet and relay integration debugging."
+      title="Mock QR fixture"
+      description="Create a fully valid DogeConnect QR URI with a live mock `dc` envelope endpoint on this app."
     >
       <div className="grid items-center gap-3 sm:grid-cols-[1fr_auto]">
         <mockQrForm.Field name="paymentId">
@@ -317,8 +317,8 @@ export function QrValidatorCard({
       id="qr-validator"
       className="min-w-0"
       contentClassName="min-w-0 space-y-4"
-      title="Validate QR URI"
-      description="Parses `dogecoin:` URI, enforces `dc`/`h`, and optionally fetches envelope from the relay endpoint defined in `dc`."
+      title="QR URI validator"
+      description="Parse a `dogecoin:` URI, enforce `dc` and `h`, and optionally fetch the envelope."
     >
       <div className="space-y-3">
         <qrForm.Field name="uri">
@@ -401,8 +401,8 @@ export function EnvelopeValidatorCard({
       id="envelope-validator"
       className="min-w-0"
       contentClassName="min-w-0 space-y-4"
-      title="Validate Payment Envelope"
-      description="Validates envelope structure, payment schema, and BIP-340 Schnorr signature."
+      title="Payment envelope validator"
+      description="Validate envelope structure, payment schema, and BIP-340 Schnorr signature."
     >
       <div className="space-y-3">
         <envelopeForm.Field name="expectedHash">
@@ -504,8 +504,8 @@ export function RelayRegistrationCard({
       id="relay-registration"
       className="min-w-0"
       contentClassName="min-w-0 space-y-4"
-      title="Relay Scenario Registration"
-      description="Register simulated payment IDs and choose response path for pay/status."
+      title="Relay scenario registration"
+      description="Register simulated payment IDs and choose the response path for pay and status."
     >
       <div className="grid min-w-0 gap-3 sm:grid-cols-2">
         <registerForm.Field name="id">
@@ -667,8 +667,8 @@ export function RelayTesterCard({
       id="relay-tester"
       className="min-w-0"
       contentClassName="min-w-0 space-y-6"
-      title="Relay Pay / Status Tester"
-      description="Submit relay payloads against local no-op API and inspect contract responses."
+      title="Relay pay and status tester"
+      description="Submit relay payloads against the local no-op API and inspect contract responses."
     >
       <div className="space-y-3">
         <h3 className="font-semibold text-sm">POST /api/relay/pay</h3>

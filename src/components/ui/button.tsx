@@ -1,9 +1,10 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import type { VariantProps } from "class-variance-authority"
+import type * as React from "react"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { cn } from "@/lib/utils"
 
-function Button({
+function ButtonRoot({
   className,
   variant = "default",
   size = "default",
@@ -17,5 +18,13 @@ function Button({
     />
   )
 }
+
+function ButtonText(props: React.ComponentProps<"span">) {
+  return <span {...props} />
+}
+
+const Button = Object.assign(ButtonRoot, {
+  Text: ButtonText,
+})
 
 export { Button }

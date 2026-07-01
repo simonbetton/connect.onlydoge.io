@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as ProtocolRouteImport } from './routes/protocol'
 import { Route as FlightRecorderRouteImport } from './routes/flight-recorder'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
@@ -17,6 +18,11 @@ import { Route as ApiSplatRouteImport } from './routes/api.$'
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProtocolRoute = ProtocolRouteImport.update({
+  id: '/protocol',
+  path: '/protocol',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FlightRecorderRoute = FlightRecorderRouteImport.update({
@@ -38,12 +44,14 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/flight-recorder': typeof FlightRecorderRoute
+  '/protocol': typeof ProtocolRoute
   '/tools': typeof ToolsRoute
   '/api/$': typeof ApiSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/flight-recorder': typeof FlightRecorderRoute
+  '/protocol': typeof ProtocolRoute
   '/tools': typeof ToolsRoute
   '/api/$': typeof ApiSplatRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/flight-recorder': typeof FlightRecorderRoute
+  '/protocol': typeof ProtocolRoute
   '/tools': typeof ToolsRoute
   '/api/$': typeof ApiSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/flight-recorder' | '/tools' | '/api/$'
+  fullPaths: '/' | '/flight-recorder' | '/protocol' | '/tools' | '/api/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/flight-recorder' | '/tools' | '/api/$'
-  id: '__root__' | '/' | '/flight-recorder' | '/tools' | '/api/$'
+  to: '/' | '/flight-recorder' | '/protocol' | '/tools' | '/api/$'
+  id: '__root__' | '/' | '/flight-recorder' | '/protocol' | '/tools' | '/api/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FlightRecorderRoute: typeof FlightRecorderRoute
+  ProtocolRoute: typeof ProtocolRoute
   ToolsRoute: typeof ToolsRoute
   ApiSplatRoute: typeof ApiSplatRoute
 }
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/tools'
       fullPath: '/tools'
       preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/protocol': {
+      id: '/protocol'
+      path: '/protocol'
+      fullPath: '/protocol'
+      preLoaderRoute: typeof ProtocolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/flight-recorder': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FlightRecorderRoute: FlightRecorderRoute,
+  ProtocolRoute: ProtocolRoute,
   ToolsRoute: ToolsRoute,
   ApiSplatRoute: ApiSplatRoute,
 }

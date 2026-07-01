@@ -13,17 +13,22 @@ export function NotFoundPage() {
   })
 
   return (
-    <section className="mx-auto flex w-full max-w-7xl px-4 py-8 sm:px-6">
-      <PageHero title="This route is missing." variant="brand" className="w-full">
+    <section className="mx-auto flex w-full max-w-332 px-4 py-12 sm:px-6 sm:py-16 lg:px-5">
+      <PageHero
+        title="This route fell out of the trace."
+        variant="brand"
+        className="w-full shadow-[0_1px_0_oklch(1_0_0/0.55)_inset,0_24px_80px_oklch(0.3_0.03_55/0.12)]"
+        titleClassName="max-w-[14ch] text-4xl sm:text-6xl"
+      >
         <Badge variant="warning" className="w-fit">
           HTTP 404
         </Badge>
-        <p className="max-w-2xl text-muted-foreground text-sm leading-relaxed sm:text-base">
-          OnlyDoge DogeConnect Debugger could not resolve the requested page. Use one of the
-          shortcuts below to get back to active debugging workflows.
+        <p className="max-w-[56ch] text-pretty text-base/7 text-muted-foreground sm:text-lg/8">
+          OnlyDoge DogeConnect Debugger could not resolve the requested page. Use one of these
+          shortcuts to return to an active debugging workflow.
         </p>
-        <div className="max-w-full overflow-x-auto rounded-2xl border border-border/70 bg-background/80 px-4 py-3">
-          <p className="font-medium text-muted-foreground text-xs uppercase">Requested Path</p>
+        <div className="max-w-full overflow-x-auto rounded-2xl border border-border/70 bg-background/80 px-4 py-3 shadow-[0_1px_0_oklch(1_0_0/0.55)_inset]">
+          <p className="font-medium text-muted-foreground text-sm sm:text-xs">Requested path</p>
           <p className="mt-1 font-mono text-foreground text-sm">{unresolvedPath || "/"}</p>
         </div>
         <div className="flex flex-wrap gap-2">

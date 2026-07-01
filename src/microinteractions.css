@@ -1,0 +1,1394 @@
+/* Microinteractions · Emil-style motion tokens + reusable patterns */
+
+@layer utilities {
+  .micro-hover-lift {
+    transition:
+      transform var(--dur-short) var(--ease-out),
+      box-shadow var(--dur-short) var(--ease-out),
+      border-color var(--dur-short) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .micro-hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card-lg);
+    }
+  }
+
+  .micro-hover-lift:active {
+    transform: translateY(0) scale(0.995);
+  }
+
+  .micro-press {
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+
+  .micro-press:active {
+    transform: scale(0.97);
+  }
+
+  .micro-reveal {
+    animation: reveal-fade-up var(--dur-long) var(--ease-out) both;
+  }
+
+  .micro-reveal-delay-1 {
+    animation-delay: 80ms;
+  }
+
+  .micro-reveal-delay-2 {
+    animation-delay: 160ms;
+  }
+
+  .micro-reveal-delay-3 {
+    animation-delay: 240ms;
+  }
+
+  .micro-link-nudge svg,
+  .micro-link-nudge [data-icon] {
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .micro-link-nudge:hover svg,
+    .micro-link-nudge:hover [data-icon] {
+      transform: translateX(2px);
+    }
+  }
+
+  /* Workbench mock panels — one orchestrated 12s pipeline (marketing only) */
+  .mock-panel-stage {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
+  .mock-step-row {
+    position: relative;
+    animation: mock-step-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  .mock-step-row::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+    background: var(--color-status);
+    transform: scaleY(0);
+    transform-origin: top center;
+    opacity: 0;
+    animation: mock-step-accent var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  .mock-step-index {
+    animation: mock-step-index-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  .mock-step-check {
+    animation: mock-step-check-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  .mock-step-pending {
+    animation: mock-step-pending-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  .mock-live-indicator {
+    animation: mock-live-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  .mock-run-badge {
+    animation: mock-run-badge-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  .mock-uri-caret {
+    animation: mock-caret-blink 1.1s steps(1, end) infinite;
+  }
+
+  .mock-timeline-segment-fill {
+    transform: scaleY(0);
+    opacity: 0.45;
+    animation: mock-segment-fill-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  .mock-timeline-dot {
+    animation: mock-dot-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+    transform-origin: center;
+  }
+
+  .mock-sequenced-timeline .mock-timeline-segment-fill {
+    opacity: 1;
+    transform: scaleY(0);
+    transform-origin: top center;
+    animation: mock-sequence-segment-phase-0 var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  .mock-sequenced-timeline .mock-timeline-dot {
+    opacity: 0;
+    animation-name: mock-sequence-dot-phase-0;
+  }
+
+  .mock-timeline-label {
+    animation: mock-event-label-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+    transition: color var(--dur-short) var(--ease-out);
+  }
+
+  .mock-timeline-meta {
+    animation: mock-event-meta-beat var(--dur-mock-cycle) var(--ease-mock-phase) infinite;
+  }
+
+  /* Hero stack — deal-in entrance + quieter back-card choreography */
+  .mock-hero-stack {
+    perspective: 1200px;
+  }
+
+  .mock-hero-stack > :first-child {
+    z-index: 1;
+  }
+
+  .mock-hero-stack > :last-child {
+    z-index: 2;
+  }
+
+  .mock-hero-card-enter {
+    opacity: 0.22;
+    transform-origin: center bottom;
+    animation: mock-hero-card-deal-in var(--dur-hero-stack) var(--ease-out) forwards;
+    animation-delay: calc(40ms + var(--hero-card-i, 0) * var(--dur-hero-stagger));
+  }
+
+  .mock-hero-stack .mock-panel--tools .mock-step-row,
+  .mock-hero-stack .mock-panel--tools .mock-step-row::before,
+  .mock-hero-stack .mock-panel--tools .mock-step-index,
+  .mock-hero-stack .mock-panel--tools .mock-step-check,
+  .mock-hero-stack .mock-panel--tools .mock-step-pending,
+  .mock-hero-stack .mock-panel--tools .mock-live-indicator,
+  .mock-hero-stack .mock-panel--tools .mock-run-badge {
+    animation: none;
+  }
+
+  .mock-hero-stack .mock-panel--trace {
+    --dur-mock-cycle: 16s;
+  }
+
+  .modal-enter {
+    animation: modal-enter var(--dur-short) var(--ease-out) both;
+  }
+
+  .modal-backdrop-enter {
+    animation: modal-backdrop-enter var(--dur-short) var(--ease-out) both;
+  }
+
+  .native-dialog-shell {
+    margin: 0;
+    max-width: none;
+    max-height: none;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .native-dialog-shell::backdrop {
+    background: color-mix(in oklch, var(--foreground) 20%, transparent);
+    backdrop-filter: blur(2px);
+  }
+
+  .native-dialog-shell.modal-dialog-shell::backdrop {
+    background: color-mix(in oklch, var(--foreground) 25%, transparent);
+    animation: modal-backdrop-enter var(--dur-short) var(--ease-out) both;
+  }
+
+  .native-dialog-shell-command {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    padding-top: 14vh;
+  }
+
+  .section-tag-glow {
+    transition:
+      border-color var(--dur-short) var(--ease-out),
+      background-color var(--dur-short) var(--ease-out),
+      transform var(--dur-press) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .section-tag-glow:hover {
+      border-color: oklch(from var(--color-accent) l c h / 0.45);
+      background-color: oklch(from var(--color-accent) l c h / 0.08);
+    }
+  }
+
+  .workflow-step-badge {
+    transition: transform var(--dur-press) var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .group\/workflow-step:hover .workflow-step-badge {
+      transform: scale(1.06);
+    }
+  }
+
+  .home-ring-scan {
+    animation: home-ring-scan 9s var(--ease-in-out) infinite;
+  }
+
+  .home-float-orb {
+    animation: home-float-orb 6s var(--ease-in-out) infinite;
+  }
+
+  .home-float-orb-delay {
+    animation-delay: 1.8s;
+  }
+
+  .home-stat-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-stat-card::after {
+    content: "";
+    position: absolute;
+    inset: auto 1.25rem 0;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0;
+    transform: translateX(-38%);
+    animation: home-card-scan 5.5s var(--ease-in-out) infinite;
+  }
+
+  .home-workflow-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-workflow-card::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      circle at var(--home-glow-x, 20%) 0%,
+      oklch(from var(--primary) l c h / 0.16),
+      transparent 38%
+    );
+    opacity: 0.55;
+    transition: opacity var(--dur-short) var(--ease-out);
+  }
+}
+
+@theme inline {
+  --animate-modal-enter: modal-enter var(--dur-short) var(--ease-out) both;
+  --animate-modal-backdrop-enter: modal-backdrop-enter var(--dur-short) var(--ease-out) both;
+
+  @keyframes mock-step-beat-phase-0 {
+    /* fallow-ignore-next-line code-duplication */
+    0%,
+    100%,
+    26%,
+    92% {
+      border-color: var(--border);
+      background-color: var(--background);
+    }
+
+    6%,
+    20% {
+      border-color: oklch(from var(--color-status) l c h / 0.28);
+      background-color: oklch(from var(--color-status) l c h / 0.075);
+    }
+  }
+
+  @keyframes mock-step-beat-phase-1 {
+    0%,
+    100%,
+    59.333%,
+    92% {
+      border-color: var(--border);
+      background-color: var(--background);
+    }
+
+    39.333%,
+    53.333% {
+      border-color: oklch(from var(--color-status) l c h / 0.28);
+      background-color: oklch(from var(--color-status) l c h / 0.075);
+    }
+  }
+
+  @keyframes mock-step-beat-phase-2 {
+    0%,
+    100%,
+    92% {
+      border-color: var(--border);
+      background-color: var(--background);
+    }
+
+    72.667%,
+    86.667% {
+      border-color: oklch(from var(--color-status) l c h / 0.28);
+      background-color: oklch(from var(--color-status) l c h / 0.075);
+    }
+  }
+
+  @keyframes mock-step-accent-phase-0 {
+    0%,
+    100%,
+    26%,
+    92% {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+
+    6%,
+    20% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-step-accent-phase-1 {
+    0%,
+    100%,
+    59.333%,
+    92% {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+
+    39.333%,
+    53.333% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-step-accent-phase-2 {
+    0%,
+    100%,
+    92% {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+
+    72.667%,
+    86.667% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-step-index-beat-phase-0 {
+    /* fallow-ignore-next-line code-duplication */
+    0%,
+    100%,
+    26%,
+    92% {
+      border-color: var(--border);
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+    }
+
+    6%,
+    20% {
+      border-color: oklch(from var(--color-status) l c h / 0.42);
+      background-color: oklch(from var(--color-status) l c h / 0.14);
+      color: var(--foreground);
+    }
+  }
+
+  @keyframes mock-step-index-beat-phase-1 {
+    0%,
+    100%,
+    59.333%,
+    92% {
+      border-color: var(--border);
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+    }
+
+    39.333%,
+    53.333% {
+      border-color: oklch(from var(--color-status) l c h / 0.42);
+      background-color: oklch(from var(--color-status) l c h / 0.14);
+      color: var(--foreground);
+    }
+  }
+
+  @keyframes mock-step-index-beat-phase-2 {
+    0%,
+    100%,
+    92% {
+      border-color: var(--border);
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+    }
+
+    72.667%,
+    86.667% {
+      border-color: oklch(from var(--color-status) l c h / 0.42);
+      background-color: oklch(from var(--color-status) l c h / 0.14);
+      color: var(--foreground);
+    }
+  }
+
+  @keyframes mock-step-beat {
+    0%,
+    100%,
+    26%,
+    92% {
+      border-color: var(--border);
+      background-color: var(--background);
+    }
+
+    6%,
+    20% {
+      border-color: oklch(from var(--color-status) l c h / 0.28);
+      background-color: oklch(from var(--color-status) l c h / 0.075);
+    }
+  }
+
+  @keyframes mock-step-accent {
+    0%,
+    100%,
+    26%,
+    92% {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+
+    6%,
+    20% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-step-index-beat {
+    0%,
+    100%,
+    26%,
+    92% {
+      border-color: var(--border);
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+    }
+
+    6%,
+    20% {
+      border-color: oklch(from var(--color-status) l c h / 0.42);
+      background-color: oklch(from var(--color-status) l c h / 0.14);
+      color: var(--foreground);
+    }
+  }
+
+  @keyframes mock-step-check-beat {
+    0%,
+    100%,
+    92% {
+      opacity: 0.5;
+      transform: scale(0.92);
+    }
+
+    6%,
+    20% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes mock-step-pending-beat {
+    0%,
+    100%,
+    26%,
+    92% {
+      opacity: 0.62;
+      color: var(--muted-foreground);
+    }
+
+    6%,
+    20% {
+      opacity: 1;
+      color: var(--foreground);
+    }
+  }
+
+  @keyframes mock-live-beat {
+    0%,
+    100%,
+    94% {
+      opacity: 0.5;
+      transform: scale(0.9);
+    }
+
+    3%,
+    91% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes mock-run-badge-beat {
+    0%,
+    100%,
+    94% {
+      opacity: 0.72;
+    }
+
+    8%,
+    88% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-caret-blink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes mock-timeline-fill-kf {
+    0%,
+    100% {
+      transform: scaleY(0.083);
+      opacity: 0.45;
+    }
+
+    4% {
+      opacity: 0.95;
+    }
+
+    18% {
+      transform: scaleY(0.357);
+      opacity: 1;
+    }
+
+    43% {
+      transform: scaleY(0.63);
+      opacity: 1;
+    }
+
+    68% {
+      transform: scaleY(0.904);
+      opacity: 1;
+    }
+
+    92% {
+      transform: scaleY(0.083);
+      opacity: 0.45;
+    }
+  }
+
+  @keyframes mock-event-label-beat-phase-0 {
+    0%,
+    100%,
+    22%,
+    88% {
+      opacity: 0.62;
+    }
+
+    6%,
+    18% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-event-label-beat-phase-1 {
+    0%,
+    100%,
+    47%,
+    88% {
+      opacity: 0.62;
+    }
+
+    31%,
+    43% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-event-label-beat-phase-2 {
+    0%,
+    100%,
+    72%,
+    88% {
+      opacity: 0.62;
+    }
+
+    56%,
+    68% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-event-label-beat-phase-3 {
+    0%,
+    100%,
+    88% {
+      opacity: 0.62;
+    }
+
+    81%,
+    93% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-event-meta-beat-phase-0 {
+    0%,
+    100%,
+    22%,
+    88% {
+      opacity: 0.5;
+    }
+
+    6%,
+    18% {
+      opacity: 0.85;
+    }
+  }
+
+  @keyframes mock-event-meta-beat-phase-1 {
+    0%,
+    100%,
+    47%,
+    88% {
+      opacity: 0.5;
+    }
+
+    31%,
+    43% {
+      opacity: 0.85;
+    }
+  }
+
+  @keyframes mock-event-meta-beat-phase-2 {
+    0%,
+    100%,
+    72%,
+    88% {
+      opacity: 0.5;
+    }
+
+    56%,
+    68% {
+      opacity: 0.85;
+    }
+  }
+
+  @keyframes mock-event-meta-beat-phase-3 {
+    0%,
+    100%,
+    88% {
+      opacity: 0.5;
+    }
+
+    81%,
+    93% {
+      opacity: 0.85;
+    }
+  }
+
+  @keyframes mock-dot-beat-phase-0 {
+    0%,
+    100%,
+    22%,
+    88% {
+      transform: scale(1);
+    }
+
+    6%,
+    18% {
+      transform: scale(1.18);
+    }
+  }
+
+  @keyframes mock-dot-beat-phase-1 {
+    0%,
+    100%,
+    47%,
+    88% {
+      transform: scale(1);
+    }
+
+    31%,
+    43% {
+      transform: scale(1.18);
+    }
+  }
+
+  @keyframes mock-dot-beat-phase-2 {
+    0%,
+    100%,
+    72%,
+    88% {
+      transform: scale(1);
+    }
+
+    56%,
+    68% {
+      transform: scale(1.18);
+    }
+  }
+
+  @keyframes mock-dot-beat-phase-3 {
+    0%,
+    100%,
+    88% {
+      transform: scale(1);
+    }
+
+    81%,
+    93% {
+      transform: scale(1.18);
+    }
+  }
+
+  @keyframes mock-sequence-line-draw {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scaleY(0);
+    }
+
+    8% {
+      opacity: 0.95;
+      transform: scaleY(0.03);
+    }
+
+    29% {
+      opacity: 1;
+      transform: scaleY(0.34);
+    }
+
+    54% {
+      opacity: 1;
+      transform: scaleY(0.66);
+    }
+
+    79%,
+    91% {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes mock-sequence-dot-phase-0 {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    5%,
+    16% {
+      opacity: 1;
+      transform: scale(1.24);
+    }
+  }
+
+  @keyframes mock-sequence-dot-phase-1 {
+    0%,
+    21%,
+    100% {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+
+    26% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    31%,
+    42% {
+      opacity: 1;
+      transform: scale(1.24);
+    }
+
+    48%,
+    92% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes mock-sequence-dot-phase-2 {
+    0%,
+    46%,
+    100% {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+
+    51% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    56%,
+    67% {
+      opacity: 1;
+      transform: scale(1.24);
+    }
+
+    73%,
+    92% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes mock-sequence-dot-phase-3 {
+    0%,
+    71%,
+    100% {
+      opacity: 0;
+      transform: scale(0.7);
+    }
+
+    76% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    81%,
+    92% {
+      opacity: 1;
+      transform: scale(1.24);
+    }
+  }
+
+  @keyframes mock-segment-fill-phase-0 {
+    0%,
+    100%,
+    92% {
+      transform: scaleY(0);
+      opacity: 0.45;
+    }
+
+    6%,
+    91% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-segment-fill-phase-1 {
+    0%,
+    100%,
+    30.999%,
+    92% {
+      transform: scaleY(0);
+      opacity: 0.45;
+    }
+
+    31%,
+    91% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-segment-fill-phase-2 {
+    0%,
+    100%,
+    55.999%,
+    92% {
+      transform: scaleY(0);
+      opacity: 0.45;
+    }
+
+    56%,
+    91% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-step-check-beat-phase-1 {
+    0%,
+    100%,
+    92% {
+      opacity: 0.5;
+      transform: scale(0.92);
+    }
+
+    39.333%,
+    53.333% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes mock-step-check-beat-phase-2 {
+    0%,
+    100%,
+    92% {
+      opacity: 0.5;
+      transform: scale(0.92);
+    }
+
+    72.667%,
+    86.667% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes mock-step-pending-beat-phase-2 {
+    0%,
+    100%,
+    92% {
+      opacity: 0.62;
+      color: var(--muted-foreground);
+    }
+
+    72.667%,
+    86.667% {
+      opacity: 1;
+      color: var(--foreground);
+    }
+  }
+
+  @keyframes mock-event-label-beat {
+    0%,
+    100%,
+    22%,
+    88% {
+      opacity: 0.62;
+    }
+
+    6%,
+    18% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mock-event-meta-beat {
+    0%,
+    100%,
+    22%,
+    88% {
+      opacity: 0.5;
+    }
+
+    6%,
+    18% {
+      opacity: 0.85;
+    }
+  }
+
+  @keyframes mock-dot-beat {
+    0%,
+    100%,
+    22%,
+    88% {
+      transform: scale(1);
+    }
+
+    6%,
+    18% {
+      transform: scale(1.18);
+    }
+  }
+
+  @keyframes modal-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.97) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes modal-backdrop-enter {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes home-ring-scan {
+    0%,
+    100% {
+      opacity: 0.18;
+      transform: translateX(-50%) scale(0.92);
+    }
+
+    50% {
+      opacity: 0.5;
+      transform: translateX(-50%) scale(1.08);
+    }
+  }
+
+  @keyframes home-float-orb {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    50% {
+      opacity: 1;
+      transform: translate3d(10px, -16px, 0) scale(1.2);
+    }
+  }
+
+  @keyframes home-card-scan {
+    0%,
+    100% {
+      opacity: 0;
+      transform: translateX(-42%);
+    }
+
+    16%,
+    48% {
+      opacity: 0.85;
+    }
+
+    64% {
+      opacity: 0;
+      transform: translateX(42%);
+    }
+  }
+
+  @keyframes mock-hero-card-deal-in {
+    from {
+      opacity: 0.22;
+      transform: translateY(calc(20px + var(--hero-card-i, 0) * 8px))
+        translateX(calc(var(--hero-card-i, 0) * 14px - 7px))
+        scale(calc(0.97 - var(--hero-card-i, 0) * 0.02));
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) translateX(0) scale(1);
+    }
+  }
+
+  @keyframes mock-hero-card-reduced {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes mock-sequence-segment-phase-0 {
+  0%,
+  8%,
+  100% {
+    transform: scaleY(0);
+  }
+
+  29%,
+  92% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes mock-sequence-segment-phase-1 {
+  0%,
+  33%,
+  100% {
+    transform: scaleY(0);
+  }
+
+  54%,
+  92% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes mock-sequence-segment-phase-2 {
+  0%,
+  58%,
+  100% {
+    transform: scaleY(0);
+  }
+
+  79%,
+  92% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes mock-sequence-dot-phase-0 {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  5%,
+  16% {
+    opacity: 1;
+    transform: scale(1.24);
+  }
+}
+
+@keyframes mock-sequence-dot-phase-1 {
+  0%,
+  21%,
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  26% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  31%,
+  42% {
+    opacity: 1;
+    transform: scale(1.24);
+  }
+
+  48%,
+  92% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mock-sequence-dot-phase-2 {
+  0%,
+  46%,
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  51% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  56%,
+  67% {
+    opacity: 1;
+    transform: scale(1.24);
+  }
+
+  73%,
+  92% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mock-sequence-dot-phase-3 {
+  0%,
+  71%,
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+
+  76% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  81%,
+  92% {
+    opacity: 1;
+    transform: scale(1.24);
+  }
+}
+
+.mock-step-row[data-mock-phase="0"] {
+  animation-name: mock-step-beat-phase-0;
+}
+
+.mock-step-row[data-mock-phase="0"]::before {
+  animation-name: mock-step-accent-phase-0;
+}
+
+.mock-step-row[data-mock-phase="0"] .mock-step-index {
+  animation-name: mock-step-index-beat-phase-0;
+}
+
+.mock-step-row[data-mock-phase="1"] {
+  animation-name: mock-step-beat-phase-1;
+}
+
+.mock-step-row[data-mock-phase="1"]::before {
+  animation-name: mock-step-accent-phase-1;
+}
+
+.mock-step-row[data-mock-phase="1"] .mock-step-index {
+  animation-name: mock-step-index-beat-phase-1;
+}
+
+.mock-step-row[data-mock-phase="2"] {
+  animation-name: mock-step-beat-phase-2;
+}
+
+.mock-step-row[data-mock-phase="2"]::before {
+  animation-name: mock-step-accent-phase-2;
+}
+
+.mock-step-row[data-mock-phase="2"] .mock-step-index {
+  animation-name: mock-step-index-beat-phase-2;
+}
+
+.mock-step-row[data-mock-phase="2"] .mock-step-pending {
+  animation-name: mock-step-pending-beat-phase-2;
+}
+
+.mock-step-row[data-mock-phase="0"] .mock-step-check {
+  animation-name: mock-step-check-beat-phase-1;
+}
+
+.mock-step-row[data-mock-phase="1"] .mock-step-check {
+  animation-name: mock-step-check-beat-phase-2;
+}
+
+.mock-timeline-event[data-mock-phase="0"] .mock-timeline-dot {
+  animation-name: mock-dot-beat-phase-0;
+}
+
+.mock-timeline-event[data-mock-phase="0"] .mock-timeline-label {
+  animation-name: mock-event-label-beat-phase-0;
+}
+
+.mock-timeline-event[data-mock-phase="0"] .mock-timeline-meta {
+  animation-name: mock-event-meta-beat-phase-0;
+}
+
+.mock-timeline-event[data-mock-phase="0"] .mock-timeline-segment-fill {
+  animation-name: mock-segment-fill-phase-0;
+}
+
+.mock-timeline-event[data-mock-phase="1"] .mock-timeline-dot {
+  animation-name: mock-dot-beat-phase-1;
+}
+
+.mock-timeline-event[data-mock-phase="1"] .mock-timeline-label {
+  animation-name: mock-event-label-beat-phase-1;
+}
+
+.mock-timeline-event[data-mock-phase="1"] .mock-timeline-meta {
+  animation-name: mock-event-meta-beat-phase-1;
+}
+
+.mock-timeline-event[data-mock-phase="1"] .mock-timeline-segment-fill {
+  animation-name: mock-segment-fill-phase-1;
+}
+
+.mock-timeline-event[data-mock-phase="2"] .mock-timeline-dot {
+  animation-name: mock-dot-beat-phase-2;
+}
+
+.mock-timeline-event[data-mock-phase="2"] .mock-timeline-label {
+  animation-name: mock-event-label-beat-phase-2;
+}
+
+.mock-timeline-event[data-mock-phase="2"] .mock-timeline-meta {
+  animation-name: mock-event-meta-beat-phase-2;
+}
+
+.mock-timeline-event[data-mock-phase="2"] .mock-timeline-segment-fill {
+  animation-name: mock-segment-fill-phase-2;
+}
+
+.mock-timeline-event[data-mock-phase="3"] .mock-timeline-dot {
+  animation-name: mock-dot-beat-phase-3;
+}
+
+.mock-timeline-event[data-mock-phase="3"] .mock-timeline-label {
+  animation-name: mock-event-label-beat-phase-3;
+}
+
+.mock-timeline-event[data-mock-phase="3"] .mock-timeline-meta {
+  animation-name: mock-event-meta-beat-phase-3;
+}
+
+.mock-sequenced-timeline .mock-timeline-event[data-mock-phase="0"] .mock-timeline-dot {
+  animation-name: mock-sequence-dot-phase-0;
+}
+
+.mock-sequenced-timeline .mock-timeline-event[data-mock-phase="0"] .mock-timeline-segment-fill {
+  animation-name: mock-sequence-segment-phase-0;
+}
+
+.mock-sequenced-timeline .mock-timeline-event[data-mock-phase="1"] .mock-timeline-dot {
+  animation-name: mock-sequence-dot-phase-1;
+}
+
+.mock-sequenced-timeline .mock-timeline-event[data-mock-phase="1"] .mock-timeline-segment-fill {
+  animation-name: mock-sequence-segment-phase-1;
+}
+
+.mock-sequenced-timeline .mock-timeline-event[data-mock-phase="2"] .mock-timeline-dot {
+  animation-name: mock-sequence-dot-phase-2;
+}
+
+.mock-sequenced-timeline .mock-timeline-event[data-mock-phase="2"] .mock-timeline-segment-fill {
+  animation-name: mock-sequence-segment-phase-2;
+}
+
+.mock-sequenced-timeline .mock-timeline-event[data-mock-phase="3"] .mock-timeline-dot {
+  animation-name: mock-sequence-dot-phase-3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mock-panel-stage,
+  .mock-step-row,
+  .mock-step-row::before,
+  .mock-step-index,
+  .mock-step-check,
+  .mock-step-pending,
+  .mock-live-indicator,
+  .mock-run-badge,
+  .mock-uri-caret,
+  .mock-timeline-segment-fill,
+  .mock-timeline-dot,
+  .mock-timeline-label,
+  .mock-timeline-meta,
+  .home-ring-scan,
+  .home-float-orb,
+  .home-stat-card::after,
+  .modal-enter,
+  .modal-backdrop-enter,
+  .micro-reveal {
+    animation: none;
+  }
+
+  .mock-hero-card-enter {
+    animation: mock-hero-card-reduced var(--dur-micro) var(--ease-out) forwards;
+    animation-delay: calc(var(--hero-card-i, 0) * 40ms);
+  }
+
+  .micro-hover-lift:hover,
+  .micro-hover-lift:active {
+    transform: none;
+  }
+
+  .micro-link-nudge:hover svg,
+  .micro-link-nudge:hover [data-icon],
+  .group\/workflow-step:hover .workflow-step-badge {
+    transform: none;
+  }
+}

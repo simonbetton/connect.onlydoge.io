@@ -1,137 +1,183 @@
 import { Link } from "@tanstack/react-router"
-import { PageHero } from "@/components/page-hero"
-import { PageJumpNav } from "@/components/page-jump-nav"
-import { Badge } from "@/components/ui/badge"
+import type { PageJumpNavItem } from "@/components/page-jump-nav"
 import { buttonVariants } from "@/components/ui/button-variants"
+import { Paragraph } from "@/components/ui/paragraph"
+import {
+  WorkbenchHeader,
+  WorkbenchPageLayout,
+  WorkbenchSection,
+  WorkbenchShell,
+} from "@/components/workbench-shell"
 import { toolsMockSearch, toolsQrValidatorSearch } from "./deep-link-builders"
 import { FlightRecorderExecutionControlsPanel } from "./flight-recorder-execution-controls-panel"
 import { FlightRecorderInspectorPanel } from "./flight-recorder-inspector-panel"
-import { badgeVariantForVerdict } from "./flight-recorder-page-utils"
+import { verdictTextClass } from "./flight-recorder-page-utils"
 import { FlightRecorderSessionBuilder } from "./flight-recorder-session-builder"
 import { FlightRecorderTimelinePanel } from "./flight-recorder-timeline-panel"
 import { useFlightRecorderPage } from "./use-flight-recorder-page"
 
-const sectionNavItems = [
-  { href: "#session-builder", label: "Builder" },
-  { href: "#timeline", label: "Timeline" },
-  { href: "#inspector", label: "Inspector" },
-  { href: "#execution", label: "Execution" },
-] as const
+const sectionNavItems: PageJumpNavItem[] = [
+  { href: "#session-builder", label: "Session" },
+  { href: "#timeline", label: "Trace" },
+  { href: "#inspect-execute", label: "Inspect" },
+]
+
+function FlightRecorderPipelineMeta({
+  verdict,
+  targetMode,
+}: {
+  verdict?: "pass" | "warn" | "fail"
+  targetMode: "live" | "simulator"
+}) {
+  return (
+    <Paragraph size="xs" className="rounded-full border border-border/70 bg-muted/45 px-3 py-1">
+      {verdict ? (
+        <>
+          <Paragraph as="span" size="inherit" color="inherit" className={verdictTextClass(verdict)}>
+            {verdict}
+          </Paragraph>
+          <span aria-hidden> · </span>
+        </>
+      ) : (
+        <>
+          <span>build</span>
+          <span aria-hidden> → </span>
+          <span>trace</span>
+          <span aria-hidden> → </span>
+          <span>inspect</span>
+          <span aria-hidden> · </span>
+        </>
+      )}
+      <span>{targetMode === "live" ? "live target" : "simulator"}</span>
+    </Paragraph>
+  )
+}
 
 export function FlightRecorderPage() {
   const page = useFlightRecorderPage()
   const qrUri = page.search.qrUri.trim()
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6">
-      <PageHero
-        title="Flight Recorder"
-        description="Build replayable DogeConnect sessions that trace QR parsing, envelope fetch and verification, relay targeting, and pay/status execution against simulator or live endpoints."
-        aside={
-          <>
-            <Badge
-              variant={
-                page.sessionView
-                  ? badgeVariantForVerdict(page.sessionView.summary.verdict)
-                  : "neutral"
-              }
-            >
-              {page.sessionView ? page.sessionView.summary.verdict : "idle"}
-            </Badge>
-            <Badge variant={page.search.targetMode === "live" ? "warning" : "neutral"}>
-              {page.search.targetMode === "live" ? "builder: live target" : "builder: simulator"}
-            </Badge>
-          </>
-        }
+    <WorkbenchShell
+      header={
+        <WorkbenchHeader
+          title="Flight Recorder"
+          description="A trace-first debugging cockpit for building sessions, reading protocol events, inspecting artifacts, and safely running relay calls."
+          aside={
+            <FlightRecorderPipelineMeta
+              verdict={page.sessionView?.summary.verdict}
+              targetMode={page.search.targetMode}
+            />
+          }
+          actions={
+            <>
+              <Link to="/tools" className={buttonVariants({ variant: "outline", size: "sm" })}>
+                <Paragraph as="span" size="sm-medium" color="inherit">
+                  Tools
+                </Paragraph>
+              </Link>
+              {qrUri ? (
+                <Link
+                  to="/tools"
+                  search={toolsQrValidatorSearch(qrUri)}
+                  hash="qr-validator"
+                  className={buttonVariants({ variant: "outline", size: "sm" })}
+                >
+                  <Paragraph as="span" size="sm-medium" color="inherit">
+                    Validate URI
+                  </Paragraph>
+                </Link>
+              ) : null}
+              {page.search.mockPaymentId.trim() ? (
+                <Link
+                  to="/tools"
+                  search={toolsMockSearch(page.search.mockPaymentId.trim())}
+                  hash="mock-fixture"
+                  className={buttonVariants({ variant: "outline", size: "sm" })}
+                >
+                  <Paragraph as="span" size="sm-medium" color="inherit">
+                    Open mock
+                  </Paragraph>
+                </Link>
+              ) : null}
+            </>
+          }
+        />
+      }
+    >
+      <WorkbenchPageLayout
+        sectionNavItems={sectionNavItems}
+        sectionNavAriaLabel="Flight Recorder sections"
       >
-        <div className="flex flex-wrap gap-2">
-          <Link to="/tools" className={buttonVariants({ variant: "outline", size: "sm" })}>
-            Open Tools
-          </Link>
-          <Link
-            to="/tools"
-            hash="mock-fixture"
-            className={buttonVariants({ variant: "outline", size: "sm" })}
-          >
-            Mock fixture in Tools
-          </Link>
-          {qrUri ? (
-            <Link
-              to="/tools"
-              search={toolsQrValidatorSearch(qrUri)}
-              hash="qr-validator"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              Validate URI in Tools
-            </Link>
-          ) : null}
-          {page.search.mockPaymentId.trim() ? (
-            <Link
-              to="/tools"
-              search={toolsMockSearch(page.search.mockPaymentId.trim())}
-              hash="mock-fixture"
-              className={buttonVariants({ variant: "outline", size: "sm" })}
-            >
-              Open mock in Tools
-            </Link>
-          ) : null}
-        </div>
-      </PageHero>
+        <WorkbenchSection
+          id="session-builder"
+          title="Compose the session"
+          description="Start from a QR URI, mock fixture, or imported JSON, then choose simulator or live target mode."
+        >
+          <FlightRecorderSessionBuilder
+            search={page.search}
+            importJson={page.importJson}
+            importError={page.importError}
+            qrImageError={page.qrImageError}
+            qrImageName={page.qrImageName}
+            qrImageDecodePending={page.qrImageDecodePending}
+            pageMessage={page.pageMessage}
+            buildPending={page.buildSessionMutation.isPending}
+            buildError={page.buildSessionMutation.error?.message}
+            ignoredLiveFaultCount={page.ignoredLiveFaults.length}
+            onUpdateSearch={page.updateSearch}
+            onSetSourceTab={page.setSourceTab}
+            onSetTargetMode={page.setTargetMode}
+            onSetImportJson={page.setImportJson}
+            onLoadQrImage={page.loadQrImage}
+            onLoadImportFile={page.loadImportFile}
+            onImportSession={page.importSession}
+            onBuildSession={() => {
+              void page.buildSession()
+            }}
+            onToggleFault={page.toggleFault}
+            onResetBuilder={page.resetBuilder}
+          />
+        </WorkbenchSection>
 
-      <PageJumpNav items={[...sectionNavItems]} ariaLabel="Flight Recorder sections" />
+        <WorkbenchSection
+          id="timeline"
+          title="Read the trace"
+          description="Review each protocol step, compare verdicts, and select entries for forensic inspection."
+        >
+          <FlightRecorderTimelinePanel
+            sessionView={page.sessionView}
+            selectedTrace={page.selectedTrace}
+            onSelectTrace={(traceId) => page.updateSearch({ selectedTraceId: traceId })}
+          />
+        </WorkbenchSection>
 
-      <div className="grid gap-6 xl:grid-cols-2">
-        <FlightRecorderSessionBuilder
-          search={page.search}
-          importJson={page.importJson}
-          importError={page.importError}
-          qrImageError={page.qrImageError}
-          qrImageName={page.qrImageName}
-          qrImageDecodePending={page.qrImageDecodePending}
-          pageMessage={page.pageMessage}
-          buildPending={page.buildSessionMutation.isPending}
-          buildError={page.buildSessionMutation.error?.message}
-          ignoredLiveFaultCount={page.ignoredLiveFaults.length}
-          onUpdateSearch={page.updateSearch}
-          onSetSourceTab={page.setSourceTab}
-          onSetTargetMode={page.setTargetMode}
-          onSetImportJson={page.setImportJson}
-          onLoadQrImage={page.loadQrImage}
-          onLoadImportFile={page.loadImportFile}
-          onImportSession={page.importSession}
-          onBuildSession={() => {
-            void page.buildSession()
-          }}
-          onToggleFault={page.toggleFault}
-          onResetBuilder={page.resetBuilder}
-        />
+        <WorkbenchSection
+          id="inspect-execute"
+          title="Inspect and execute"
+          description="Drill into normalized artifacts, run status checks, export evidence, or arm controlled pay submission."
+        >
+          <div className="grid min-w-0 gap-(--space-md) xl:grid-cols-2 xl:gap-(--space-lg)">
+            <FlightRecorderInspectorPanel
+              sessionView={page.sessionView}
+              selectedTrace={page.selectedTrace}
+            />
 
-        <FlightRecorderTimelinePanel
-          sessionView={page.sessionView}
-          selectedTrace={page.selectedTrace}
-          onSelectTrace={(traceId) => page.updateSearch({ selectedTraceId: traceId })}
-        />
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-2">
-        <FlightRecorderInspectorPanel
-          sessionView={page.sessionView}
-          selectedTrace={page.selectedTrace}
-        />
-
-        <FlightRecorderExecutionControlsPanel
-          sessionView={page.sessionView}
-          search={page.search}
-          payDraftFields={page.payDraftFields}
-          requiresLiveWriteArm={page.requiresLiveWriteArm}
-          statusMutation={page.statusMutation}
-          payMutation={page.payMutation}
-          onUpdateSearch={page.updateSearch}
-          onSetPayDraftFields={page.setPayDraftFields}
-          onSetLiveWriteArmed={page.setLiveWriteArmed}
-          onExportSession={page.exportSession}
-        />
-      </div>
-    </div>
+            <FlightRecorderExecutionControlsPanel
+              sessionView={page.sessionView}
+              search={page.search}
+              payDraftFields={page.payDraftFields}
+              requiresLiveWriteArm={page.requiresLiveWriteArm}
+              statusMutation={page.statusMutation}
+              payMutation={page.payMutation}
+              onUpdateSearch={page.updateSearch}
+              onSetPayDraftFields={page.setPayDraftFields}
+              onSetLiveWriteArmed={page.setLiveWriteArmed}
+              onExportSession={page.exportSession}
+            />
+          </div>
+        </WorkbenchSection>
+      </WorkbenchPageLayout>
+    </WorkbenchShell>
   )
 }
