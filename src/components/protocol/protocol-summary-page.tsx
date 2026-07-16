@@ -150,7 +150,7 @@ export function ProtocolSummaryPage() {
     <div className="min-w-0">
       <section className="relative overflow-hidden border-border/70 border-b py-16 sm:py-20">
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(circle_at_20%_10%,oklch(from_var(--primary)_l_c_h/0.3),transparent_34%),linear-gradient(180deg,var(--color-hero-wash),transparent)]"
+          className="mask-[linear-gradient(180deg,black_0%,black_58%,transparent_100%)] pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(circle_at_20%_10%,oklch(from_var(--primary)_l_c_h/0.3),transparent_34%),linear-gradient(180deg,var(--color-hero-wash),transparent)]"
           aria-hidden
         />
         <SiteContainer className="relative">

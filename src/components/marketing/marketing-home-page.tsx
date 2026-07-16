@@ -114,7 +114,7 @@ export function MarketingHomePage() {
   return (
     <div className="min-w-0">
       <section className="relative overflow-hidden bg-paper pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pb-24">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-150 bg-[radial-gradient(circle_at_15%_12%,oklch(from_var(--primary)_l_c_h/0.42),transparent_32%),radial-gradient(circle_at_75%_0%,oklch(0.88_0.12_80/0.28),transparent_30%),linear-gradient(180deg,var(--color-hero-wash)_0%,oklch(from_var(--color-hero-wash)_l_c_h/0)_64%)]" />
+        <div className="mask-[linear-gradient(180deg,black_0%,black_58%,transparent_100%)] pointer-events-none absolute inset-x-0 top-0 h-150 bg-[radial-gradient(circle_at_15%_12%,oklch(from_var(--primary)_l_c_h/0.42),transparent_32%),radial-gradient(circle_at_75%_0%,oklch(0.88_0.12_80/0.28),transparent_30%),linear-gradient(180deg,var(--color-hero-wash)_0%,oklch(from_var(--color-hero-wash)_l_c_h/0)_64%)]" />
         <div
           className="mask-[linear-gradient(90deg,transparent,black_24%,black_76%,transparent)] pointer-events-none absolute top-20 left-1/2 h-80 w-6xl -translate-x-1/2 rounded-full border border-primary/18 opacity-70"
           aria-hidden
