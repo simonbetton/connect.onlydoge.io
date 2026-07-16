@@ -9,6 +9,13 @@ const steps = [
   { label: "Relay status", meta: "accepted in 418ms", state: "pending" },
 ] as const
 
+const flightRecorderEvents = [
+  "QR parsed",
+  "Envelope verified",
+  "Pay draft ready",
+  "Relay accepted",
+] as const
+
 function MockFrame({
   title,
   eyebrow,
@@ -85,8 +92,6 @@ export function ToolsWorkbenchMock({ className }: { className?: string }) {
 }
 
 export function FlightRecorderMock({ className }: { className?: string }) {
-  const events = ["QR parsed", "Envelope verified", "Pay draft ready", "Relay accepted"]
-
   return (
     <MockFrame title="Flight Recorder" eyebrow="Trace replay" className={className}>
       <div className="grid gap-4">
@@ -108,13 +113,13 @@ export function FlightRecorderMock({ className }: { className?: string }) {
           </div>
         </div>
         <div className="mock-sequenced-timeline relative">
-          {events.map((event, index) => (
+          {flightRecorderEvents.map((event, index) => (
             <div
               key={event}
               className="mock-timeline-event relative grid grid-cols-[0.875rem_minmax(0,1fr)] gap-3 pb-4 last:pb-0"
               data-mock-phase={index}
             >
-              {index < events.length - 1 ? (
+              {index < flightRecorderEvents.length - 1 ? (
                 <>
                   <span
                     className="absolute top-3 -bottom-3 left-1.5 z-0 w-px rounded-full bg-border/60"

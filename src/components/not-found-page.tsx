@@ -63,7 +63,8 @@ export function NotFoundPage() {
           <div className="rounded-2xl border border-border/60 bg-background/70 p-4">
             <p className="font-medium text-foreground">Testing relay flows?</p>
             <p className="mt-1 text-muted-foreground">
-              Register a debug scenario, call `relay/pay`, then inspect status transitions.
+              Register a debug scenario, call <code className="font-mono text-xs">relay/pay</code>,
+              then inspect status transitions.
             </p>
           </div>
         </div>

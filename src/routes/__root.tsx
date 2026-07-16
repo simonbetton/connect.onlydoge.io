@@ -27,7 +27,28 @@ export const Route = createRootRoute({
           "Dogecoin DogeConnect Debugger is an open-source developer toolkit for building and testing DogeConnect integrations. Validate DogeConnect QR URIs, verify payment envelopes (including cryptographic checks), and simulate relay pay/status flows with scenario-driven responses.",
       },
       {
-        name: "og:image",
+        property: "og:title",
+        content: "DogeConnect Debugger for Dogecoin | OnlyDoge by EasyDoge",
+      },
+      {
+        property: "og:description",
+        content:
+          "Open-source developer toolkit for building and testing DogeConnect integrations: validate QR URIs, verify payment envelopes, and simulate relay flows.",
+      },
+      {
+        property: "og:type",
+        content: "website",
+      },
+      {
+        property: "og:image",
+        content: "/social.jpg",
+      },
+      {
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
+      {
+        name: "twitter:image",
         content: "/social.jpg",
       },
       {
@@ -38,8 +59,12 @@ export const Route = createRootRoute({
     links: [
       {
         rel: "icon",
-        type: "image/svg+xml",
-        href: "/favicon.svg",
+        href: "/favicon.ico",
+        sizes: "32x32",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/logo192.png",
       },
       {
         rel: "stylesheet",
@@ -73,8 +98,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <QueryClientProvider client={queryClient}>
           <GlobalPasteDiagnose />
           <div className="relative isolate flex min-h-svh flex-col">
+            <a
+              href="#main-content"
+              className="sr-only z-50 rounded-full border border-border bg-card px-4 py-2 font-medium text-foreground text-sm shadow-lg focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
+            >
+              Skip to content
+            </a>
             <AppNav />
-            <main className="flex-1">{children}</main>
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
             <AppFooter />
           </div>
         </QueryClientProvider>

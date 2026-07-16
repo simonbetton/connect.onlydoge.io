@@ -25,7 +25,17 @@ const navLinks = [
 export function AppNav() {
   const [paletteOpen, setPaletteOpen] = React.useState(false)
   const [mobileOpen, setMobileOpen] = React.useState(false)
+  const [notice, setNotice] = React.useState<string | null>(null)
+  const noticeTimerRef = React.useRef(0)
   const { validateClipboard } = useDiagnosisNavigation()
+
+  const showNotice = React.useCallback((message: string) => {
+    setNotice(message)
+    window.clearTimeout(noticeTimerRef.current)
+    noticeTimerRef.current = window.setTimeout(() => setNotice(null), 4500)
+  }, [])
+
+  React.useEffect(() => () => window.clearTimeout(noticeTimerRef.current), [])
 
   const commandItems = React.useMemo(
     (): typeof appCommandItems => [
@@ -36,13 +46,13 @@ export function AppNav() {
         action: async () => {
           const handled = await validateClipboard()
           if (!handled) {
-            window.alert("Clipboard does not contain a Dogecoin URI or payment envelope JSON.")
+            showNotice("Clipboard does not contain a Dogecoin URI or payment envelope JSON.")
           }
         },
       },
       ...appCommandItems,
     ],
-    [validateClipboard]
+    [validateClipboard, showNotice]
   )
 
   useCommandPaletteToggle(setPaletteOpen)
@@ -57,7 +67,13 @@ export function AppNav() {
             className="flex min-w-0 shrink-0 items-center gap-2 rounded-md pr-1 transition-[opacity,transform] duration-200 ease-out hover:opacity-90 active:scale-[0.97] motion-reduce:active:scale-100"
             onClick={() => setMobileOpen(false)}
           >
-            <img src="/favicon.svg" alt="" className="size-8 shrink-0" />
+            <img
+              src="/dogecoin-logo.png"
+              alt=""
+              width={32}
+              height={32}
+              className="size-8 shrink-0"
+            />
             <Paragraph
               as="span"
               size="sm-medium"
@@ -236,6 +252,16 @@ export function AppNav() {
       </header>
 
       <AppCommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} items={commandItems} />
+
+      <div role="status" aria-live="polite" className="contents">
+        {notice ? (
+          <div className="modal-enter fixed bottom-5 left-1/2 z-50 w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-full border border-warning-border bg-warning-muted px-4 py-2.5 shadow-[0_1px_0_oklch(1_0_0/0.55)_inset,0_16px_40px_oklch(0.3_0.03_55/0.18)] motion-reduce:animate-none">
+            <Paragraph as="span" size="sm-medium" color="warning">
+              {notice}
+            </Paragraph>
+          </div>
+        ) : null}
+      </div>
     </>
   )
 }

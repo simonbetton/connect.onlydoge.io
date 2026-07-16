@@ -15,7 +15,9 @@ export function useToolsPageController() {
   const search = resolveToolsSearch(rawSearch)
   const navigate = useNavigate({ from: "/tools" })
   const navigateRef = React.useRef(navigate)
-  navigateRef.current = navigate
+  React.useEffect(() => {
+    navigateRef.current = navigate
+  })
   const [envelopeInputError, setEnvelopeInputError] = React.useState("")
   const [qrPreviewUri, setQrPreviewUri] = React.useState(search.qrUri)
   const [mockCopyState, setMockCopyState] = React.useState<"idle" | "copied" | "failed">("idle")

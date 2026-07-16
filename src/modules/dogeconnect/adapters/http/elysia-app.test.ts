@@ -37,61 +37,58 @@ describe("DogeConnect Elysia API", () => {
       expectedPayStatus: 400,
       expectedError: "invalid_tx",
     },
-  ] as const)("handles $scenario relay scenario on pay/status flow", async ({
-    scenario,
-    paymentId,
-    expectedPayStatus,
-    expectedRelayStatus,
-    expectedError,
-  }) => {
-    const app = createTestApp()
-    const required = 6
+  ] as const)(
+    "handles $scenario relay scenario on pay/status flow",
+    async ({ scenario, paymentId, expectedPayStatus, expectedRelayStatus, expectedError }) => {
+      const app = createTestApp()
+      const required = 6
 
-    const registerResponse = await requestJson(app, "/api/relay/debug/payment", {
-      id: paymentId,
-      scenario,
-      required,
-      dueSec: 600,
-    })
-    expect(registerResponse.status).toBe(200)
+      const registerResponse = await requestJson(app, "/api/relay/debug/payment", {
+        id: paymentId,
+        scenario,
+        required,
+        dueSec: 600,
+      })
+      expect(registerResponse.status).toBe(200)
 
-    const payResponse = await requestJson(app, "/api/relay/pay", {
-      id: paymentId,
-      tx: "deadbeef",
-    })
-    expect(payResponse.status).toBe(expectedPayStatus)
+      const payResponse = await requestJson(app, "/api/relay/pay", {
+        id: paymentId,
+        tx: "deadbeef",
+      })
+      expect(payResponse.status).toBe(expectedPayStatus)
 
-    if (expectedError) {
-      expect((payResponse.body as { error: string }).error).toBe(expectedError)
-      return
+      if (expectedError) {
+        expect((payResponse.body as { error: string }).error).toBe(expectedError)
+        return
+      }
+
+      const payBody = payResponse.body as {
+        status: string
+        required?: number
+        confirmed?: number
+      }
+      expect(payBody.status).toBe(expectedRelayStatus)
+
+      const statusResponse = await requestJson(app, "/api/relay/status", {
+        id: paymentId,
+      })
+      expect(statusResponse.status).toBe(200)
+
+      const statusBody = statusResponse.body as {
+        status: string
+        required?: number
+        confirmed?: number
+      }
+      expect(statusBody.status).toBe(expectedRelayStatus)
+
+      if (scenario === "confirmed") {
+        expect(payBody.required).toBe(required)
+        expect(payBody.confirmed).toBe(required)
+        expect(statusBody.required).toBe(required)
+        expect(statusBody.confirmed).toBe(required)
+      }
     }
-
-    const payBody = payResponse.body as {
-      status: string
-      required?: number
-      confirmed?: number
-    }
-    expect(payBody.status).toBe(expectedRelayStatus)
-
-    const statusResponse = await requestJson(app, "/api/relay/status", {
-      id: paymentId,
-    })
-    expect(statusResponse.status).toBe(200)
-
-    const statusBody = statusResponse.body as {
-      status: string
-      required?: number
-      confirmed?: number
-    }
-    expect(statusBody.status).toBe(expectedRelayStatus)
-
-    if (scenario === "confirmed") {
-      expect(payBody.required).toBe(required)
-      expect(payBody.confirmed).toBe(required)
-      expect(statusBody.required).toBe(required)
-      expect(statusBody.confirmed).toBe(required)
-    }
-  })
+  )
 
   test("returns not_found for unknown relay payment id", async () => {
     const app = createTestApp()

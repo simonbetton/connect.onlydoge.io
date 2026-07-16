@@ -28,7 +28,13 @@ export function AppFooter() {
               aria-label="Homepage"
               className="inline-flex items-center gap-2 rounded-md text-footer-ink"
             >
-              <img src="/favicon.svg" alt="" className="size-6 shrink-0" />
+              <img
+                src="/dogecoin-logo.png"
+                alt=""
+                width={24}
+                height={24}
+                className="size-6 shrink-0"
+              />
               <Paragraph as="span" size="sm-medium" color="inherit" font="display">
                 DogeConnect Debugger
               </Paragraph>
@@ -69,11 +75,19 @@ export function AppFooter() {
             </a>
           </div>
         </div>
-        <div className="mt-8 border-footer-rule border-t pt-6">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-footer-rule border-t pt-6">
           <Paragraph size="xs" className="text-footer-muted">
             Built for Dogecoin builders who need repeatable evidence before shipping wallet and
             relay integrations.
           </Paragraph>
+          <a
+            href={`${repositoryUrl}/blob/main/LICENSE`}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-footer-muted text-xs hover:text-footer-ink"
+          >
+            MIT License
+          </a>
         </div>
       </SiteContainer>
     </footer>

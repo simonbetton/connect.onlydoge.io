@@ -36,7 +36,9 @@ export function useFlightRecorderPage() {
   const search = resolveFlightRecorderSearch(rawSearch)
   const navigate = useNavigate({ from: "/flight-recorder" })
   const navigateRef = React.useRef(navigate)
-  navigateRef.current = navigate
+  React.useEffect(() => {
+    navigateRef.current = navigate
+  })
   const queryClient = useQueryClient()
   const [uiState, dispatch] = React.useReducer(
     flightRecorderUiReducer,
@@ -156,20 +158,13 @@ export function useFlightRecorderPage() {
     return sessionView.trace.at(-1)?.id ?? ""
   }, [search.selectedTraceId, sessionView])
 
-  const sessionViewRef = React.useRef(sessionView)
-  sessionViewRef.current = sessionView
-  const statusMutationRef = React.useRef(statusMutation)
-  statusMutationRef.current = statusMutation
-
-  const runStatusCheck = React.useCallback(() => {
-    const currentSessionView = sessionViewRef.current
-    const mutation = statusMutationRef.current
-    if (!currentSessionView?.artifacts.relay || mutation.isPending) {
+  const runStatusCheck = React.useEffectEvent(() => {
+    if (!sessionView?.artifacts.relay || statusMutation.isPending) {
       return
     }
 
-    void mutation.mutateAsync(currentSessionView)
-  }, [])
+    void statusMutation.mutateAsync(sessionView)
+  })
 
   React.useEffect(() => {
     if (!search.autoPoll || !sessionView?.artifacts.relay) {
@@ -184,7 +179,7 @@ export function useFlightRecorderPage() {
     return () => {
       window.clearInterval(handle)
     }
-  }, [runStatusCheck, search.autoPoll, search.pollIntervalSec, sessionView?.artifacts.relay])
+  }, [search.autoPoll, search.pollIntervalSec, sessionView?.artifacts.relay])
 
   const selectedTrace =
     sessionView?.trace.find((entry) => entry.id === effectiveSelectedTraceId) ??

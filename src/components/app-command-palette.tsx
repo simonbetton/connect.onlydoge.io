@@ -38,10 +38,10 @@ export function AppCommandPalette({
     return null
   }
 
-  return <AppCommandPalettePanel items={items} onOpenChange={onOpenChange} />
+  return <AppCommandPaletteDialog items={items} onOpenChange={onOpenChange} />
 }
 
-function AppCommandPalettePanel({
+function AppCommandPaletteDialog({
   onOpenChange,
   items,
 }: {
@@ -49,22 +49,24 @@ function AppCommandPalettePanel({
   items: AppCommandItem[]
 }) {
   const [query, setQuery] = React.useState("")
+  const dialogRef = React.useRef<HTMLDialogElement>(null)
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
-    requestAnimationFrame(() => inputRef.current?.focus())
-  }, [])
-
-  React.useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onOpenChange(false)
-      }
+    const dialog = dialogRef.current
+    if (!dialog) {
+      return
     }
 
-    window.addEventListener("keydown", onKeyDown)
-    return () => window.removeEventListener("keydown", onKeyDown)
-  }, [onOpenChange])
+    dialog.showModal()
+    requestAnimationFrame(() => inputRef.current?.focus())
+
+    return () => {
+      if (dialog.open) {
+        dialog.close()
+      }
+    }
+  }, [])
 
   const normalizedQuery = query.trim().toLowerCase()
   const filteredItems = normalizedQuery
@@ -72,22 +74,13 @@ function AppCommandPalettePanel({
     : items
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-foreground/25 p-4 pt-[10vh] backdrop-blur-md sm:pt-[14vh]"
-      role="presentation"
+    <dialog
+      ref={dialogRef}
+      className="native-dialog-shell native-dialog-shell-command modal-dialog-shell"
+      aria-label="Search pages and actions"
+      onClose={() => onOpenChange(false)}
     >
-      <button
-        type="button"
-        className="absolute inset-0 cursor-default"
-        aria-label="Close command palette"
-        onClick={() => onOpenChange(false)}
-      />
-      <div
-        className="modal-enter relative w-full max-w-xl overflow-hidden rounded-[2rem] bg-card shadow-[0_1px_0_oklch(1_0_0/0.72)_inset,0_40px_120px_oklch(0.16_0.02_52/0.28)] ring-1 ring-foreground/10 motion-reduce:animate-none"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Search pages and actions"
-      >
+      <div className="modal-enter relative w-full max-w-xl overflow-hidden rounded-4xl bg-card shadow-[0_1px_0_oklch(1_0_0/0.72)_inset,0_40px_120px_oklch(0.16_0.02_52/0.28)] ring-1 ring-foreground/10 motion-reduce:animate-none">
         <div
           className="pointer-events-none absolute -top-24 right-8 size-56 rounded-full bg-primary/25 blur-3xl"
           aria-hidden
@@ -147,6 +140,6 @@ function AppCommandPalettePanel({
           )}
         </div>
       </div>
-    </div>
+    </dialog>
   )
 }

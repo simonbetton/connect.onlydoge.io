@@ -313,7 +313,7 @@ const createBrandedQrDownloadImage = async (uri: string): Promise<string> => {
     await document.fonts.ready
   }
 
-  const brandIcon = await loadImage("/favicon.svg")
+  const brandIcon = await loadImage("/dogecoin-logo.png")
   context.drawImage(brandIcon, 86, 70, 150, 150)
 
   const titleText = "OnlyDoge DogeConnect Debugger"

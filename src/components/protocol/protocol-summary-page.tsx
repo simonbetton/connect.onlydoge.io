@@ -248,7 +248,7 @@ export function ProtocolSummaryPage() {
                 className="group/flow-step grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4"
               >
                 <span
-                  className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-paper-2 font-display font-semibold text-(--text-xs) text-foreground transition-transform duration-(--dur-press) ease-[var(--ease-out)] group-hover/flow-step:scale-105 motion-reduce:group-hover/flow-step:scale-100"
+                  className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-paper-2 font-display font-semibold text-(--text-xs) text-foreground transition-transform duration-(--dur-press) ease-out group-hover/flow-step:scale-105 motion-reduce:group-hover/flow-step:scale-100"
                   aria-hidden
                 >
                   {index + 1}

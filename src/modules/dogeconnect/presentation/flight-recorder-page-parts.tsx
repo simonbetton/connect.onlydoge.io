@@ -23,6 +23,8 @@ export function FaultSelector({
   disabled?: boolean
   disabledHint?: string
 }) {
+  const selectedFaultSet = new Set(selectedFaults)
+
   return (
     <div className="space-y-2">
       <p className="font-medium text-muted-foreground text-xs uppercase">{title}</p>
@@ -38,7 +40,7 @@ export function FaultSelector({
           >
             <input
               type="checkbox"
-              checked={selectedFaults.includes(fault.value)}
+              checked={selectedFaultSet.has(fault.value)}
               onChange={() => onToggle(fault.value)}
               disabled={disabled}
               aria-label={fault.label}

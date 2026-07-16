@@ -1,15 +1,17 @@
 import { afterEach, describe, expect, test, vi } from "vitest"
 import { HttpEnvelopeFetcher } from "./http-envelope-fetcher"
 
+const originalFetch = globalThis.fetch
+
 describe("http envelope fetcher", () => {
   afterEach(() => {
-    vi.unstubAllGlobals()
+    globalThis.fetch = originalFetch
   })
 
   test("normalizes scheme-less urls to https and returns the JSON body", async () => {
     const body = { envelope: { payment: "doge" } }
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify(body)))
-    vi.stubGlobal("fetch", fetchMock)
+    globalThis.fetch = fetchMock as typeof fetch
 
     await expect(new HttpEnvelopeFetcher().fetchEnvelope("8.8.8.8/envelope")).resolves.toEqual(body)
 
@@ -23,7 +25,7 @@ describe("http envelope fetcher", () => {
 
   test("rejects explicit http targets", async () => {
     const fetchMock = vi.fn()
-    vi.stubGlobal("fetch", fetchMock)
+    globalThis.fetch = fetchMock as typeof fetch
 
     await expect(
       new HttpEnvelopeFetcher().fetchEnvelope("http://8.8.8.8/envelope")
@@ -34,7 +36,7 @@ describe("http envelope fetcher", () => {
 
   test("rejects non-JSON responses", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response("not json"))
-    vi.stubGlobal("fetch", fetchMock)
+    globalThis.fetch = fetchMock as typeof fetch
 
     await expect(new HttpEnvelopeFetcher().fetchEnvelope("8.8.8.8/envelope")).rejects.toThrow(
       "Response was not valid JSON"
@@ -49,7 +51,7 @@ describe("http envelope fetcher", () => {
         },
       })
     )
-    vi.stubGlobal("fetch", fetchMock)
+    globalThis.fetch = fetchMock as typeof fetch
 
     await expect(new HttpEnvelopeFetcher().fetchEnvelope("8.8.8.8/envelope")).rejects.toThrow(
       "Response exceeded"

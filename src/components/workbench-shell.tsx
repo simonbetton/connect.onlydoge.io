@@ -38,7 +38,7 @@ type WorkbenchHeaderProps = {
 
 export function WorkbenchHeader({ title, description, aside, actions }: WorkbenchHeaderProps) {
   return (
-    <header className="micro-reveal relative overflow-hidden rounded-[2rem] border border-border/70 bg-card/74 p-5 shadow-[0_1px_0_oklch(1_0_0/0.62)_inset,0_22px_70px_oklch(0.32_0.03_55/0.08)] backdrop-blur motion-reduce:animate-none sm:p-6 lg:p-7">
+    <header className="micro-reveal relative overflow-hidden rounded-4xl border border-border/70 bg-card/74 p-5 shadow-[0_1px_0_oklch(1_0_0/0.62)_inset,0_22px_70px_oklch(0.32_0.03_55/0.08)] backdrop-blur motion-reduce:animate-none sm:p-6 lg:p-7">
       <div
         className="pointer-events-none absolute -top-28 right-12 size-72 rounded-full bg-primary/25 blur-3xl"
         aria-hidden
