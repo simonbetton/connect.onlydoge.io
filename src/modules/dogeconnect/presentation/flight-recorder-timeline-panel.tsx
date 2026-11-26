@@ -47,20 +47,20 @@ export function FlightRecorderTimelinePanel({
                 >
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="mock-timeline-label font-medium text-base text-foreground sm:text-sm">
+                      <p className="mock-timeline-label text-base font-medium text-foreground sm:text-sm">
                         {formatPhaseLabel(entry.phase)}
                       </p>
-                      <p className="mock-timeline-meta text-muted-foreground text-sm sm:text-xs">
+                      <p className="mock-timeline-meta text-sm text-muted-foreground sm:text-xs">
                         {entry.target} · {entry.durationMs}ms
                       </p>
                     </div>
                     <Badge variant={badgeVariantForVerdict(entry.verdict)}>{entry.verdict}</Badge>
                   </div>
-                  <p className="mt-2 text-muted-foreground text-sm sm:text-xs">
+                  <p className="mt-2 text-sm text-muted-foreground sm:text-xs">
                     {entry.responseSummary.note}
                   </p>
                   {entry.issues.length > 0 ? (
-                    <p className="mt-2 text-danger-foreground text-sm sm:text-xs">
+                    <p className="mt-2 text-sm text-danger-foreground sm:text-xs">
                       {entry.issues[0]?.field}: {entry.issues[0]?.message}
                     </p>
                   ) : null}

@@ -100,7 +100,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <div className="relative isolate flex min-h-svh flex-col">
             <a
               href="#main-content"
-              className="sr-only z-50 rounded-full border border-border bg-card px-4 py-2 font-medium text-foreground text-sm shadow-lg focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2"
+              className="sr-only z-50 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground shadow-lg focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
             >
               Skip to content
             </a>

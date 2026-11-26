@@ -19,7 +19,7 @@ export function SessionBuilderTargetSection({
   return (
     <>
       <div className="space-y-2">
-        <p className="font-medium text-muted-foreground text-xs uppercase">Target Mode</p>
+        <p className="text-xs font-medium text-muted-foreground uppercase">Target Mode</p>
         <div className="grid gap-3 sm:grid-cols-2">
           <TargetModeCard
             active={search.targetMode === "simulator"}
@@ -137,10 +137,10 @@ function QrSourcePanel({
           />
         )}
       </Field>
-      <div className="space-y-3 rounded-2xl border border-border/70 border-dashed bg-background/50 p-4">
+      <div className="space-y-3 rounded-2xl border border-dashed border-border/70 bg-background/50 p-4">
         <div className="space-y-1">
-          <p className="font-medium text-muted-foreground text-xs uppercase">QR Image Upload</p>
-          <p className="text-muted-foreground text-xs">
+          <p className="text-xs font-medium text-muted-foreground uppercase">QR Image Upload</p>
+          <p className="text-xs text-muted-foreground">
             Pick a QR image to decode it locally in your browser. Nothing is sent to the server.
           </p>
         </div>
@@ -155,13 +155,13 @@ function QrSourcePanel({
           }}
         />
         {qrImageName ? (
-          <p className="text-muted-foreground text-xs">
+          <p className="text-xs text-muted-foreground">
             {qrImageDecodePending
               ? `Decoding ${qrImageName} locally...`
               : `Last image: ${qrImageName}`}
           </p>
         ) : null}
-        {qrImageError ? <p className="text-danger-foreground text-sm">{qrImageError}</p> : null}
+        {qrImageError ? <p className="text-sm text-danger-foreground">{qrImageError}</p> : null}
       </div>
     </div>
   )
@@ -226,7 +226,7 @@ function ImportSourcePanel({
           Import Session
         </Button>
       </div>
-      {importError ? <p className="text-danger-foreground text-sm">{importError}</p> : null}
+      {importError ? <p className="text-sm text-danger-foreground">{importError}</p> : null}
     </div>
   )
 }

@@ -33,7 +33,7 @@ export function ExternalDocLink({ href, children }: { href: string; children: Re
         as="span"
         size="sm-medium"
         color="foreground"
-        className="wrap-break-word inline-flex items-center gap-1 underline decoration-border underline-offset-[3px] transition-[color,text-decoration-color] duration-200 ease-out hover:decoration-accent-ink"
+        className="inline-flex items-center gap-1 wrap-break-word underline decoration-border underline-offset-[3px] transition-[color,text-decoration-color] duration-200 ease-out hover:decoration-accent-ink"
       >
         {children}
         <ExternalLinkIcon />
@@ -48,7 +48,7 @@ export function SectionHang({ id, children }: { id: string; children: ReactNode 
       as="h2"
       id={id}
       size="display"
-      className="wrap-anywhere mt-(--space-3xl) mb-6 min-w-0 scroll-mt-24 pt-(--space-xl) first:mt-(--space-2xl) first:pt-0 sm:scroll-mt-28"
+      className="mt-(--space-3xl) mb-6 min-w-0 scroll-mt-24 pt-(--space-xl) wrap-anywhere first:mt-(--space-2xl) first:pt-0 sm:scroll-mt-28"
     >
       {children}
     </Heading>
@@ -65,7 +65,7 @@ export function DefList({
       {items.map((item) => (
         <div
           key={item.term}
-          className="grid gap-1 border-border border-b py-6 sm:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] sm:gap-6"
+          className="grid gap-1 border-b border-border py-6 sm:grid-cols-[minmax(0,11rem)_minmax(0,1fr)] sm:gap-6"
         >
           <Paragraph as="dt" size="inherit" color="foreground" className="font-medium">
             {item.term}

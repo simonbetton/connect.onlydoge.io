@@ -59,7 +59,7 @@ export function AppNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-20 border-border/60 border-b bg-background/82 backdrop-blur-xl supports-backdrop-filter:bg-background/72">
+      <header className="sticky top-0 z-20 border-b border-border/60 bg-background/82 backdrop-blur-xl supports-backdrop-filter:bg-background/72">
         <SiteContainer className="flex items-center gap-3 py-3">
           <Link
             to="/"
@@ -90,7 +90,7 @@ export function AppNav() {
               <Link
                 key={link.to}
                 to={link.to}
-                className="whitespace-nowrap rounded-full px-3 py-1.5 transition-[color,background-color,border-color,transform] duration-200 ease-out hover:bg-muted/55 hover:text-foreground active:scale-[0.98] motion-reduce:active:scale-100"
+                className="rounded-full px-3 py-1.5 whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out hover:bg-muted/55 hover:text-foreground active:scale-[0.98] motion-reduce:active:scale-100"
                 activeProps={{ className: "bg-muted text-foreground" }}
               >
                 <Paragraph as="span" size="sm">
@@ -102,7 +102,7 @@ export function AppNav() {
               href={debuggerApiHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-1.5 transition-[color,background-color,border-color,transform] duration-200 ease-out hover:bg-muted/55 hover:text-foreground active:scale-[0.98] motion-reduce:active:scale-100"
+              className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 whitespace-nowrap transition-[color,background-color,border-color,transform] duration-200 ease-out hover:bg-muted/55 hover:text-foreground active:scale-[0.98] motion-reduce:active:scale-100"
             >
               <Paragraph as="span" size="sm">
                 {debuggerApiLabel}
@@ -196,7 +196,7 @@ export function AppNav() {
         {mobileOpen ? (
           <div
             id="mobile-nav-drawer"
-            className="animate-mobile-nav-enter border-border/60 border-t bg-background/92 px-4 py-3 shadow-xl backdrop-blur-xl motion-reduce:animate-none lg:hidden"
+            className="animate-mobile-nav-enter border-t border-border/60 bg-background/92 px-4 py-3 shadow-xl backdrop-blur-xl motion-reduce:animate-none lg:hidden"
           >
             <div className="grid gap-1">
               {navLinks.map((link) => (

@@ -27,7 +27,7 @@ export function FaultSelector({
 
   return (
     <div className="space-y-2">
-      <p className="font-medium text-muted-foreground text-xs uppercase">{title}</p>
+      <p className="text-xs font-medium text-muted-foreground uppercase">{title}</p>
       <div className="grid gap-2 sm:grid-cols-2">
         {faults.map((fault) => (
           <label
@@ -47,8 +47,8 @@ export function FaultSelector({
               className="mt-0.5 size-4 rounded border-border accent-amber-500"
             />
             <span className="space-y-1">
-              <span className="block font-medium text-foreground text-sm">{fault.label}</span>
-              <span className="block text-muted-foreground text-xs">
+              <span className="block text-sm font-medium text-foreground">{fault.label}</span>
+              <span className="block text-xs text-muted-foreground">
                 {disabled ? disabledHint || fault.hint : fault.hint}
               </span>
             </span>
@@ -80,8 +80,8 @@ export function TargetModeCard({
         active ? selectedInteractiveClass : idleInteractiveClass
       )}
     >
-      <p className="font-medium text-foreground text-sm">{title}</p>
-      <p className="mt-1 text-muted-foreground text-xs">{description}</p>
+      <p className="text-sm font-medium text-foreground">{title}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{description}</p>
     </button>
   )
 }
@@ -93,12 +93,12 @@ export function LiveModeNotice({ ignoredFaultCount }: { ignoredFaultCount: numbe
         <Badge variant="warning">Live target mode</Badge>
         <Badge variant="neutral">Read-only until armed</Badge>
       </div>
-      <p className="mt-3 text-foreground text-sm">
+      <p className="mt-3 text-sm text-foreground">
         Builds in this mode resolve the real relay target from the QR or imported session. Status
         reads can hit live infrastructure, and pay submission stays blocked until you explicitly arm
         outbound writes for the built session.
       </p>
-      <p className="mt-2 text-muted-foreground text-xs">
+      <p className="mt-2 text-xs text-muted-foreground">
         {ignoredFaultCount > 0
           ? `${ignoredFaultCount} simulator preset${ignoredFaultCount === 1 ? "" : "s"} remain selected in the URL but will be ignored while live mode is active.`
           : "Simulator execution presets are disabled here and will reactivate if you switch back to simulator mode."}
@@ -117,14 +117,14 @@ export function SessionSummaryView({ session }: { session: FlightRecorderSession
         <Badge variant="neutral">{session.meta.sourceMode}</Badge>
         <Badge variant="neutral">{session.meta.targetMode}</Badge>
       </div>
-      <p className="mt-3 text-foreground text-sm">
+      <p className="mt-3 text-sm text-foreground">
         {session.summary.firstFailingStep
           ? `First divergence: ${formatPhaseLabel(session.summary.firstFailingStep)}`
           : "No failing trace step detected."}
       </p>
       <div className="mt-2 space-y-1">
         {session.summary.likelyCauses.map((cause) => (
-          <p key={cause} className="text-muted-foreground text-xs">
+          <p key={cause} className="text-xs text-muted-foreground">
             {cause}
           </p>
         ))}
@@ -136,7 +136,7 @@ export function SessionSummaryView({ session }: { session: FlightRecorderSession
 export function JsonSection({ title, value }: { title: string; value: unknown }) {
   return (
     <div className="space-y-2 rounded-2xl border border-border/70 bg-background/60 p-4">
-      <p className="font-medium text-muted-foreground text-xs uppercase">{title}</p>
+      <p className="text-xs font-medium text-muted-foreground uppercase">{title}</p>
       <JsonCodeBlock
         filename={`${title.toLowerCase().replaceAll(" ", "-")}.json`}
         value={JSON.stringify(value, null, 2)}
@@ -147,7 +147,7 @@ export function JsonSection({ title, value }: { title: string; value: unknown })
 
 export function EmptyPanelMessage({ message }: { message: string }) {
   return (
-    <div className="rounded-2xl border border-border/70 border-dashed bg-background/40 p-4 text-muted-foreground text-sm">
+    <div className="rounded-2xl border border-dashed border-border/70 bg-background/40 p-4 text-sm text-muted-foreground">
       {message}
     </div>
   )

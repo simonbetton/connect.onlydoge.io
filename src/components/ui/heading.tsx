@@ -32,7 +32,7 @@ export function Heading<T extends React.ElementType = "h2">({
   return (
     <Component
       className={cn(
-        "text-balance font-semibold text-foreground",
+        "font-semibold text-balance text-foreground",
         sizeClasses[size],
         fontClasses[font],
         className

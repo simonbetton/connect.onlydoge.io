@@ -106,8 +106,8 @@ export function ToolsQuickStartSection() {
     <section className="rounded-3xl border border-border/70 bg-card/60 p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="font-semibold text-base">Quick Start</h2>
-          <p className="mt-1 text-muted-foreground text-sm">
+          <h2 className="text-base font-semibold">Quick Start</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
             New here? Follow this path to get from QR input to relay response quickly.
           </p>
         </div>
@@ -230,7 +230,7 @@ export function MockQrFixtureCard({
       </div>
 
       {generateMockQrMutation.error ? (
-        <p className="text-danger-foreground text-sm">{generateMockQrMutation.error.message}</p>
+        <p className="text-sm text-danger-foreground">{generateMockQrMutation.error.message}</p>
       ) : null}
 
       {generateMockQrMutation.data ? (
@@ -281,10 +281,10 @@ export function MockQrFixtureCard({
             </Link>
           </div>
           {mockCopyState === "copied" ? (
-            <p className="text-success-foreground text-xs">URI copied to clipboard.</p>
+            <p className="text-xs text-success-foreground">URI copied to clipboard.</p>
           ) : null}
           {mockCopyState === "failed" ? (
-            <p className="text-danger-foreground text-xs">
+            <p className="text-xs text-danger-foreground">
               Clipboard copy failed in this environment. Copy from the textarea above.
             </p>
           ) : null}
@@ -454,7 +454,7 @@ export function EnvelopeValidatorCard({
         </Button>
       </div>
       {envelopeInputError ? (
-        <p className="text-danger-foreground text-sm">{envelopeInputError}</p>
+        <p className="text-sm text-danger-foreground">{envelopeInputError}</p>
       ) : null}
       <ValidationResultView
         result={validateEnvelopeMutation.data}
@@ -632,7 +632,7 @@ export function RelayRegistrationCard({
         </div>
       </div>
       {registerScenarioMutation.error ? (
-        <p className="text-danger-foreground text-sm">{registerScenarioMutation.error.message}</p>
+        <p className="text-sm text-danger-foreground">{registerScenarioMutation.error.message}</p>
       ) : null}
       <RelayRecordsTable records={relayRecords} />
     </PanelCard>
@@ -671,7 +671,7 @@ export function RelayTesterCard({
       description="Submit relay payloads against the local no-op API and inspect contract responses."
     >
       <div className="space-y-3">
-        <h3 className="font-semibold text-sm">POST /api/relay/pay</h3>
+        <h3 className="text-sm font-semibold">POST /api/relay/pay</h3>
         <relayPayForm.Field name="id">
           {(field: ToolsFormFieldApi) => (
             <Field label="Payment ID">
@@ -755,8 +755,8 @@ export function RelayTesterCard({
         </Button>
       </div>
 
-      <div className="space-y-3 border-border/60 border-t pt-4">
-        <h3 className="font-semibold text-sm">POST /api/relay/status</h3>
+      <div className="space-y-3 border-t border-border/60 pt-4">
+        <h3 className="text-sm font-semibold">POST /api/relay/status</h3>
         <relayStatusForm.Field name="id">
           {(field: ToolsFormFieldApi) => (
             <Field label="Payment ID">
@@ -795,7 +795,7 @@ export function RelayTesterCard({
         href={openApiDocsHref}
         target="_blank"
         rel="noreferrer"
-        className="inline-flex font-medium text-sm text-warning-foreground hover:underline"
+        className="inline-flex text-sm font-medium text-warning-foreground hover:underline"
       >
         Open OpenAPI docs in a new tab
       </a>

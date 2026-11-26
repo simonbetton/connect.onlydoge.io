@@ -21,14 +21,19 @@
     "rules": {
       "preset": "recommended",
       "nursery": {
-        "useSortedClasses": {
+        "useTailwindSortedClasses": {
           "level": "warn",
-          "fix": "safe",
-          "options": {
-            "functions": ["cn", "clsx", "cva", "tw", "tw.*"]
-          }
+          "fix": "safe"
         }
       }
+    }
+  },
+  "tailwind": {
+    "stylesheet": "./src/styles.css"
+  },
+  "markdown": {
+    "formatter": {
+      "formatEmbeds": false
     }
   },
   "javascript": {

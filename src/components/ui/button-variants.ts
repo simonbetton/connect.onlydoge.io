@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority"
 
 export const buttonVariants = cva(
-  "group/button relative inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-full bg-clip-padding font-medium text-sm outline-none transition-[transform,box-shadow,background-color,color] duration-150 ease-[var(--ease-out)] hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2 active:translate-y-0 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 motion-reduce:transition-none motion-reduce:active:scale-100 motion-reduce:hover:translate-y-0 dark:aria-invalid:ring-destructive/40 [&_span]:relative [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:relative [&_svg]:shrink-0",
+  "group/button relative inline-flex shrink-0 items-center justify-center rounded-full bg-clip-padding text-sm font-medium whitespace-nowrap transition-[transform,box-shadow,background-color,color] duration-150 ease-[var(--ease-out)] outline-none select-none hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:translate-y-0 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 motion-reduce:transition-none motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 dark:aria-invalid:ring-destructive/40 [&_span]:relative [&_svg]:pointer-events-none [&_svg]:relative [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -14,7 +14,7 @@ export const buttonVariants = cva(
         ghost:
           "text-muted-foreground hover:bg-muted/60 hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 dark:hover:bg-destructive/30",
+          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

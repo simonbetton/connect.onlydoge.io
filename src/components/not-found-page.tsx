@@ -23,13 +23,13 @@ export function NotFoundPage() {
         <Badge variant="warning" className="w-fit">
           HTTP 404
         </Badge>
-        <p className="max-w-[56ch] text-pretty text-base/7 text-muted-foreground sm:text-lg/8">
+        <p className="max-w-[56ch] text-base/7 text-pretty text-muted-foreground sm:text-lg/8">
           OnlyDoge DogeConnect Debugger could not resolve the requested page. Use one of these
           shortcuts to return to an active debugging workflow.
         </p>
         <div className="max-w-full overflow-x-auto rounded-2xl border border-border/70 bg-background/80 px-4 py-3 shadow-[0_1px_0_oklch(1_0_0/0.55)_inset]">
-          <p className="font-medium text-muted-foreground text-sm sm:text-xs">Requested path</p>
-          <p className="mt-1 font-mono text-foreground text-sm">{unresolvedPath || "/"}</p>
+          <p className="text-sm font-medium text-muted-foreground sm:text-xs">Requested path</p>
+          <p className="mt-1 font-mono text-sm text-foreground">{unresolvedPath || "/"}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link to="/" className={cn(buttonVariants())}>

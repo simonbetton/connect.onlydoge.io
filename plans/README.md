@@ -1,8 +1,8 @@
 # Improvement plans
 
-| Plan | Title | Severity | Status |
-| --- | --- | --- | --- |
-| [001](./001-soften-home-hero-gradient-edge.md) | Soften the home hero gradient edge | MEDIUM | DONE |
+| Plan                                           | Title                              | Severity | Status |
+| ---------------------------------------------- | ---------------------------------- | -------- | ------ |
+| [001](./001-soften-home-hero-gradient-edge.md) | Soften the home hero gradient edge | MEDIUM   | DONE   |
 
 ## Recommended execution order
 

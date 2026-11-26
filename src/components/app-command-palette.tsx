@@ -85,7 +85,7 @@ function AppCommandPaletteDialog({
           className="pointer-events-none absolute -top-24 right-8 size-56 rounded-full bg-primary/25 blur-3xl"
           aria-hidden
         />
-        <div className="relative border-border/70 border-b p-4">
+        <div className="relative border-b border-border/70 p-4">
           <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-2xl border border-border/70 bg-background/80 px-3 shadow-[0_1px_0_oklch(1_0_0/0.55)_inset]">
             <Paragraph as="span" size="sm-medium" color="foreground" aria-hidden>
               /

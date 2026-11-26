@@ -132,7 +132,7 @@ function ProtocolPartCard({
 }) {
   return (
     <div className="micro-hover-lift rounded-3xl border border-border/70 bg-card/70 p-5 shadow-[0_1px_0_oklch(1_0_0/0.55)_inset]">
-      <span className="grid size-9 place-items-center rounded-full bg-primary/55 font-display font-semibold text-foreground text-sm">
+      <span className="grid size-9 place-items-center rounded-full bg-primary/55 font-display text-sm font-semibold text-foreground">
         {index}
       </span>
       <Paragraph size="lg" color="foreground" font="display" className="mt-5 font-semibold">
@@ -148,9 +148,9 @@ function ProtocolPartCard({
 export function ProtocolSummaryPage() {
   return (
     <div className="min-w-0">
-      <section className="relative overflow-hidden border-border/70 border-b py-16 sm:py-20">
+      <section className="relative overflow-hidden border-b border-border/70 py-16 sm:py-20">
         <div
-          className="mask-[linear-gradient(180deg,black_0%,black_58%,transparent_100%)] pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(circle_at_20%_10%,oklch(from_var(--primary)_l_c_h/0.3),transparent_34%),linear-gradient(180deg,var(--color-hero-wash),transparent)]"
+          className="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(circle_at_20%_10%,oklch(from_var(--primary)_l_c_h/0.3),transparent_34%),linear-gradient(180deg,var(--color-hero-wash),transparent)] mask-[linear-gradient(180deg,black_0%,black_58%,transparent_100%)]"
           aria-hidden
         />
         <SiteContainer className="relative">
@@ -159,7 +159,7 @@ export function ProtocolSummaryPage() {
               <Badge variant="neutral">Protocol summary</Badge>
               <Badge variant="success">Ready to implement</Badge>
             </div>
-            <Heading as="h1" size="hero" className="wrap-anywhere mt-5 max-w-[12ch]">
+            <Heading as="h1" size="hero" className="mt-5 max-w-[12ch] wrap-anywhere">
               DogeConnect in plain terms
             </Heading>
             <Paragraph size="xl" color="foreground" className="mt-6 max-w-[52ch]">
@@ -176,7 +176,7 @@ export function ProtocolSummaryPage() {
           className="sticky top-[calc(var(--space-xl)+4rem)] hidden pt-(--space-xs) lg:block"
           aria-label="On this page"
         >
-          <Paragraph size="xs-medium" className="mb-4 uppercase tracking-(--tracking-label)">
+          <Paragraph size="xs-medium" className="mb-4 tracking-(--tracking-label) uppercase">
             On this page
           </Paragraph>
           <ProtocolSectionNav

@@ -21,7 +21,7 @@ const tryItOptions = [
 
 export function ProtocolTryItSection() {
   return (
-    <section className="mt-(--space-3xl) scroll-mt-24 border-border border-t pt-(--space-xl) sm:scroll-mt-28">
+    <section className="mt-(--space-3xl) scroll-mt-24 border-t border-border pt-(--space-xl) sm:scroll-mt-28">
       <SectionHang id="next">Try it here</SectionHang>
       <Paragraph className="mb-6">
         OnlyDoge DogeConnect Debugger runs locally — no live relay writes unless you opt in.
@@ -31,7 +31,7 @@ export function ProtocolTryItSection() {
           <Link
             key={option.to}
             to={option.to}
-            className="group micro-hover-lift micro-link-nudge micro-press flex min-w-0 items-start justify-between gap-6 border-border border-b p-6 text-inherit no-underline transition-[background-color,border-color] duration-200 ease-out last:border-b-0 hover:bg-muted/28 focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2 motion-reduce:active:scale-100 sm:border-r sm:border-b-0 sm:first:border-r"
+            className="group micro-hover-lift micro-link-nudge micro-press flex min-w-0 items-start justify-between gap-6 border-b border-border p-6 text-inherit no-underline transition-[background-color,border-color] duration-200 ease-out last:border-b-0 hover:bg-muted/28 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:active:scale-100 sm:border-r sm:border-b-0 sm:first:border-r"
           >
             <div className="min-w-0">
               <Paragraph size="base" color="foreground" font="display" className="font-medium">
