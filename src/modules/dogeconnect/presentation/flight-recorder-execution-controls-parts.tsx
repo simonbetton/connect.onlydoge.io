@@ -19,8 +19,8 @@ export function CurrentRelayTargetPanel({
     <div className="rounded-2xl border border-border/70 bg-background/60 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="font-medium text-sm">Current relay target</p>
-          <p className="text-muted-foreground text-xs">
+          <p className="text-sm font-medium">Current relay target</p>
+          <p className="text-xs text-muted-foreground">
             {sessionView.artifacts.relay?.statusUrl || "No relay target derived"}
           </p>
         </div>
@@ -50,13 +50,13 @@ function LiveRelayWriteGate({
   return (
     <div className="mt-4 space-y-3 rounded-2xl border border-warning-border bg-warning-muted/80 p-4">
       <div className="space-y-1">
-        <p className="font-medium text-foreground text-sm">Live relay write gate</p>
-        <p className="text-muted-foreground text-xs">
+        <p className="text-sm font-medium text-foreground">Live relay write gate</p>
+        <p className="text-xs text-muted-foreground">
           Status checks are safe live reads. Pay requests stay disabled until you arm outbound
           writes for this session.
         </p>
       </div>
-      <div className="grid gap-2 text-muted-foreground text-xs sm:grid-cols-2">
+      <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
         <div>
           <p className="font-medium text-foreground">Status URL</p>
           <p>{relay.statusUrl}</p>
@@ -78,7 +78,7 @@ function LiveRelayWriteGate({
           <span className="block font-medium text-foreground">
             Arm outbound pay requests to this live relay
           </span>
-          <span className="block text-muted-foreground text-xs">
+          <span className="block text-xs text-muted-foreground">
             Leave this off to inspect the live target without sending a pay request.
           </span>
         </span>
@@ -287,10 +287,10 @@ export function MutationErrorMessages({
   return (
     <>
       {statusMutation.error ? (
-        <p className="text-danger-foreground text-sm">{statusMutation.error.message}</p>
+        <p className="text-sm text-danger-foreground">{statusMutation.error.message}</p>
       ) : null}
       {payMutation.error ? (
-        <p className="text-danger-foreground text-sm">{payMutation.error.message}</p>
+        <p className="text-sm text-danger-foreground">{payMutation.error.message}</p>
       ) : null}
     </>
   )

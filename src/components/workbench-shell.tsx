@@ -15,12 +15,12 @@ export function WorkbenchShell({ header, children, className }: WorkbenchShellPr
   return (
     <div
       className={cn(
-        "relative mx-auto w-full min-w-0 max-w-332 px-4 py-8 sm:px-6 sm:py-10 lg:px-5",
+        "relative mx-auto w-full max-w-332 min-w-0 px-4 py-8 sm:px-6 sm:py-10 lg:px-5",
         className
       )}
     >
       <div
-        className="mask-[linear-gradient(180deg,black_0%,black_58%,transparent_100%)] pointer-events-none absolute top-0 left-1/2 -z-1 h-120 w-dvw -translate-x-1/2 bg-[radial-gradient(circle_at_18%_0%,oklch(from_var(--primary)_l_c_h/0.24),transparent_34%),radial-gradient(circle_at_82%_8%,oklch(0.9_0.1_92/0.22),transparent_30%),linear-gradient(180deg,oklch(from_var(--color-hero-wash)_l_c_h/0.72),oklch(from_var(--color-hero-wash)_l_c_h/0.34)_42%,transparent_88%)]"
+        className="pointer-events-none absolute top-0 left-1/2 -z-1 h-120 w-dvw -translate-x-1/2 bg-[radial-gradient(circle_at_18%_0%,oklch(from_var(--primary)_l_c_h/0.24),transparent_34%),radial-gradient(circle_at_82%_8%,oklch(0.9_0.1_92/0.22),transparent_30%),linear-gradient(180deg,oklch(from_var(--color-hero-wash)_l_c_h/0.72),oklch(from_var(--color-hero-wash)_l_c_h/0.34)_42%,transparent_88%)] mask-[linear-gradient(180deg,black_0%,black_58%,transparent_100%)]"
         aria-hidden
       />
       {header}
@@ -87,10 +87,10 @@ export function WorkbenchSection({ id, title, description, children }: Workbench
   return (
     <section
       id={id}
-      className="micro-reveal min-w-0 scroll-mt-24 border-border/65 border-b pb-(--space-xl) last:border-b-0 last:pb-0 motion-reduce:animate-none"
+      className="micro-reveal min-w-0 scroll-mt-24 border-b border-border/65 pb-(--space-xl) last:border-b-0 last:pb-0 motion-reduce:animate-none"
     >
       <header className="mb-6">
-        <Heading as="h2" size="xl" font="display" className="wrap-anywhere min-w-0 max-w-[30ch]">
+        <Heading as="h2" size="xl" font="display" className="max-w-[30ch] min-w-0 wrap-anywhere">
           {title}
         </Heading>
         <Paragraph size="sm" className="mt-2 max-w-[56ch]">
@@ -121,7 +121,7 @@ export function WorkbenchPageLayout({
       >
         <Paragraph
           size="xs-medium"
-          className="mb-4 hidden uppercase tracking-(--tracking-label) lg:block"
+          className="mb-4 hidden tracking-(--tracking-label) uppercase lg:block"
         >
           Sections
         </Paragraph>

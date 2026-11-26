@@ -34,7 +34,7 @@ function MockFrame({
         className
       )}
     >
-      <div className="flex items-center justify-between border-border/60 border-b px-4 py-3">
+      <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
         <div>
           <Paragraph size="xs-medium" className="text-muted-foreground">
             {eyebrow}
@@ -73,7 +73,7 @@ export function ToolsWorkbenchMock({ className }: { className?: string }) {
             data-mock-phase={index}
           >
             <div className="flex items-start gap-3">
-              <span className="mock-step-index grid size-7 shrink-0 place-items-center rounded-full border border-border bg-muted text-muted-foreground text-xs">
+              <span className="mock-step-index grid size-7 shrink-0 place-items-center rounded-full border border-border bg-muted text-xs text-muted-foreground">
                 {index + 1}
               </span>
               <div className="min-w-0 flex-1">

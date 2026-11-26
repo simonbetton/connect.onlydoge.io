@@ -50,7 +50,7 @@ export function AppFooter() {
               <Link
                 key={link.to}
                 to={link.to}
-                className="font-normal text-footer-muted text-sm hover:text-footer-ink"
+                className="text-sm font-normal text-footer-muted hover:text-footer-ink"
               >
                 {link.label}
               </Link>
@@ -59,7 +59,7 @@ export function AppFooter() {
               href={debuggerApiHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1 font-normal text-footer-muted text-sm hover:text-footer-ink"
+              className="inline-flex items-center gap-1 text-sm font-normal text-footer-muted hover:text-footer-ink"
             >
               {debuggerApiLabel}
               <ExternalLinkIcon className="size-3" />
@@ -68,14 +68,14 @@ export function AppFooter() {
               href={repositoryUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1 font-normal text-footer-muted text-sm hover:text-footer-ink"
+              className="inline-flex items-center gap-1 text-sm font-normal text-footer-muted hover:text-footer-ink"
             >
               <GitHubMarkIcon className="size-4" />
               GitHub
             </a>
           </div>
         </div>
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-footer-rule border-t pt-6">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-footer-rule pt-6">
           <Paragraph size="xs" className="text-footer-muted">
             Built for Dogecoin builders who need repeatable evidence before shipping wallet and
             relay integrations.
@@ -84,7 +84,7 @@ export function AppFooter() {
             href={`${repositoryUrl}/blob/main/LICENSE`}
             target="_blank"
             rel="noreferrer noopener"
-            className="text-footer-muted text-xs hover:text-footer-ink"
+            className="text-xs text-footer-muted hover:text-footer-ink"
           >
             MIT License
           </a>

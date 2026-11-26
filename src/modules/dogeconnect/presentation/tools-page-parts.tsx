@@ -91,7 +91,7 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
 
   if (!uri) {
     return (
-      <div className="rounded-2xl border border-border/70 border-dashed bg-muted/25 p-4">
+      <div className="rounded-2xl border border-dashed border-border/70 bg-muted/25 p-4">
         <Paragraph size="xs">
           Generate or paste a DogeConnect URI to preview its QR code here.
         </Paragraph>
@@ -112,7 +112,7 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
   return (
     <div className="min-w-0 space-y-3 rounded-2xl border border-border/70 bg-muted/25 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <Paragraph size="xs-medium" className="uppercase tracking-(--tracking-label)">
+        <Paragraph size="xs-medium" className="tracking-(--tracking-label) uppercase">
           Live QR Preview
         </Paragraph>
         <Button
@@ -136,7 +136,7 @@ function QrPreviewPanelContent({ uri }: { uri: string }) {
             alt="QR code preview for current URI"
             width={256}
             height={256}
-            className="aspect-square w-full max-w-56 rounded-2xl bg-white object-contain p-2 outline-1 outline-black/10 -outline-offset-1"
+            className="aspect-square w-full max-w-56 rounded-2xl bg-white object-contain p-2 outline-1 -outline-offset-1 outline-black/10"
           />
         ) : null}
       </div>
@@ -453,27 +453,27 @@ export function RelayRecordsTable({ records }: { records: RelayDebugRecordView[]
           <caption className="sr-only">Registered relay scenarios</caption>
           <thead>
             <tr>
-              <th scope="col" className="whitespace-nowrap px-3 py-2">
+              <th scope="col" className="px-3 py-2 whitespace-nowrap">
                 <Paragraph as="span" size="xs-medium">
                   ID
                 </Paragraph>
               </th>
-              <th scope="col" className="whitespace-nowrap px-3 py-2">
+              <th scope="col" className="px-3 py-2 whitespace-nowrap">
                 <Paragraph as="span" size="xs-medium">
                   Scenario
                 </Paragraph>
               </th>
-              <th scope="col" className="whitespace-nowrap px-3 py-2">
+              <th scope="col" className="px-3 py-2 whitespace-nowrap">
                 <Paragraph as="span" size="xs-medium">
                   Status
                 </Paragraph>
               </th>
-              <th scope="col" className="whitespace-nowrap px-3 py-2">
+              <th scope="col" className="px-3 py-2 whitespace-nowrap">
                 <Paragraph as="span" size="xs-medium">
                   Txid
                 </Paragraph>
               </th>
-              <th scope="col" className="whitespace-nowrap px-3 py-2">
+              <th scope="col" className="px-3 py-2 whitespace-nowrap">
                 <Paragraph as="span" size="xs-medium">
                   Updated
                 </Paragraph>
@@ -482,7 +482,7 @@ export function RelayRecordsTable({ records }: { records: RelayDebugRecordView[]
           </thead>
           <tbody>
             {records.map((record) => (
-              <tr key={record.id} className="border-border/60 border-t">
+              <tr key={record.id} className="border-t border-border/60">
                 <td className="px-3 py-2">
                   <Paragraph as="span" size="xs" color="foreground">
                     {record.id}
@@ -536,7 +536,7 @@ export function ApiResponseView({
 
   return (
     <div className="min-w-0 space-y-1.5">
-      <Paragraph size="xs-medium" className="uppercase tracking-(--tracking-label)">
+      <Paragraph size="xs-medium" className="tracking-(--tracking-label) uppercase">
         {label} ({response.status})
       </Paragraph>
       <JsonCodeBlock

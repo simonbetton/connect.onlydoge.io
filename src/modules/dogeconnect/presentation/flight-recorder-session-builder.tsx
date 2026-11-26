@@ -97,7 +97,7 @@ function SessionBuilderStatusMessages({
 }) {
   return (
     <>
-      {buildError ? <p className="text-danger-foreground text-sm">{buildError}</p> : null}
+      {buildError ? <p className="text-sm text-danger-foreground">{buildError}</p> : null}
       {pageMessage ? <p className="text-sm text-success-foreground">{pageMessage}</p> : null}
     </>
   )

@@ -57,14 +57,14 @@ export function PageHero({
             {eyebrow ? eyebrow : null}
             <h1
               className={cn(
-                "text-balance font-display font-semibold text-3xl tracking-tight sm:text-5xl",
+                "font-display text-3xl font-semibold tracking-tight text-balance sm:text-5xl",
                 titleClassName
               )}
             >
               {title}
             </h1>
             {description ? (
-              <p className="max-w-[56ch] text-pretty text-base/7 text-muted-foreground sm:text-lg/8">
+              <p className="max-w-[56ch] text-base/7 text-pretty text-muted-foreground sm:text-lg/8">
                 {description}
               </p>
             ) : null}

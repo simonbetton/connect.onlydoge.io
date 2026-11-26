@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import transformImports from "@rolldown/plugin-transform-imports"
@@ -7,7 +8,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite"
 import viteReact from "@vitejs/plugin-react"
 import { nitro } from "nitro/vite"
 import { defineConfig } from "vite"
-import stripInvalidPureAnnotations from "./vite/strip-invalid-pure-annotations"
+import stripInvalidPureAnnotations from "./vite/strip-invalid-pure-annotations.ts"
 
 const rootDir = dirname(fileURLToPath(import.meta.url))
 
@@ -31,6 +32,11 @@ const config = defineConfig(({ mode }) => ({
     tanstackStart(),
     viteReact(),
   ],
+  test: {
+    // Vite 8 resolves some package exports to file URLs that the default
+    // forks pool cannot load. The VM pool executes those modules directly.
+    pool: "vmForks",
+  },
 }))
 
 export default config

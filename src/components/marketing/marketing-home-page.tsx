@@ -71,7 +71,7 @@ function SplitSection({
     <section className={cn("py-(--space-2xl) md:py-(--space-3xl)", className)}>
       <div
         className={cn(
-          "mx-auto grid w-full min-w-0 max-w-332 gap-10 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-16 lg:px-5",
+          "mx-auto grid w-full max-w-332 min-w-0 gap-10 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:gap-16 lg:px-5",
           reverse && "lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1"
         )}
       >
@@ -91,7 +91,7 @@ function SplitSection({
               as="span"
               size="sm-medium"
               color="foreground"
-              className="wrap-break-word inline-flex items-center gap-1 underline decoration-border underline-offset-[3px] transition-[color,text-decoration-color] duration-200 ease-out hover:decoration-accent-ink"
+              className="inline-flex items-center gap-1 wrap-break-word underline decoration-border underline-offset-[3px] transition-[color,text-decoration-color] duration-200 ease-out hover:decoration-accent-ink"
             >
               {linkLabel}
             </Paragraph>
@@ -114,9 +114,9 @@ export function MarketingHomePage() {
   return (
     <div className="min-w-0">
       <section className="relative overflow-hidden bg-paper pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pb-24">
-        <div className="mask-[linear-gradient(180deg,black_0%,black_58%,transparent_100%)] pointer-events-none absolute inset-x-0 top-0 h-150 bg-[radial-gradient(circle_at_15%_12%,oklch(from_var(--primary)_l_c_h/0.42),transparent_32%),radial-gradient(circle_at_75%_0%,oklch(0.88_0.12_80/0.28),transparent_30%),linear-gradient(180deg,var(--color-hero-wash)_0%,oklch(from_var(--color-hero-wash)_l_c_h/0)_64%)]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-150 bg-[radial-gradient(circle_at_15%_12%,oklch(from_var(--primary)_l_c_h/0.42),transparent_32%),radial-gradient(circle_at_75%_0%,oklch(0.88_0.12_80/0.28),transparent_30%),linear-gradient(180deg,var(--color-hero-wash)_0%,oklch(from_var(--color-hero-wash)_l_c_h/0)_64%)] mask-[linear-gradient(180deg,black_0%,black_58%,transparent_100%)]" />
         <div
-          className="mask-[linear-gradient(90deg,transparent,black_24%,black_76%,transparent)] pointer-events-none absolute top-20 left-1/2 h-80 w-6xl -translate-x-1/2 rounded-full border border-primary/18 opacity-70"
+          className="pointer-events-none absolute top-20 left-1/2 h-80 w-6xl -translate-x-1/2 rounded-full border border-primary/18 mask-[linear-gradient(90deg,transparent,black_24%,black_76%,transparent)] opacity-70"
           aria-hidden
         />
         <div
@@ -131,7 +131,7 @@ export function MarketingHomePage() {
           className="home-float-orb home-float-orb-delay pointer-events-none absolute top-92 left-[11%] size-2 rounded-full bg-primary shadow-[0_0_28px_oklch(from_var(--primary)_l_c_h/0.8)] motion-reduce:animate-none"
           aria-hidden
         />
-        <div className="relative z-2 mx-auto grid w-full min-w-0 max-w-332 gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-center lg:gap-16 lg:px-5">
+        <div className="relative z-2 mx-auto grid w-full max-w-332 min-w-0 gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-center lg:gap-16 lg:px-5">
           <div className="min-w-0 animate-reveal-fade-up motion-reduce:animate-none">
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant="neutral">OnlyDoge by EasyDoge</Badge>
@@ -180,7 +180,7 @@ export function MarketingHomePage() {
         </div>
       </section>
 
-      <section className="border-border border-t bg-background py-10 sm:py-12">
+      <section className="border-t border-border bg-background py-10 sm:py-12">
         <div className="mx-auto grid max-w-332 gap-6 px-4 sm:px-6 lg:grid-cols-3 lg:px-5">
           {proofStats.map((stat) => (
             <div
@@ -191,7 +191,7 @@ export function MarketingHomePage() {
                 size="inherit"
                 color="foreground"
                 font="display"
-                className="text-5xl tabular-nums tracking-tight"
+                className="text-5xl tracking-tight tabular-nums"
               >
                 {stat.value}
               </Paragraph>
@@ -219,7 +219,7 @@ export function MarketingHomePage() {
                 to={step.to}
                 className="group/workflow-step home-workflow-card micro-hover-lift micro-press rounded-3xl border border-border/70 bg-card/70 p-5 no-underline shadow-[0_1px_0_oklch(1_0_0/0.55)_inset] motion-reduce:active:scale-100"
               >
-                <span className="workflow-step-badge grid size-9 place-items-center rounded-full bg-primary/55 font-display font-semibold text-foreground text-sm">
+                <span className="workflow-step-badge grid size-9 place-items-center rounded-full bg-primary/55 font-display text-sm font-semibold text-foreground">
                   {index + 1}
                 </span>
                 <Paragraph
@@ -240,7 +240,7 @@ export function MarketingHomePage() {
       </section>
 
       <SplitSection
-        className="border-border border-t"
+        className="border-t border-border"
         tag="Protocol clarity"
         title="The spec, reduced to operational decisions"
         body="Before you validate or trace anything, read the payment model in plain language. See where QR parameters, signed envelopes, wallet checks, and relay state transitions meet."

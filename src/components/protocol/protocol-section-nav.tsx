@@ -96,7 +96,7 @@ export function ProtocolSectionNav({
       aria-label={ariaLabel}
       className={cn(
         isVertical
-          ? "relative flex flex-col gap-1 border-border border-s ps-4"
+          ? "relative flex flex-col gap-1 border-s border-border ps-4"
           : "flex flex-wrap gap-1",
         className
       )}
@@ -127,10 +127,10 @@ export function ProtocolSectionNav({
             href={item.href}
             aria-current={isActive ? "location" : undefined}
             className={cn(
-              "block border border-transparent no-underline transition-[color,background-color,border-color] duration-200 ease-out focus-visible:outline-2 focus-visible:outline-focus focus-visible:outline-offset-2 motion-reduce:transition-none",
+              "block border border-transparent no-underline transition-[color,background-color,border-color] duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none",
               isVertical
                 ? "px-4 py-1 hover:text-foreground"
-                : "inline-flex h-8 items-center whitespace-nowrap rounded-lg bg-paper px-4 hover:border-border hover:bg-muted/35 hover:text-foreground",
+                : "inline-flex h-8 items-center rounded-lg bg-paper px-4 whitespace-nowrap hover:border-border hover:bg-muted/35 hover:text-foreground",
               isActive &&
                 (isVertical ? "text-foreground" : "border-border bg-muted/35 text-foreground")
             )}
